@@ -16,7 +16,13 @@ test.describe("Главная страница", () => {
       if (msg.type() === "error") consoleErrors.push(msg.text());
     });
     const failedRequests: string[] = [];
-    page.on("requestfailed", (req) => failedRequests.push(req.url()));
+    page.on("requestfailed", (req) => {
+      // Next.js Link-префетч (RSC-запросы с ?_rsc=) сам отменяет "лишние"
+      // запросы при новой навигации/повторном ховере — net::ERR_ABORTED
+      // это ожидаемая отмена, а не реальный сбой сети, и не должна валить тест.
+      if (req.failure()?.errorText === "net::ERR_ABORTED") return;
+      failedRequests.push(req.url());
+    });
 
     await page.goto("/");
     await page.waitForLoadState("networkidle");
