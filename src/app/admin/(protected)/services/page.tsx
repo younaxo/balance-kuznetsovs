@@ -1,113 +1,151 @@
-import { db } from "@/server/db/client";
-import { services } from "@/server/db/schema";
-import { asc } from "drizzle-orm";
-import { SERVICES } from "@/domain/services";
-import { upsertExtraServiceAction, deleteExtraServiceAction } from "./actions";
+import { ServiceRepository } from "@/server/services/repository";
+import { ILLUSTRATION_KEYS } from "@/components/icons/legal-illustrations";
+import { upsertServiceAction, deleteServiceAction } from "./actions";
+import { AdminForm } from "@/components/admin/admin-form";
+import { AdminSubmitButton } from "@/components/admin/admin-submit-button";
 
 export const metadata = { title: "Услуги" };
 
+const ILLUSTRATION_LABELS: Record<string, string> = {
+  "personal-data": "Персональные данные (щит)",
+  trademark: "Товарный знак (R)",
+  "website-documents": "Документы сайта (браузер)",
+  contract: "Договор (подпись)",
+  claim: "Претензия (конверт)",
+};
+
 export default async function AdminServicesPage() {
-  const extraServices = await db.select().from(services).orderBy(asc(services.order));
+  const services = await ServiceRepository.listAll();
 
   return (
     <div className="flex flex-col gap-8">
       <div>
         <h1 className="font-display text-2xl">Услуги</h1>
         <p className="text-muted-foreground mt-1 text-sm">
-          Базовые 5 направлений заданы техническим заданием и редактируются в коде (тексты нельзя
-          менять без согласования с владельцем). Здесь можно добавить дополнительные услуги сверх
-          базового списка.
+          Полное управление направлениями услуг — заголовок, текст, CTA, иллюстрация, порядок и
+          публикация. Изменения сразу отражаются на публичном сайте.
         </p>
       </div>
 
       <section className="border-border bg-surface rounded-lg border">
-        <div className="border-border border-b p-5">
-          <h2 className="font-medium">Базовые услуги (только чтение)</h2>
-        </div>
         <ul className="divide-border divide-y">
-          {SERVICES.map((s) => (
-            <li key={s.slug} className="p-5">
-              <p className="font-medium">
-                {s.order}. {s.title}
-              </p>
-              <p className="text-muted-foreground mt-1 text-sm">{s.summary}</p>
-            </li>
+          {services.map((service) => (
+            <ServiceRow key={service.id} service={service} />
           ))}
-        </ul>
-      </section>
-
-      <section className="border-border bg-surface rounded-lg border">
-        <div className="border-border border-b p-5">
-          <h2 className="font-medium">Дополнительные услуги</h2>
-        </div>
-        <ul className="divide-border divide-y">
-          {extraServices.map((s) => (
-            <li key={s.id} className="flex items-start justify-between gap-4 p-5">
-              <div>
-                <p className="font-medium">
-                  {s.order}. {s.title}{" "}
-                  {!s.isPublished && (
-                    <span className="text-muted-foreground text-xs">(скрыто)</span>
-                  )}
-                </p>
-                <p className="text-muted-foreground mt-1 text-sm">{s.summary}</p>
-              </div>
-              <form action={deleteExtraServiceAction}>
-                <input type="hidden" name="id" value={s.id} />
-                <button type="submit" className="text-destructive text-sm hover:underline">
-                  Удалить
-                </button>
-              </form>
-            </li>
-          ))}
-          {extraServices.length === 0 && (
-            <li className="text-muted-foreground p-5 text-sm">Дополнительных услуг пока нет.</li>
+          {services.length === 0 && (
+            <li className="text-muted-foreground p-5 text-sm">Услуг пока нет.</li>
           )}
         </ul>
+      </section>
 
-        <form action={upsertExtraServiceAction} className="border-border grid gap-3 border-t p-5">
-          <p className="text-sm font-medium">Добавить услугу</p>
-          <div className="grid gap-3 sm:grid-cols-2">
-            <input
-              name="slug"
-              placeholder="slug-latinicej"
-              required
-              className="border-border-strong bg-background h-9 rounded-md border px-3 text-sm"
-            />
-            <input
-              name="title"
-              placeholder="Название"
-              required
-              className="border-border-strong bg-background h-9 rounded-md border px-3 text-sm"
-            />
-          </div>
-          <textarea
-            name="summary"
-            placeholder="Описание"
-            required
-            rows={3}
-            className="border-border-strong bg-background rounded-md border p-3 text-sm"
-          />
-          <div className="flex items-center gap-4">
-            <input
-              name="order"
-              type="number"
-              placeholder="Порядок"
-              defaultValue={extraServices.length + 1}
-              className="border-border-strong bg-background h-9 w-28 rounded-md border px-3 text-sm"
-            />
-            <label className="flex items-center gap-2 text-sm">
-              <input type="checkbox" name="isPublished" defaultChecked /> Опубликовано
-            </label>
-            <button
-              type="submit"
-              className="bg-foreground text-background ml-auto h-9 rounded-md px-4 text-sm"
-            >
-              Сохранить
-            </button>
-          </div>
-        </form>
+      <section className="border-border bg-surface rounded-lg border p-5">
+        <h2 className="mb-4 text-sm font-medium">Добавить услугу</h2>
+        <ServiceForm order={services.length + 1} />
       </section>
     </div>
+  );
+}
+
+function ServiceRow({
+  service,
+}: {
+  service: Awaited<ReturnType<typeof ServiceRepository.listAll>>[number];
+}) {
+  return (
+    <li className="p-5">
+      <details>
+        <summary className="flex cursor-pointer items-center justify-between gap-4">
+          <span className="font-medium">
+            {service.title}{" "}
+            {!service.isPublished && (
+              <span className="text-muted-foreground text-xs">(скрыто)</span>
+            )}
+          </span>
+          <span className="text-muted-foreground text-xs">Редактировать ▾</span>
+        </summary>
+        <div className="mt-4">
+          <ServiceForm service={service} order={service.order} />
+          <AdminForm action={deleteServiceAction} className="mt-3">
+            <input type="hidden" name="id" value={service.id} />
+            <AdminSubmitButton variant="destructive" pendingLabel="Удаление…">
+              Удалить услугу
+            </AdminSubmitButton>
+          </AdminForm>
+        </div>
+      </details>
+    </li>
+  );
+}
+
+function ServiceForm({
+  service,
+  order,
+}: {
+  service?: Awaited<ReturnType<typeof ServiceRepository.listAll>>[number];
+  order: number;
+}) {
+  return (
+    <AdminForm action={upsertServiceAction} resetOnSuccess={!service} className="grid gap-3">
+      {service && <input type="hidden" name="id" value={service.id} />}
+      <div className="grid gap-3 sm:grid-cols-2">
+        <input
+          name="slug"
+          placeholder="slug-latinicej"
+          defaultValue={service?.slug}
+          required
+          className="border-border-strong bg-background h-9 rounded-md border px-3 text-sm"
+        />
+        <input
+          name="title"
+          placeholder="Название"
+          defaultValue={service?.title}
+          required
+          className="border-border-strong bg-background h-9 rounded-md border px-3 text-sm"
+        />
+      </div>
+      <textarea
+        name="summary"
+        placeholder="Описание"
+        defaultValue={service?.summary}
+        required
+        rows={3}
+        className="border-border-strong bg-background rounded-md border p-3 text-sm"
+      />
+      <div className="grid gap-3 sm:grid-cols-3">
+        <input
+          name="ctaLabel"
+          placeholder="Текст кнопки"
+          defaultValue={service?.ctaLabel ?? "Заказать услугу"}
+          className="border-border-strong bg-background h-9 rounded-md border px-3 text-sm"
+        />
+        <select
+          name="illustration"
+          defaultValue={service?.illustration ?? "contract"}
+          className="border-border-strong bg-background h-9 rounded-md border px-3 text-sm"
+        >
+          {ILLUSTRATION_KEYS.map((key) => (
+            <option key={key} value={key}>
+              {ILLUSTRATION_LABELS[key] ?? key}
+            </option>
+          ))}
+        </select>
+        <input
+          name="order"
+          type="number"
+          placeholder="Порядок"
+          defaultValue={order}
+          className="border-border-strong bg-background h-9 rounded-md border px-3 text-sm"
+        />
+      </div>
+      <div className="flex items-center gap-4">
+        <label className="flex items-center gap-2 text-sm">
+          <input type="checkbox" name="isPublished" defaultChecked={service?.isPublished ?? true} />{" "}
+          Опубликовано
+        </label>
+        <AdminSubmitButton pendingLabel="Сохранение…" className="ml-auto">
+          Сохранить
+        </AdminSubmitButton>
+      </div>
+    </AdminForm>
   );
 }

@@ -1,5 +1,7 @@
 import { ReviewRepository } from "@/server/reviews/repository";
 import { importReviewAction, togglePublishReviewAction, deleteReviewAction } from "./actions";
+import { AdminForm } from "@/components/admin/admin-form";
+import { AdminSubmitButton } from "@/components/admin/admin-submit-button";
 
 export const metadata = { title: "Отзывы" };
 
@@ -32,19 +34,19 @@ export default async function AdminReviewsPage() {
                 <p className="text-muted-foreground mt-1 max-w-xl text-sm">{review.text}</p>
               </div>
               <div className="flex shrink-0 gap-3">
-                <form action={togglePublishReviewAction}>
+                <AdminForm action={togglePublishReviewAction}>
                   <input type="hidden" name="id" value={review.id} />
                   <input type="hidden" name="isPublished" value={String(review.isPublished)} />
-                  <button type="submit" className="text-accent text-sm hover:underline">
+                  <AdminSubmitButton variant="ghost" pendingLabel="…">
                     {review.isPublished ? "Скрыть" : "Опубликовать"}
-                  </button>
-                </form>
-                <form action={deleteReviewAction}>
+                  </AdminSubmitButton>
+                </AdminForm>
+                <AdminForm action={deleteReviewAction}>
                   <input type="hidden" name="id" value={review.id} />
-                  <button type="submit" className="text-destructive text-sm hover:underline">
+                  <AdminSubmitButton variant="destructive" pendingLabel="Удаление…">
                     Удалить
-                  </button>
-                </form>
+                  </AdminSubmitButton>
+                </AdminForm>
               </div>
             </li>
           ))}
@@ -53,7 +55,11 @@ export default async function AdminReviewsPage() {
           )}
         </ul>
 
-        <form action={importReviewAction} className="border-border grid gap-3 border-t p-5">
+        <AdminForm
+          action={importReviewAction}
+          resetOnSuccess
+          className="border-border grid gap-3 border-t p-5"
+        >
           <p className="text-sm font-medium">Добавить отзыв вручную</p>
           <div className="grid gap-3 sm:grid-cols-2">
             <input
@@ -103,14 +109,11 @@ export default async function AdminReviewsPage() {
             <label className="flex items-center gap-2 text-sm">
               <input type="checkbox" name="isPublished" /> Опубликовать сразу
             </label>
-            <button
-              type="submit"
-              className="bg-foreground text-background ml-auto h-9 rounded-md px-4 text-sm"
-            >
+            <AdminSubmitButton pendingLabel="Сохранение…" className="ml-auto">
               Добавить
-            </button>
+            </AdminSubmitButton>
           </div>
-        </form>
+        </AdminForm>
       </section>
     </div>
   );

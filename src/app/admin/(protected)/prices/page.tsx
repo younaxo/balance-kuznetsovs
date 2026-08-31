@@ -1,11 +1,16 @@
 import { PriceRepository, formatPriceFromKopecks } from "@/server/pricing/repository";
-import { SERVICES } from "@/domain/services";
+import { ServiceRepository } from "@/server/services/repository";
 import { upsertPriceItemAction, deletePriceItemAction } from "./actions";
+import { AdminForm } from "@/components/admin/admin-form";
+import { AdminSubmitButton } from "@/components/admin/admin-submit-button";
 
 export const metadata = { title: "Прайс" };
 
 export default async function AdminPricesPage() {
-  const items = await PriceRepository.listAll();
+  const [items, services] = await Promise.all([
+    PriceRepository.listAll(),
+    ServiceRepository.listAll(),
+  ]);
 
   return (
     <div className="flex flex-col gap-8">
@@ -35,12 +40,12 @@ export default async function AdminPricesPage() {
                   {item.unit ? ` / ${item.unit}` : ""}
                 </p>
               </div>
-              <form action={deletePriceItemAction}>
+              <AdminForm action={deletePriceItemAction}>
                 <input type="hidden" name="id" value={item.id} />
-                <button type="submit" className="text-destructive text-sm hover:underline">
+                <AdminSubmitButton variant="destructive" pendingLabel="Удаление…">
                   Удалить
-                </button>
-              </form>
+                </AdminSubmitButton>
+              </AdminForm>
             </li>
           ))}
           {items.length === 0 && (
@@ -48,7 +53,11 @@ export default async function AdminPricesPage() {
           )}
         </ul>
 
-        <form action={upsertPriceItemAction} className="border-border grid gap-3 border-t p-5">
+        <AdminForm
+          action={upsertPriceItemAction}
+          resetOnSuccess
+          className="border-border grid gap-3 border-t p-5"
+        >
           <p className="text-sm font-medium">Добавить позицию</p>
           <div className="grid gap-3 sm:grid-cols-2">
             <input
@@ -62,7 +71,7 @@ export default async function AdminPricesPage() {
               className="border-border-strong bg-background h-9 rounded-md border px-3 text-sm"
             >
               <option value="">Без привязки к услуге</option>
-              {SERVICES.map((s) => (
+              {services.map((s) => (
                 <option key={s.slug} value={s.slug}>
                   {s.title}
                 </option>
@@ -101,14 +110,11 @@ export default async function AdminPricesPage() {
             <label className="flex items-center gap-2 text-sm">
               <input type="checkbox" name="isPublished" defaultChecked /> Опубликовано
             </label>
-            <button
-              type="submit"
-              className="bg-foreground text-background ml-auto h-9 rounded-md px-4 text-sm"
-            >
+            <AdminSubmitButton pendingLabel="Сохранение…" className="ml-auto">
               Сохранить
-            </button>
+            </AdminSubmitButton>
           </div>
-        </form>
+        </AdminForm>
       </section>
     </div>
   );

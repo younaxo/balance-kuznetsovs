@@ -5,6 +5,7 @@ import { getCurrentAdmin } from "@/server/auth/session";
 import { db } from "@/server/db/client";
 import { contentBlocks } from "@/server/db/schema";
 import { z } from "zod";
+import type { AdminActionState } from "@/server/admin/action-state";
 
 const schema = z.object({
   key: z.string().trim().min(1).max(150),
@@ -13,9 +14,12 @@ const schema = z.object({
   isPublished: z.boolean(),
 });
 
-export async function updateContentBlockAction(formData: FormData): Promise<void> {
+export async function updateContentBlockAction(
+  _prevState: AdminActionState,
+  formData: FormData,
+): Promise<AdminActionState> {
   const admin = await getCurrentAdmin();
-  if (!admin) throw new Error("Unauthorized");
+  if (!admin) return { ok: false, error: "Unauthorized" };
 
   const parsed = schema.safeParse({
     key: formData.get("key"),
@@ -23,7 +27,9 @@ export async function updateContentBlockAction(formData: FormData): Promise<void
     body: formData.get("body") || "",
     isPublished: formData.get("isPublished") === "on",
   });
-  if (!parsed.success) throw new Error(parsed.error.issues[0]?.message ?? "Некорректные данные");
+  if (!parsed.success) {
+    return { ok: false, error: parsed.error.issues[0]?.message ?? "Некорректные данные" };
+  }
 
   await db
     .insert(contentBlocks)
@@ -45,4 +51,5 @@ export async function updateContentBlockAction(formData: FormData): Promise<void
 
   revalidatePath("/admin/content");
   revalidatePath("/");
+  return { ok: true };
 }

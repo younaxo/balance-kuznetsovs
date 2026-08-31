@@ -4,10 +4,14 @@ import { revalidatePath } from "next/cache";
 import { getCurrentAdmin } from "@/server/auth/session";
 import { PriceRepository } from "@/server/pricing/repository";
 import { priceItemUpsertSchema } from "@/server/validation/admin";
+import type { AdminActionState } from "@/server/admin/action-state";
 
-export async function upsertPriceItemAction(formData: FormData): Promise<void> {
+export async function upsertPriceItemAction(
+  _prevState: AdminActionState,
+  formData: FormData,
+): Promise<AdminActionState> {
   const admin = await getCurrentAdmin();
-  if (!admin) throw new Error("Unauthorized");
+  if (!admin) return { ok: false, error: "Unauthorized" };
 
   const rawPrice = formData.get("priceFromKopecks");
   const parsed = priceItemUpsertSchema.safeParse({
@@ -20,7 +24,9 @@ export async function upsertPriceItemAction(formData: FormData): Promise<void> {
     order: Number(formData.get("order")) || 0,
     isPublished: formData.get("isPublished") === "on",
   });
-  if (!parsed.success) throw new Error(parsed.error.issues[0]?.message ?? "Некорректные данные");
+  if (!parsed.success) {
+    return { ok: false, error: parsed.error.issues[0]?.message ?? "Некорректные данные" };
+  }
 
   const { id, serviceSlug, description, unit, ...rest } = parsed.data;
   const data = {
@@ -37,16 +43,21 @@ export async function upsertPriceItemAction(formData: FormData): Promise<void> {
   }
   revalidatePath("/admin/prices");
   revalidatePath("/prices");
+  return { ok: true };
 }
 
-export async function deletePriceItemAction(formData: FormData): Promise<void> {
+export async function deletePriceItemAction(
+  _prevState: AdminActionState,
+  formData: FormData,
+): Promise<AdminActionState> {
   const admin = await getCurrentAdmin();
-  if (!admin) throw new Error("Unauthorized");
+  if (!admin) return { ok: false, error: "Unauthorized" };
 
   const id = formData.get("id");
-  if (typeof id !== "string") throw new Error("Некорректный id");
+  if (typeof id !== "string") return { ok: false, error: "Некорректный id" };
 
   await PriceRepository.remove(id);
   revalidatePath("/admin/prices");
   revalidatePath("/prices");
+  return { ok: true };
 }

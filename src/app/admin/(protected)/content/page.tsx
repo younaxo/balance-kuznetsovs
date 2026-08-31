@@ -2,6 +2,8 @@ import { db } from "@/server/db/client";
 import { contentBlocks } from "@/server/db/schema";
 import { CONTENT_BLOCK_KEYS } from "@/domain/content-blocks";
 import { updateContentBlockAction } from "./actions";
+import { AdminForm } from "@/components/admin/admin-form";
+import { AdminSubmitButton } from "@/components/admin/admin-submit-button";
 
 export const metadata = { title: "Контент" };
 
@@ -23,7 +25,7 @@ export default async function AdminContentPage() {
         {CONTENT_BLOCK_KEYS.map(({ key, label }) => {
           const block = byKey.get(key);
           return (
-            <form
+            <AdminForm
               key={key}
               action={updateContentBlockAction}
               className="border-border bg-surface grid gap-3 rounded-lg border p-6"
@@ -52,14 +54,11 @@ export default async function AdminContentPage() {
                   />
                   Опубликовано
                 </label>
-                <button
-                  type="submit"
-                  className="bg-foreground text-background ml-auto h-9 rounded-md px-4 text-sm"
-                >
+                <AdminSubmitButton pendingLabel="Сохранение…" className="ml-auto">
                   Сохранить
-                </button>
+                </AdminSubmitButton>
               </div>
-            </form>
+            </AdminForm>
           );
         })}
       </div>

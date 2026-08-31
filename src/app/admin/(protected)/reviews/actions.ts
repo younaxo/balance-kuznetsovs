@@ -8,6 +8,7 @@ import { reviews } from "@/server/db/schema";
 import { reviewUpsertSchema } from "@/server/validation/admin";
 import { ManualReviewProvider } from "@/server/reviews/providers/manual-provider";
 import { ReviewRepository } from "@/server/reviews/repository";
+import type { AdminActionState } from "@/server/admin/action-state";
 
 /**
  * Ручной импорт отзыва (см. ReviewProvider/AvitoReviewProvider/
@@ -15,9 +16,12 @@ import { ReviewRepository } from "@/server/reviews/repository";
  * отзыв с источником Avito, так как публичная страница профиля закрыта
  * antibot-firewall (см. DECISIONS.md).
  */
-export async function importReviewAction(formData: FormData): Promise<void> {
+export async function importReviewAction(
+  _prevState: AdminActionState,
+  formData: FormData,
+): Promise<AdminActionState> {
   const admin = await getCurrentAdmin();
-  if (!admin) throw new Error("Unauthorized");
+  if (!admin) return { ok: false, error: "Unauthorized" };
 
   const parsed = reviewUpsertSchema.safeParse({
     authorName: formData.get("authorName"),
@@ -28,7 +32,9 @@ export async function importReviewAction(formData: FormData): Promise<void> {
     reviewedAt: formData.get("reviewedAt") || "",
     isPublished: formData.get("isPublished") === "on",
   });
-  if (!parsed.success) throw new Error(parsed.error.issues[0]?.message ?? "Некорректные данные");
+  if (!parsed.success) {
+    return { ok: false, error: parsed.error.issues[0]?.message ?? "Некорректные данные" };
+  }
 
   const provider = new ManualReviewProvider({
     authorName: parsed.data.authorName,
@@ -53,30 +59,39 @@ export async function importReviewAction(formData: FormData): Promise<void> {
   revalidatePath("/admin/reviews");
   revalidatePath("/reviews");
   revalidatePath("/");
+  return { ok: true };
 }
 
-export async function togglePublishReviewAction(formData: FormData): Promise<void> {
+export async function togglePublishReviewAction(
+  _prevState: AdminActionState,
+  formData: FormData,
+): Promise<AdminActionState> {
   const admin = await getCurrentAdmin();
-  if (!admin) throw new Error("Unauthorized");
+  if (!admin) return { ok: false, error: "Unauthorized" };
 
   const id = formData.get("id");
   const isPublished = formData.get("isPublished") === "true";
-  if (typeof id !== "string") throw new Error("Некорректный id");
+  if (typeof id !== "string") return { ok: false, error: "Некорректный id" };
 
   await ReviewRepository.setPublished(id, !isPublished);
   revalidatePath("/admin/reviews");
   revalidatePath("/reviews");
   revalidatePath("/");
+  return { ok: true };
 }
 
-export async function deleteReviewAction(formData: FormData): Promise<void> {
+export async function deleteReviewAction(
+  _prevState: AdminActionState,
+  formData: FormData,
+): Promise<AdminActionState> {
   const admin = await getCurrentAdmin();
-  if (!admin) throw new Error("Unauthorized");
+  if (!admin) return { ok: false, error: "Unauthorized" };
 
   const id = formData.get("id");
-  if (typeof id !== "string") throw new Error("Некорректный id");
+  if (typeof id !== "string") return { ok: false, error: "Некорректный id" };
 
   await db.delete(reviews).where(eq(reviews.id, id));
   revalidatePath("/admin/reviews");
   revalidatePath("/reviews");
+  return { ok: true };
 }

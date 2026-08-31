@@ -1,6 +1,7 @@
 "use client";
 
 import { useActionState } from "react";
+import { Loader2 } from "lucide-react";
 import {
   changePasswordAction,
   type ChangePasswordState,
@@ -52,8 +53,9 @@ export function ChangePasswordForm() {
       <button
         type="submit"
         disabled={pending}
-        className="bg-foreground text-background mt-1 h-9 w-fit rounded-md px-4 text-sm disabled:opacity-50"
+        className="bg-foreground text-background mt-1 inline-flex h-9 w-fit items-center gap-2 rounded-md px-4 text-sm disabled:cursor-not-allowed disabled:opacity-50"
       >
+        {pending && <Loader2 className="size-3.5 animate-spin" />}
         Сохранить
       </button>
     </form>

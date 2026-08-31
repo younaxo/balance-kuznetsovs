@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { getAnalyticsSummary } from "@/server/analytics/reporting";
 import { cn } from "@/lib/cn";
+import { BarList } from "@/components/admin/bar-list";
 
 export const metadata = { title: "Аналитика" };
 
@@ -73,63 +74,30 @@ export default async function AdminAnalyticsPage({ searchParams }: PageProps<"/a
 
       <div className="grid gap-6 lg:grid-cols-2">
         <Panel title="События">
-          {summary.eventsByType.length === 0 ? (
-            <EmptyState />
-          ) : (
-            <ul className="divide-border divide-y">
-              {summary.eventsByType.map((e) => (
-                <li key={e.eventType} className="flex justify-between p-4 text-sm">
-                  <span>{EVENT_LABELS[e.eventType] ?? e.eventType}</span>
-                  <span className="font-medium">{e.count}</span>
-                </li>
-              ))}
-            </ul>
-          )}
+          <BarList
+            items={summary.eventsByType.map((e) => ({
+              label: EVENT_LABELS[e.eventType] ?? e.eventType,
+              value: e.count,
+            }))}
+          />
         </Panel>
 
         <Panel title="Точки входа">
-          {summary.topLandingPaths.length === 0 ? (
-            <EmptyState />
-          ) : (
-            <ul className="divide-border divide-y">
-              {summary.topLandingPaths.map((p) => (
-                <li key={p.path} className="flex justify-between p-4 text-sm">
-                  <span className="truncate">{p.path}</span>
-                  <span className="font-medium">{p.count}</span>
-                </li>
-              ))}
-            </ul>
-          )}
+          <BarList
+            items={summary.topLandingPaths.map((p) => ({ label: p.path, value: p.count }))}
+          />
         </Panel>
 
         <Panel title="Источники (UTM Source)">
-          {summary.topUtmSources.length === 0 ? (
-            <EmptyState />
-          ) : (
-            <ul className="divide-border divide-y">
-              {summary.topUtmSources.map((s) => (
-                <li key={s.source} className="flex justify-between p-4 text-sm">
-                  <span>{s.source}</span>
-                  <span className="font-medium">{s.count}</span>
-                </li>
-              ))}
-            </ul>
-          )}
+          <BarList
+            items={summary.topUtmSources.map((s) => ({ label: s.source, value: s.count }))}
+          />
         </Panel>
 
         <Panel title="Кампании (UTM Campaign)">
-          {summary.topUtmCampaigns.length === 0 ? (
-            <EmptyState />
-          ) : (
-            <ul className="divide-border divide-y">
-              {summary.topUtmCampaigns.map((c) => (
-                <li key={c.campaign} className="flex justify-between p-4 text-sm">
-                  <span>{c.campaign}</span>
-                  <span className="font-medium">{c.count}</span>
-                </li>
-              ))}
-            </ul>
-          )}
+          <BarList
+            items={summary.topUtmCampaigns.map((c) => ({ label: c.campaign, value: c.count }))}
+          />
         </Panel>
       </div>
     </div>
@@ -154,8 +122,4 @@ function Panel({ title, children }: { title: string; children: React.ReactNode }
       {children}
     </div>
   );
-}
-
-function EmptyState() {
-  return <p className="text-muted-foreground p-4 text-sm">Нет данных за выбранный период.</p>;
 }

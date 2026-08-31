@@ -1,5 +1,7 @@
 import { getContactSettings } from "@/server/content/contact-settings";
 import { updateContactSettingsAction } from "./actions";
+import { AdminForm } from "@/components/admin/admin-form";
+import { AdminSubmitButton } from "@/components/admin/admin-submit-button";
 
 export const metadata = { title: "Контакты" };
 
@@ -40,7 +42,7 @@ export default async function AdminContactsPage() {
         </p>
       </div>
 
-      <form action={updateContactSettingsAction} className="grid max-w-2xl gap-8">
+      <AdminForm action={updateContactSettingsAction} className="grid max-w-2xl gap-8">
         <section className="border-border bg-surface grid gap-4 rounded-lg border p-6">
           <h2 className="font-medium">Способы связи</h2>
           <div className="grid gap-4 sm:grid-cols-2">
@@ -94,13 +96,10 @@ export default async function AdminContactsPage() {
           />
         </section>
 
-        <button
-          type="submit"
-          className="bg-foreground text-background h-10 w-fit rounded-md px-6 text-sm"
-        >
+        <AdminSubmitButton pendingLabel="Сохранение…" className="h-10 w-fit px-6">
           Сохранить
-        </button>
-      </form>
+        </AdminSubmitButton>
+      </AdminForm>
     </div>
   );
 }
