@@ -4,11 +4,14 @@
 /*
  * Design tokens «БАЛАНС КУЗНЕЦОВЫ».
  *
- * Монохромная база (белый / off-white / графит / чёрный) с редким
- * акцентом глубокого синего. Радиусы небольшие, границы тонкие —
- * издательская, архитектурная эстетика вместо типового SaaS-скругления
- * и цветных градиентов. Токены продублированы для light/dark и не
- * зависят от порядка загрузки — тема применяется без "мигания".
+ * Строго монохромная база (белый / off-white / графит / чёрный) —
+ * никакого синего или другого цветного акцента: "accent" — это чёрный
+ * в светлой теме и белый в тёмной (используется и для выделения текста,
+ * и для фокус-кольца, и для CTA-акцентов). Радиусы небольшие, границы
+ * тонкие — издательская, архитектурная эстетика вместо типового
+ * SaaS-скругления и цветных градиентов. Токены продублированы для
+ * light/dark и не зависят от порядка загрузки — тема применяется без
+ * "мигания".
  */
 
 :root {
@@ -28,13 +31,13 @@
   --graphite-foreground: #f4f4f2;
   --graphite-border: rgba(255, 255, 255, 0.1);
 
-  --accent: #1d3a6e;
+  --accent: #000000;
   --accent-foreground: #ffffff;
 
   --destructive: #8c2f2f;
   --destructive-foreground: #ffffff;
 
-  --ring: #1d3a6e;
+  --ring: #14161a;
 
   --radius: 0.5rem;
 }
@@ -57,13 +60,13 @@
     --graphite-foreground: #f4f4f2;
     --graphite-border: rgba(255, 255, 255, 0.08);
 
-    --accent: #5a80c4;
+    --accent: #ffffff;
     --accent-foreground: #0a0b0d;
 
     --destructive: #d97a7a;
     --destructive-foreground: #1a0a0a;
 
-    --ring: #5a80c4;
+    --ring: #f1f1ef;
   }
 }
 
@@ -84,13 +87,13 @@
   --graphite-foreground: #f4f4f2;
   --graphite-border: rgba(255, 255, 255, 0.08);
 
-  --accent: #5a80c4;
+  --accent: #ffffff;
   --accent-foreground: #0a0b0d;
 
   --destructive: #d97a7a;
   --destructive-foreground: #1a0a0a;
 
-  --ring: #5a80c4;
+  --ring: #f1f1ef;
 }
 
 @theme inline {
@@ -219,4 +222,51 @@
     transition-duration: 0.01ms !important;
     scroll-behavior: auto !important;
   }
+}
+
+/* Кастомный скроллбар — тонкий, в тон дизайн-системы, а не браузерный
+   дефолт. Firefox — через scrollbar-width/scrollbar-color, остальные —
+   через ::-webkit-scrollbar. */
+html {
+  scrollbar-width: thin;
+  scrollbar-color: var(--color-border-strong) transparent;
+}
+
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: var(--color-border-strong);
+  border-radius: 999px;
+  border: 2px solid var(--color-background);
+  background-clip: padding-box;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background-color: var(--color-muted-foreground);
+  background-clip: padding-box;
+}
+
+/* "Большая" анимация переключения темы (View Transitions API) — круг
+   расширяется из точки клика по кнопке темы. Отключаем стандартный
+   next/prev кросс-фейд, чтобы был виден только наш clip-path-круг
+   (см. src/lib/view-transition-theme.ts). */
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation: none;
+  mix-blend-mode: normal;
+}
+
+::view-transition-old(root) {
+  z-index: 1;
+}
+
+::view-transition-new(root) {
+  z-index: 2;
 }

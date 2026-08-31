@@ -4,6 +4,7 @@ import * as React from "react";
 import { useTheme } from "next-themes";
 import { Moon, Sun } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { animateThemeChange } from "@/lib/view-transition-theme";
 
 // Флаг гидратации без useEffect: useSyncExternalStore с "пустой" подпиской
 // возвращает false на сервере и при первом клиентском рендере (совпадают —
@@ -20,6 +21,7 @@ function useHasMounted(): boolean {
 export function ThemeToggle() {
   const { resolvedTheme, setTheme } = useTheme();
   const mounted = useHasMounted();
+  const buttonRef = React.useRef<HTMLButtonElement>(null);
 
   if (!mounted) {
     // Пустая "заглушка" того же размера, чтобы не было прыжка layout
@@ -29,13 +31,24 @@ export function ThemeToggle() {
 
   const isDark = resolvedTheme === "dark";
 
+  function handleToggle() {
+    const next = isDark ? "light" : "dark";
+    const rect = buttonRef.current?.getBoundingClientRect();
+    const origin = rect
+      ? { x: rect.left + rect.width / 2, y: rect.top + rect.height / 2 }
+      : { x: window.innerWidth / 2, y: window.innerHeight / 2 };
+
+    animateThemeChange(() => setTheme(next), origin);
+  }
+
   return (
     <Button
+      ref={buttonRef}
       type="button"
       variant="ghost"
       size="icon"
       aria-label={isDark ? "Включить светлую тему" : "Включить тёмную тему"}
-      onClick={() => setTheme(isDark ? "light" : "dark")}
+      onClick={handleToggle}
     >
       {isDark ? <Sun className="size-4.5" /> : <Moon className="size-4.5" />}
     </Button>
