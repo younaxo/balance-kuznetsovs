@@ -9,9 +9,10 @@ import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
 import { TrackedLink } from "@/components/analytics/tracked-link";
 import { OptionCard } from "./option-card";
+import { TurnstileWidget } from "@/components/security/turnstile-widget";
 import { trackEvent } from "@/lib/analytics/client";
 import { quizSubmissionSchema } from "@/server/validation/application";
-import { SERVICES } from "@/domain/services";
+import type { ServiceOption } from "@/server/services/options";
 
 type EntityType = "individual" | "sole_proprietor" | "llc" | "other";
 type YesNo = "yes" | "no" | "not_sure";
@@ -45,9 +46,10 @@ const INITIAL_STATE: QuizState = {
 
 const TOTAL_STEPS = 7;
 
-export function Quiz({ onDone }: { onDone?: () => void }) {
+export function Quiz({ onDone, services }: { onDone?: () => void; services: ServiceOption[] }) {
   const [step, setStep] = React.useState(1);
   const [state, setState] = React.useState<QuizState>(INITIAL_STATE);
+  const [turnstileToken, setTurnstileToken] = React.useState<string | null>(null);
   const [status, setStatus] = React.useState<"idle" | "submitting" | "success" | "error">("idle");
   const [error, setError] = React.useState<string | null>(null);
   const trackedSteps = React.useRef(new Set<number>());
@@ -98,6 +100,7 @@ export function Quiz({ onDone }: { onDone?: () => void }) {
       email: state.email,
       consent: state.consent,
       website: state.website,
+      turnstileToken: turnstileToken ?? undefined,
       quizAnswers: {
         serviceSlug: state.serviceSlug,
         entityType: state.entityType,
@@ -178,7 +181,7 @@ export function Quiz({ onDone }: { onDone?: () => void }) {
         {step === 1 && (
           <StepShell title="Какая услуга нужна?">
             <div className="grid gap-2">
-              {SERVICES.map((service) => (
+              {services.map((service) => (
                 <OptionCard
                   key={service.slug}
                   label={service.title}
@@ -371,6 +374,7 @@ export function Quiz({ onDone }: { onDone?: () => void }) {
                   *
                 </span>
               </label>
+              <TurnstileWidget onVerify={setTurnstileToken} />
             </div>
           </StepShell>
         )}

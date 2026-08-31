@@ -9,11 +9,11 @@ import {
 } from "@/components/ui/dialog";
 import { ApplicationForm } from "./application-form";
 import { useDialogs } from "@/components/dialogs/dialog-manager";
-import { getServiceBySlug } from "@/domain/services";
+import type { ServiceOption } from "@/server/services/options";
 
-export function ApplicationDialog() {
+export function ApplicationDialog({ services }: { services: ServiceOption[] }) {
   const { applicationOpen, applicationServiceSlug, closeApplication } = useDialogs();
-  const service = applicationServiceSlug ? getServiceBySlug(applicationServiceSlug) : undefined;
+  const service = services.find((s) => s.slug === applicationServiceSlug);
 
   return (
     <Dialog open={applicationOpen} onOpenChange={(open) => !open && closeApplication()}>
@@ -26,7 +26,7 @@ export function ApplicationDialog() {
               : "Расскажите о задаче — мы свяжемся с вами удобным способом."}
           </DialogDescription>
         </DialogHeader>
-        <ApplicationForm defaultServiceSlug={applicationServiceSlug} />
+        <ApplicationForm defaultServiceSlug={applicationServiceSlug} services={services} />
       </DialogContent>
     </Dialog>
   );

@@ -3,6 +3,7 @@ import { Phone, Mail, Send, MapPin, Clock } from "lucide-react";
 import { getContactSettings } from "@/server/content/contact-settings";
 import { TrackedLink } from "@/components/analytics/tracked-link";
 import { ApplicationForm } from "@/components/forms/application-form";
+import { ServiceRepository } from "@/server/services/repository";
 
 export const metadata: Metadata = {
   title: "Контакты",
@@ -10,7 +11,10 @@ export const metadata: Metadata = {
 };
 
 export default async function ContactsPage() {
-  const contacts = await getContactSettings();
+  const [contacts, services] = await Promise.all([
+    getContactSettings(),
+    ServiceRepository.listPublished(),
+  ]);
   const hasAnyContact =
     contacts.phone ||
     contacts.email ||
@@ -68,7 +72,7 @@ export default async function ContactsPage() {
         <div className="border-border bg-surface rounded-lg border p-6 sm:p-8">
           <h2 className="font-display text-xl">Оставить заявку</h2>
           <div className="mt-6">
-            <ApplicationForm />
+            <ApplicationForm services={services.map((s) => ({ slug: s.slug, title: s.title }))} />
           </div>
         </div>
       </div>

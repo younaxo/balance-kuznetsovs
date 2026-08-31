@@ -1,6 +1,5 @@
 import "server-only";
 import nodemailer from "nodemailer";
-import { getServiceBySlug } from "@/domain/services";
 import type {
   ApplicationNotificationPayload,
   NotificationProvider,
@@ -12,9 +11,7 @@ function escapeHtml(value: string): string {
 }
 
 function buildEmailHtml(payload: ApplicationNotificationPayload): string {
-  const service = payload.serviceSlug
-    ? (getServiceBySlug(payload.serviceSlug)?.title ?? payload.serviceSlug)
-    : "не указана";
+  const service = payload.serviceTitle ?? "не указана";
 
   const rows: [string, string | null][] = [
     ["Источник", payload.source === "quiz" ? "Квиз" : "Форма"],

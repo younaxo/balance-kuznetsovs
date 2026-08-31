@@ -1,10 +1,20 @@
 import { z } from "zod";
-import { SERVICE_SLUGS } from "@/domain/services";
 
 /**
  * Серверная валидация заявки — обязательна независимо от клиентской.
  * Любые данные из формы/квиза считаются недоверенными.
  */
+
+// Услуги полностью редактируются из /admin/services (создаются, удаляются,
+// переименовываются владельцем) — поэтому serviceSlug не завязан на
+// статичный enum, а просто ограничен по формату/длине. Несуществующий
+// slug не представляет угрозы (ApplicationService просто не найдёт
+// подходящую услугу при формировании уведомления) — только данные.
+const serviceSlugSchema = z
+  .string()
+  .trim()
+  .max(100)
+  .regex(/^[a-z0-9-]+$/, "Некорректный идентификатор услуги");
 
 // Достаточно либеральный формат телефона: цифры, пробелы, +, -, (), от 10 знаков.
 const phoneRegex = /^[+()\-\s\d]{10,25}$/;
@@ -21,7 +31,7 @@ export const applicationBaseSchema = z.object({
     .optional()
     .or(z.literal("")),
   email: z.string().trim().email("Некорректный email").max(255).optional().or(z.literal("")),
-  serviceSlug: z.enum(SERVICE_SLUGS).optional(),
+  serviceSlug: serviceSlugSchema.optional(),
   message: trimmedString(4000).optional().or(z.literal("")),
   consent: z.literal(true, "Необходимо согласие на обработку персональных данных"),
   // Honeypot: настоящие пользователи это поле не видят и не заполняют.
@@ -42,9 +52,7 @@ export type ApplicationInput = z.infer<typeof applicationSchema>;
 // --- Квиз «Рассчитать стоимость» ------------------------------------------
 
 export const quizAnswersSchema = z.object({
-  // "consultation" — отдельное значение для варианта «Пока не знаю» в квизе,
-  // это не реальная услуга из каталога, поэтому не входит в SERVICE_SLUGS.
-  serviceSlug: z.enum([...SERVICE_SLUGS, "consultation"]).optional(),
+  serviceSlug: serviceSlugSchema.optional(),
   entityType: z.enum(["individual", "sole_proprietor", "llc", "other"]).optional(),
   taskDescription: trimmedString(2000).optional().or(z.literal("")),
   hasExistingDocuments: z.enum(["yes", "no", "not_sure"]).optional(),

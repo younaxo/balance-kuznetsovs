@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { ApplicationRepository, type ApplicationStatus } from "@/server/applications/repository";
-import { getServiceBySlug } from "@/domain/services";
+import { ServiceRepository } from "@/server/services/repository";
 import { cn } from "@/lib/cn";
 
 export const metadata = { title: "Заявки" };
@@ -24,11 +24,15 @@ export default async function AdminApplicationsPage({
   const query = typeof params.q === "string" ? params.q.trim().toLowerCase() : "";
 
   const status = statusParam !== "all" ? (statusParam as ApplicationStatus) : undefined;
-  const { items, total } = await ApplicationRepository.list({
-    status,
-    limit: PAGE_SIZE,
-    offset: (page - 1) * PAGE_SIZE,
-  });
+  const [{ items, total }, allServices] = await Promise.all([
+    ApplicationRepository.list({
+      status,
+      limit: PAGE_SIZE,
+      offset: (page - 1) * PAGE_SIZE,
+    }),
+    ServiceRepository.listAll(),
+  ]);
+  const serviceTitleBySlug = new Map(allServices.map((s) => [s.slug, s.title]));
 
   const filtered = query
     ? items.filter(
@@ -107,7 +111,7 @@ export default async function AdminApplicationsPage({
                 </td>
                 <td className="text-muted-foreground p-4">
                   {app.serviceSlug
-                    ? (getServiceBySlug(app.serviceSlug)?.title ?? app.serviceSlug)
+                    ? (serviceTitleBySlug.get(app.serviceSlug) ?? app.serviceSlug)
                     : "—"}
                 </td>
                 <td className="text-muted-foreground p-4">

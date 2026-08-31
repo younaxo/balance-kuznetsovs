@@ -1,5 +1,4 @@
 import "server-only";
-import { getServiceBySlug } from "@/domain/services";
 import type {
   ApplicationNotificationPayload,
   NotificationProvider,
@@ -13,9 +12,7 @@ function escapeHtml(value: string): string {
 }
 
 function buildMessage(payload: ApplicationNotificationPayload): string {
-  const service = payload.serviceSlug
-    ? (getServiceBySlug(payload.serviceSlug)?.title ?? payload.serviceSlug)
-    : "не указана";
+  const service = payload.serviceTitle ?? "не указана";
 
   const lines = [
     `<b>Новая заявка (${payload.source === "quiz" ? "квиз" : "форма"})</b>`,

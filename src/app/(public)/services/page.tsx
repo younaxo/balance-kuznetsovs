@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
 import { ServicesSection } from "@/components/sections/services-section";
-import { ExtraServicesSection } from "@/components/sections/extra-services-section";
 import { FinalCtaSection } from "@/components/sections/final-cta-section";
 
 export const metadata: Metadata = {
@@ -13,7 +12,6 @@ export default function ServicesPage() {
   return (
     <>
       <ServicesSection headingLevel="h1" />
-      <ExtraServicesSection />
       <FinalCtaSection />
     </>
   );

@@ -1,11 +1,13 @@
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import { ApplicationRepository } from "@/server/applications/repository";
-import { getServiceBySlug } from "@/domain/services";
+import { ServiceRepository } from "@/server/services/repository";
 import { updateApplicationStatusAction } from "../actions";
 import { db } from "@/server/db/client";
 import { attributions } from "@/server/db/schema";
 import { eq } from "drizzle-orm";
+import { AdminForm } from "@/components/admin/admin-form";
+import { AdminSubmitButton } from "@/components/admin/admin-submit-button";
 
 export const metadata = { title: "Заявка" };
 
@@ -23,11 +25,15 @@ export default async function AdminApplicationDetailPage({
   const application = await ApplicationRepository.findById(id);
   if (!application) notFound();
 
-  const [attribution] = await db
-    .select()
-    .from(attributions)
-    .where(eq(attributions.applicationId, id))
-    .limit(1);
+  const [attribution, service] = await Promise.all([
+    db
+      .select()
+      .from(attributions)
+      .where(eq(attributions.applicationId, id))
+      .limit(1)
+      .then((r) => r[0]),
+    application.serviceSlug ? ServiceRepository.findBySlug(application.serviceSlug) : null,
+  ]);
 
   return (
     <div className="flex flex-col gap-6">
@@ -42,7 +48,7 @@ export default async function AdminApplicationDetailPage({
           <h1 className="font-display mt-1 text-2xl">{application.name}</h1>
         </div>
 
-        <form action={updateApplicationStatusAction} className="flex items-center gap-2">
+        <AdminForm action={updateApplicationStatusAction} className="flex items-start gap-2">
           <input type="hidden" name="id" value={application.id} />
           <select
             name="status"
@@ -55,13 +61,8 @@ export default async function AdminApplicationDetailPage({
               </option>
             ))}
           </select>
-          <button
-            type="submit"
-            className="bg-foreground text-background h-9 rounded-md px-4 text-sm"
-          >
-            Сохранить
-          </button>
-        </form>
+          <AdminSubmitButton pendingLabel="Сохранение…">Сохранить</AdminSubmitButton>
+        </AdminForm>
       </div>
 
       <div className="grid gap-6 lg:grid-cols-2">
@@ -71,14 +72,7 @@ export default async function AdminApplicationDetailPage({
             <Row label="Телефон" value={application.phone} />
             <Row label="Telegram / MAX" value={application.telegram} />
             <Row label="Email" value={application.email} />
-            <Row
-              label="Услуга"
-              value={
-                application.serviceSlug
-                  ? (getServiceBySlug(application.serviceSlug)?.title ?? application.serviceSlug)
-                  : null
-              }
-            />
+            <Row label="Услуга" value={service?.title ?? application.serviceSlug} />
             <Row label="Источник" value={application.source === "quiz" ? "Квиз" : "Форма"} />
             <Row
               label="Создана"

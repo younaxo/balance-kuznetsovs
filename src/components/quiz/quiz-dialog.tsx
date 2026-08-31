@@ -9,8 +9,9 @@ import {
 } from "@/components/ui/dialog";
 import { Quiz } from "./quiz";
 import { useDialogs } from "@/components/dialogs/dialog-manager";
+import type { ServiceOption } from "@/server/services/options";
 
-export function QuizDialog() {
+export function QuizDialog({ services }: { services: ServiceOption[] }) {
   const { quizOpen, closeQuiz } = useDialogs();
 
   return (
@@ -23,7 +24,7 @@ export function QuizDialog() {
             вами.
           </DialogDescription>
         </DialogHeader>
-        <Quiz onDone={closeQuiz} />
+        <Quiz onDone={closeQuiz} services={services} />
       </DialogContent>
     </Dialog>
   );

@@ -1,12 +1,9 @@
-"use client";
-
-import { SERVICES } from "@/domain/services";
-import { ILLUSTRATIONS } from "@/components/icons/legal-illustrations";
-import { TrackedButton } from "@/components/analytics/tracked-button";
-import { useDialogs } from "@/components/dialogs/dialog-manager";
+import { ServiceRepository } from "@/server/services/repository";
+import { ILLUSTRATIONS, type IllustrationKey } from "@/components/icons/legal-illustrations";
 import { Reveal } from "@/components/motion/reveal";
+import { ServiceCardCta } from "./service-card-cta";
 
-export function ServicesSection({
+export async function ServicesSection({
   showHeading = true,
   headingLevel = "h2",
 }: {
@@ -15,8 +12,10 @@ export function ServicesSection({
    *  в главную (там h1 уже задаёт Hero) — корректная иерархия заголовков. */
   headingLevel?: "h1" | "h2";
 }) {
-  const { openApplication } = useDialogs();
   const Heading = headingLevel;
+  const services = await ServiceRepository.listPublished();
+
+  if (services.length === 0) return null;
 
   return (
     <section className="border-border border-b">
@@ -31,20 +30,18 @@ export function ServicesSection({
         )}
 
         <div className="mt-12 grid gap-6 lg:grid-cols-2">
-          {SERVICES.map((service, index) => {
-            const Illustration = ILLUSTRATIONS[service.illustration];
+          {services.map((service, index) => {
+            const Illustration =
+              ILLUSTRATIONS[service.illustration as IllustrationKey] ?? ILLUSTRATIONS.contract;
             return (
               <Reveal
-                key={service.slug}
+                key={service.id}
                 delay={(index % 2) * 0.08}
                 id={service.slug}
                 className="group border-border bg-surface hover:border-border-strong flex scroll-mt-28 flex-col justify-between gap-8 rounded-lg border p-8 transition-colors sm:p-10"
               >
                 <div>
-                  <span className="font-display text-muted-foreground text-2xl">
-                    {String(service.order).padStart(2, "0")}.
-                  </span>
-                  <h3 className="font-display mt-3 text-2xl leading-tight sm:text-[1.75rem]">
+                  <h3 className="font-display text-2xl leading-tight sm:text-[1.75rem]">
                     {service.title}
                   </h3>
                   <p className="text-muted-foreground mt-4 text-[15px] leading-relaxed">
@@ -53,20 +50,12 @@ export function ServicesSection({
                 </div>
 
                 <div className="flex flex-col items-start gap-6 sm:flex-row sm:items-end sm:justify-between">
-                  <TrackedButton
-                    eventType="service_cta_click"
-                    sourceElement={`service_${service.slug}`}
-                    destination={service.slug}
-                    onClick={() =>
-                      openApplication({
-                        serviceSlug: service.slug,
-                        sourceElement: `service_card_${service.slug}`,
-                      })
-                    }
-                  >
-                    {service.ctaLabel}
-                  </TrackedButton>
-                  <Illustration className="text-foreground/70 h-16 w-20 shrink-0 self-end transition-transform duration-300 group-hover:scale-105 sm:h-20 sm:w-24" />
+                  <ServiceCardCta
+                    slug={service.slug}
+                    ctaLabel={service.ctaLabel}
+                    sourcePrefix="service"
+                  />
+                  <Illustration className="text-foreground/70 h-16 w-20 shrink-0 self-end sm:h-20 sm:w-24" />
                 </div>
               </Reveal>
             );

@@ -5,6 +5,10 @@ export interface ApplicationNotificationPayload {
   telegram: string | null;
   email: string | null;
   serviceSlug: string | null;
+  /** Человекочитаемое название услуги — резолвится из БД до вызова
+   *  провайдера, чтобы форматтеры уведомлений оставались синхронными
+   *  и не зависели от репозитория услуг. */
+  serviceTitle: string | null;
   message: string | null;
   source: "form" | "quiz";
   createdAt: Date;

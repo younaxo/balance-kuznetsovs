@@ -1,6 +1,7 @@
 import "server-only";
+import { eq } from "drizzle-orm";
 import { db } from "@/server/db/client";
-import { attributions } from "@/server/db/schema";
+import { attributions, analyticsSessions } from "@/server/db/schema";
 import { getFirstTouchCookie, getLastTouchCookie, getSessionIdCookie } from "./cookies";
 
 /**
@@ -22,9 +23,24 @@ export async function attachAttribution(applicationId: string, ctaSource?: strin
 
     if (!firstTouch && !lastTouch && !sessionId && !ctaSource) return;
 
+    // Cookie сессии может пережить саму запись в analytics_sessions
+    // (ручная очистка в разработке, будущая retention-политика) —
+    // проверяем существование, иначе вставка упадёт на foreign key.
+    const sessionExists = sessionId
+      ? Boolean(
+          (
+            await db
+              .select({ id: analyticsSessions.id })
+              .from(analyticsSessions)
+              .where(eq(analyticsSessions.id, sessionId))
+              .limit(1)
+          )[0],
+        )
+      : false;
+
     await db.insert(attributions).values({
       applicationId,
-      sessionId: sessionId ?? undefined,
+      sessionId: sessionExists ? sessionId! : undefined,
       firstTouchUtmSource: firstTouch?.utmSource ?? undefined,
       firstTouchUtmMedium: firstTouch?.utmMedium ?? undefined,
       firstTouchUtmCampaign: firstTouch?.utmCampaign ?? undefined,

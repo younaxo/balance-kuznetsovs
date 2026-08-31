@@ -33,11 +33,20 @@ describe("applicationSchema", () => {
     expect(result.success).toBe(false);
   });
 
-  it("отклоняет неизвестный serviceSlug", () => {
+  it("принимает произвольный корректно оформленный serviceSlug (услуги полностью управляются из админки)", () => {
     const result = applicationSchema.safeParse({
       ...base,
       phone: "+79001234567",
       serviceSlug: "totally-made-up-service",
+    });
+    expect(result.success).toBe(true);
+  });
+
+  it("отклоняет serviceSlug некорректного формата (не latin/цифры/дефис)", () => {
+    const result = applicationSchema.safeParse({
+      ...base,
+      phone: "+79001234567",
+      serviceSlug: "Некорректный Slug!",
     });
     expect(result.success).toBe(false);
   });

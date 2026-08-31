@@ -1,7 +1,8 @@
 import { Logo } from "@/components/brand/logo";
+import { KodvenLogo } from "@/components/brand/kodven-logo";
 import { TrackedLink } from "@/components/analytics/tracked-link";
 import { NAV_ITEMS } from "./nav-items";
-import { SERVICES } from "@/domain/services";
+import { ServiceRepository } from "@/server/services/repository";
 import { getContactSettings } from "@/server/content/contact-settings";
 
 const LEGAL_LINKS = [
@@ -12,7 +13,10 @@ const LEGAL_LINKS = [
 ];
 
 export async function SiteFooter() {
-  const contacts = await getContactSettings();
+  const [contacts, services] = await Promise.all([
+    getContactSettings(),
+    ServiceRepository.listPublished(),
+  ]);
   const hasContacts =
     contacts.phone || contacts.email || contacts.telegram || contacts.maxMessenger;
 
@@ -53,7 +57,7 @@ export async function SiteFooter() {
             Услуги
           </h3>
           <ul className="mt-4 flex flex-col gap-2.5">
-            {SERVICES.map((service) => (
+            {services.map((service) => (
               <li key={service.slug}>
                 <TrackedLink
                   href={`/services#${service.slug}`}
@@ -135,19 +139,29 @@ export async function SiteFooter() {
       <div className="border-graphite-border border-t">
         <div className="container-page text-graphite-foreground/50 flex flex-col items-center justify-between gap-3 py-6 text-xs sm:flex-row">
           <p>© {new Date().getFullYear()} БАЛАНС КУЗНЕЦОВЫ. Все права защищены.</p>
-          <p>
+          <p className="flex items-center gap-1.5">
             Разработано{" "}
             <TrackedLink
-              href="https://profi.ru/"
+              href="https://profi.ru/profile/BaranovKA34"
               eventType="external_link_click"
               sourceElement="footer_developer_credit"
               target="_blank"
               rel="noopener noreferrer nofollow"
+              className="hover:text-graphite-foreground inline-flex items-center underline underline-offset-2"
+            >
+              <KodvenLogo className="inline-block" />
+            </TrackedLink>
+            {" · Developed by "}
+            <TrackedLink
+              href="https://github.com/younaxo/balance-kuznetsovs"
+              eventType="external_link_click"
+              sourceElement="footer_github_credit"
+              target="_blank"
+              rel="noopener noreferrer nofollow"
               className="hover:text-graphite-foreground underline underline-offset-2"
             >
-              KODVEN STUDIO
+              younaxo
             </TrackedLink>
-            {" · "}Developed by younaxo
           </p>
         </div>
       </div>

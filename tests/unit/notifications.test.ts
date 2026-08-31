@@ -9,6 +9,7 @@ const basePayload = {
   telegram: null,
   email: null,
   serviceSlug: null,
+  serviceTitle: null,
   message: null,
   source: "form" as const,
   createdAt: new Date(),

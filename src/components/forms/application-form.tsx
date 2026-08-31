@@ -6,12 +6,19 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
-import { Select } from "@/components/ui/select";
+import {
+  Select,
+  SelectTrigger,
+  SelectValue,
+  SelectContent,
+  SelectItem,
+} from "@/components/ui/select";
 import { Checkbox } from "@/components/ui/checkbox";
 import { TrackedLink } from "@/components/analytics/tracked-link";
+import { TurnstileWidget } from "@/components/security/turnstile-widget";
 import { trackEvent } from "@/lib/analytics/client";
 import { applicationSchema } from "@/server/validation/application";
-import { SERVICES } from "@/domain/services";
+import type { ServiceOption } from "@/server/services/options";
 
 type FormState = {
   name: string;
@@ -37,15 +44,18 @@ const initialState: FormState = {
 
 export function ApplicationForm({
   defaultServiceSlug,
+  services,
   onSuccess,
 }: {
   defaultServiceSlug?: string;
+  services: ServiceOption[];
   onSuccess?: () => void;
 }) {
   const [form, setForm] = React.useState<FormState>({
     ...initialState,
     serviceSlug: defaultServiceSlug ?? "",
   });
+  const [turnstileToken, setTurnstileToken] = React.useState<string | null>(null);
   const [errors, setErrors] = React.useState<Record<string, string>>({});
   const [status, setStatus] = React.useState<"idle" | "submitting" | "success" | "error">("idle");
   const [serverError, setServerError] = React.useState<string | null>(null);
@@ -61,6 +71,7 @@ export function ApplicationForm({
     const parsed = applicationSchema.safeParse({
       ...form,
       serviceSlug: form.serviceSlug || undefined,
+      turnstileToken: turnstileToken ?? undefined,
     });
 
     if (!parsed.success) {
@@ -187,17 +198,17 @@ export function ApplicationForm({
 
       <div className="grid gap-1.5">
         <Label htmlFor="serviceSlug">Тип услуги</Label>
-        <Select
-          id="serviceSlug"
-          value={form.serviceSlug}
-          onChange={(e) => update("serviceSlug", e.target.value)}
-        >
-          <option value="">Не выбрано</option>
-          {SERVICES.map((service) => (
-            <option key={service.slug} value={service.slug}>
-              {service.title}
-            </option>
-          ))}
+        <Select value={form.serviceSlug} onValueChange={(value) => update("serviceSlug", value)}>
+          <SelectTrigger id="serviceSlug">
+            <SelectValue placeholder="Не выбрано" />
+          </SelectTrigger>
+          <SelectContent>
+            {services.map((service) => (
+              <SelectItem key={service.slug} value={service.slug}>
+                {service.title}
+              </SelectItem>
+            ))}
+          </SelectContent>
         </Select>
       </div>
 
@@ -237,6 +248,8 @@ export function ApplicationForm({
         </span>
       </label>
       {errors.consent && <p className="text-destructive text-xs">{errors.consent}</p>}
+
+      <TurnstileWidget onVerify={setTurnstileToken} />
 
       {serverError && <p className="text-destructive text-sm">{serverError}</p>}
 

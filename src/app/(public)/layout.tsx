@@ -6,6 +6,7 @@ import { YandexMetrica } from "@/components/analytics/yandex-metrica";
 import { CookieConsentBanner } from "@/components/consent/cookie-consent-banner";
 import { SiteHeader } from "@/components/layout/site-header";
 import { SiteFooter } from "@/components/layout/site-footer";
+import { ServiceRepository } from "@/server/services/repository";
 
 /**
  * Layout публичного сайта: header, footer, диалоги заявки/квиза,
@@ -21,7 +22,10 @@ import { SiteFooter } from "@/components/layout/site-footer";
  */
 export const dynamic = "force-dynamic";
 
-export default function PublicLayout({ children }: { children: React.ReactNode }) {
+export default async function PublicLayout({ children }: { children: React.ReactNode }) {
+  const services = await ServiceRepository.listPublished();
+  const serviceOptions = services.map((s) => ({ slug: s.slug, title: s.title }));
+
   return (
     <DialogsProvider>
       <a
@@ -35,8 +39,8 @@ export default function PublicLayout({ children }: { children: React.ReactNode }
         {children}
       </main>
       <SiteFooter />
-      <ApplicationDialog />
-      <QuizDialog />
+      <ApplicationDialog services={serviceOptions} />
+      <QuizDialog services={serviceOptions} />
       <CookieConsentBanner />
       <AnalyticsProvider />
       <YandexMetrica />

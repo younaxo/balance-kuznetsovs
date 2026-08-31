@@ -3,6 +3,7 @@ import type { ApplicationInput, QuizSubmissionInput } from "@/server/validation/
 import { ApplicationRepository, type Application } from "./repository";
 import { dispatchApplicationNotifications } from "@/server/notifications";
 import { attachAttribution } from "@/server/analytics/attribution";
+import { ServiceRepository } from "@/server/services/repository";
 import { checkRateLimit } from "@/server/security/rate-limit";
 import { verifyTurnstile } from "@/server/security/turnstile";
 
@@ -99,6 +100,10 @@ export const ApplicationService = {
 async function afterCreate(application: Application, ctaSource?: string) {
   await attachAttribution(application.id, ctaSource);
 
+  const service = application.serviceSlug
+    ? await ServiceRepository.findBySlug(application.serviceSlug)
+    : null;
+
   const dispatch = await dispatchApplicationNotifications({
     id: application.id,
     name: application.name,
@@ -106,6 +111,7 @@ async function afterCreate(application: Application, ctaSource?: string) {
     telegram: application.telegram,
     email: application.email,
     serviceSlug: application.serviceSlug,
+    serviceTitle: service?.title ?? null,
     message: application.message,
     source: application.source,
     createdAt: application.createdAt,

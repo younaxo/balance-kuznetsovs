@@ -1,26 +1,28 @@
 "use client";
 
-import { getServiceBySlug } from "@/domain/services";
-import { ILLUSTRATIONS } from "@/components/icons/legal-illustrations";
+import { ILLUSTRATIONS, type IllustrationKey } from "@/components/icons/legal-illustrations";
 import { TrackedButton } from "@/components/analytics/tracked-button";
 import { useDialogs } from "@/components/dialogs/dialog-manager";
 import { Reveal } from "@/components/motion/reveal";
 
-export function ServiceDetailSection({ slug }: { slug: string }) {
-  const service = getServiceBySlug(slug);
-  const { openApplication, openQuiz } = useDialogs();
+export interface ServiceDetailData {
+  slug: string;
+  title: string;
+  summary: string;
+  ctaLabel: string;
+  illustration: string;
+}
 
-  if (!service) return null;
-  const Illustration = ILLUSTRATIONS[service.illustration];
+export function ServiceDetailSection({ service }: { service: ServiceDetailData }) {
+  const { openApplication, openQuiz } = useDialogs();
+  const Illustration =
+    ILLUSTRATIONS[service.illustration as IllustrationKey] ?? ILLUSTRATIONS.contract;
 
   return (
     <section className="border-border border-b">
       <div className="container-page grid gap-12 py-20 lg:grid-cols-2 lg:items-center lg:py-32">
         <Reveal>
-          <span className="font-display text-muted-foreground text-2xl">
-            {String(service.order).padStart(2, "0")}.
-          </span>
-          <h1 className="font-display mt-3 text-4xl leading-tight sm:text-5xl">{service.title}</h1>
+          <h1 className="font-display text-4xl leading-tight sm:text-5xl">{service.title}</h1>
           <p className="text-muted-foreground mt-6 max-w-xl text-[15px] leading-relaxed sm:text-base">
             {service.summary}
           </p>

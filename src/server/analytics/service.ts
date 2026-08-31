@@ -107,7 +107,19 @@ async function ensureSession(
   utm: UtmSnapshot,
 ): Promise<string> {
   const existing = await getSessionIdCookie();
-  if (existing) return existing;
+  if (existing) {
+    // Cookie может пережить саму запись в БД (например, после ручной
+    // очистки таблиц в разработке, или редкого расхождения между
+    // временем жизни cookie и retention-политикой аналитики в будущем).
+    // Без этой проверки вставка события упала бы с нарушением foreign
+    // key — самовосстанавливаемся новой сессией вместо падения.
+    const [row] = await db
+      .select({ id: analyticsSessions.id })
+      .from(analyticsSessions)
+      .where(eq(analyticsSessions.id, existing))
+      .limit(1);
+    if (row) return existing;
+  }
 
   const [row] = await db
     .insert(analyticsSessions)
