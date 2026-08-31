@@ -197,4 +197,10 @@ export const ILLUSTRATIONS = {
   claim: ClaimIllustration,
 } as const;
 
+/** Список ключей иллюстраций для admin-формы услуг (select) и zod-валидации. */
+export const ILLUSTRATION_KEYS = Object.keys(ILLUSTRATIONS) as [
+  keyof typeof ILLUSTRATIONS,
+  ...(keyof typeof ILLUSTRATIONS)[],
+];
+
 export type IllustrationKey = keyof typeof ILLUSTRATIONS;

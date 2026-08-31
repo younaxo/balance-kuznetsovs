@@ -1,13 +1,13 @@
 /**
- * Единый источник правды по направлениям услуг компании.
+ * Исходный текст пяти базовых направлений услуг — дословно из
+ * технического задания владельца продукта.
  *
- * Тексты — дословно из технического задания владельца продукта.
- * Изменять формулировки самостоятельно нельзя (см. правило проекта
- * «не менять тексты» в CLAUDE.md / DECISIONS.md) — при необходимости
- * править текст нужно явно спросить владельца.
- *
- * Используется и в публичном UI, и в zod-валидации (`serviceSlug`),
- * и при первичном сидировании таблицы `services`.
+ * По прямому запросу владельца услуги полностью редактируются из
+ * /admin/services (включая эти пять) — поэтому этот файл используется
+ * ТОЛЬКО как одноразовые seed-данные (scripts/seed-admin.ts), а не как
+ * источник правды в рантайме. Публичный UI и админка читают услуги из
+ * БД (таблица `services`, src/server/services/repository.ts). Если
+ * владелец изменит текст через админку — это ожидаемо, а не баг.
  */
 
 export interface ServiceDefinition {
@@ -67,9 +67,3 @@ export const SERVICES: readonly ServiceDefinition[] = [
     illustration: "claim",
   },
 ] as const;
-
-export const SERVICE_SLUGS = SERVICES.map((s) => s.slug) as [string, ...string[]];
-
-export function getServiceBySlug(slug: string): ServiceDefinition | undefined {
-  return SERVICES.find((s) => s.slug === slug);
-}

@@ -4,6 +4,7 @@ import postgres from "postgres";
 import { hash } from "@node-rs/argon2";
 import { eq } from "drizzle-orm";
 import * as schema from "../src/server/db/schema";
+import { SERVICES } from "../src/domain/services";
 
 /**
  * Безопасный bootstrap первого администратора и базового контента.
@@ -79,6 +80,24 @@ async function main() {
       .insert(schema.contentBlocks)
       .values({ key, isPublished: false })
       .onConflictDoNothing({ target: schema.contentBlocks.key });
+  }
+
+  // Пять базовых услуг из ТЗ — сидируются один раз дословным текстом.
+  // Дальше редактируются из /admin/services; повторный запуск скрипта
+  // их не перезаписывает (onConflictDoNothing по slug).
+  for (const service of SERVICES) {
+    await db
+      .insert(schema.services)
+      .values({
+        slug: service.slug,
+        order: service.order,
+        title: service.title,
+        summary: service.summary,
+        ctaLabel: service.ctaLabel,
+        illustration: service.illustration,
+        isPublished: true,
+      })
+      .onConflictDoNothing({ target: schema.services.slug });
   }
 
   console.log("Сидирование базового контента завершено.");

@@ -137,6 +137,8 @@ export const services = pgTable(
     order: integer("order").notNull().default(0),
     title: varchar("title", { length: 300 }).notNull(),
     summary: text("summary").notNull(),
+    ctaLabel: varchar("cta_label", { length: 100 }).notNull().default("Заказать услугу"),
+    illustration: varchar("illustration", { length: 50 }).notNull().default("contract"),
     isPublished: boolean("is_published").notNull().default(true),
     createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
     updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow(),
