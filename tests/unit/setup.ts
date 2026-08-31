@@ -12,3 +12,10 @@ process.env.DATABASE_URL =
   process.env.DATABASE_URL_TEST ??
   process.env.DATABASE_URL ??
   "postgresql://postgres:postgres@localhost:5433/balance_kuznetsovs_test";
+
+// Тесты не должны зависеть от сети/Cloudflare: verifyTurnstile() коротко
+// замыкается на `true`, только если TURNSTILE_SECRET_KEY не задан. Если
+// разработчик прописал в своём .env реальные (или тестовые) ключи
+// Cloudflare для ручной проверки формы в браузере — юнит/интеграционные
+// тесты всё равно должны оставаться детерминированными и офлайн.
+delete process.env.TURNSTILE_SECRET_KEY;

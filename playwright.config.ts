@@ -31,5 +31,13 @@ export default defineConfig({
     url: "http://localhost:3000",
     reuseExistingServer: !process.env.CI,
     timeout: 60_000,
+    // Turnstile отключаем именно для сервера, который поднимает Playwright:
+    // виджет — реальный вызов к Cloudflare, и тесты не должны зависеть от
+    // сети/тайминга ответа стороннего сервиса. verifyTurnstile() без
+    // TURNSTILE_SECRET_KEY считает проверку пройденной автоматически.
+    env: {
+      TURNSTILE_SECRET_KEY: "",
+      NEXT_PUBLIC_TURNSTILE_SITE_KEY: "",
+    },
   },
 });

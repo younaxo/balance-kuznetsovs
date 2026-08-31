@@ -41,6 +41,12 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
+      # PageProps/LayoutProps и другие типы маршрутов Next.js генерируются
+      # только `next dev`/`next build`/`next typegen` — на свежем checkout
+      # их ещё нет, а без этого шага tsc падает с "Cannot find name 'PageProps'".
+      - name: Generate Next.js route types
+        run: npx next typegen
+
       - name: Format check
         run: npx prettier --check "src/**/*.{ts,tsx,css}" "*.{ts,tsx,mjs}" "scripts/**/*.ts" "e2e/**/*.ts" "tests/**/*.ts"
 

@@ -5,6 +5,7 @@ import { redirect } from "next/navigation";
 import { adminLoginSchema } from "@/server/validation/admin";
 import { loginAdmin, GENERIC_LOGIN_ERROR } from "@/server/auth/login";
 import { getClientIp, hashIp } from "@/server/security/ip";
+import { verifyTurnstile } from "@/server/security/turnstile";
 
 export interface LoginActionState {
   error?: string;
@@ -25,6 +26,14 @@ export async function loginAction(
 
   if (!parsed.success) {
     return { error: GENERIC_LOGIN_ERROR };
+  }
+
+  const turnstileToken = formData.get("turnstileToken");
+  const captchaOk = await verifyTurnstile(
+    typeof turnstileToken === "string" ? turnstileToken : undefined,
+  );
+  if (!captchaOk) {
+    return { error: "Проверка безопасности не пройдена. Обновите страницу и попробуйте снова." };
   }
 
   const headerList = await headers();
