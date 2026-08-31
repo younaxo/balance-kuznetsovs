@@ -1,0 +1,2 @@
+ALTER TABLE "services" ADD COLUMN "cta_label" varchar(100) DEFAULT 'Заказать услугу' NOT NULL;--> statement-breakpoint
+ALTER TABLE "services" ADD COLUMN "illustration" varchar(50) DEFAULT 'contract' NOT NULL;
