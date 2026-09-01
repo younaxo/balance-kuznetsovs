@@ -3,21 +3,13 @@
 import { revalidatePath } from "next/cache";
 import { getCurrentAdmin } from "@/server/auth/session";
 import { TeamRepository } from "@/server/team/repository";
+import { saveTeamPhoto } from "@/server/team/photo";
 import { z } from "zod";
 import type { AdminActionState } from "@/server/admin/action-state";
 
 const upsertSchema = z.object({
   id: z.uuid().optional(),
   fullName: z.string().trim().min(1).max(200),
-  // Имя файла в public/team/ — файл кладётся на сервер вручную (см.
-  // README, раздел «Фото команды»), поле здесь только запоминает имя.
-  photoFilename: z
-    .string()
-    .trim()
-    .max(255)
-    .regex(/^[a-zA-Z0-9._-]+$/, "Только латиница, цифры, точка, дефис и подчёркивание")
-    .optional()
-    .or(z.literal("")),
   order: z.coerce.number().int().default(0),
   isPublished: z.coerce.boolean(),
 });
@@ -32,7 +24,6 @@ export async function upsertTeamMemberAction(
   const parsed = upsertSchema.safeParse({
     id: formData.get("id") || undefined,
     fullName: formData.get("fullName"),
-    photoFilename: formData.get("photoFilename") || "",
     order: formData.get("order") || 0,
     isPublished: formData.get("isPublished") === "on",
   });
@@ -40,8 +31,33 @@ export async function upsertTeamMemberAction(
     return { ok: false, error: parsed.error.issues[0]?.message ?? "Некорректные данные" };
   }
 
-  const { id, photoFilename, ...rest } = parsed.data;
-  const data = { ...rest, photoFilename: photoFilename || null };
+  // Фото — необязательное: если новый файл не выбрали, сохраняем то, что
+  // уже было (existingPhotoFilename прилетает скрытым полем из формы).
+  // Если нажали "убрать фото" — обнуляем, даже если файл тоже не выбрали.
+  const photo = formData.get("photo");
+  const existingPhotoFilename = formData.get("existingPhotoFilename");
+  const removePhoto = formData.get("removePhoto") === "on";
+
+  let photoFilename: string | null =
+    typeof existingPhotoFilename === "string" && existingPhotoFilename
+      ? existingPhotoFilename
+      : null;
+
+  if (removePhoto) {
+    photoFilename = null;
+  } else if (photo instanceof File && photo.size > 0) {
+    try {
+      photoFilename = await saveTeamPhoto(photo);
+    } catch (error) {
+      return {
+        ok: false,
+        error: error instanceof Error ? error.message : "Не удалось загрузить фото",
+      };
+    }
+  }
+
+  const { id, ...rest } = parsed.data;
+  const data = { ...rest, photoFilename };
   if (id) {
     await TeamRepository.update(id, data);
   } else {

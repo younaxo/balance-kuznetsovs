@@ -17,16 +17,13 @@ export async function AboutSection() {
   return (
     <section className="border-graphite-border bg-graphite text-graphite-foreground border-b">
       <div className="container-page py-20 lg:py-28">
-        <Reveal>
-          <p className="text-graphite-foreground/50 text-xs font-medium tracking-[0.2em] uppercase">
-            Кто с вами работает
-          </p>
-          <h2 className="font-display mt-3 text-3xl sm:text-4xl">Наша команда</h2>
+        <Reveal className="text-center">
+          <h2 className="font-display text-3xl sm:text-4xl">Наша команда</h2>
         </Reveal>
 
-        <div className="mt-10 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+        <div className="mt-10 flex flex-wrap justify-center gap-8">
           {members.map((member, index) => (
-            <Reveal key={member.id} delay={index * 0.08}>
+            <Reveal key={member.id} delay={index * 0.08} className="w-64">
               <TeamMemberCard fullName={member.fullName} photoFilename={member.photoFilename} />
             </Reveal>
           ))}
@@ -46,16 +43,19 @@ function TeamMemberCard({
   const hasPhoto = photoFilename ? photoFileExists(photoFilename) : false;
 
   return (
-    <div className="border-graphite-foreground/15 flex flex-col items-center gap-4 rounded-lg border p-8 text-center">
+    <div className="flex flex-col items-center gap-4 text-center">
       {hasPhoto ? (
         // eslint-disable-next-line @next/next/no-img-element -- путь определяется в рантайме по данным из БД, статический импорт невозможен
         <img
           src={`/team/${photoFilename}`}
           alt={fullName}
-          className="size-28 rounded-full object-cover"
+          // Фиксированное соотношение сторон + object-cover: фото разного
+          // исходного размера/пропорций всё равно ложатся в одинаковую
+          // рамку, ничего не искажая.
+          className="aspect-3/4 w-full rounded-lg object-cover"
         />
       ) : (
-        <span className="bg-graphite-foreground/10 text-graphite-foreground/60 flex size-28 items-center justify-center rounded-full text-2xl font-medium">
+        <span className="bg-graphite-foreground/10 text-graphite-foreground/60 flex aspect-3/4 w-full items-center justify-center rounded-lg text-4xl font-medium">
           {initials(fullName)}
         </span>
       )}
