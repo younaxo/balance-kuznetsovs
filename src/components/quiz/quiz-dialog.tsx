@@ -12,7 +12,7 @@ import { useDialogs } from "@/components/dialogs/dialog-manager";
 import type { ServiceOption } from "@/server/services/options";
 
 export function QuizDialog({ services }: { services: ServiceOption[] }) {
-  const { quizOpen, closeQuiz } = useDialogs();
+  const { quizOpen, quizServiceSlug, closeQuiz } = useDialogs();
 
   return (
     <Dialog open={quizOpen} onOpenChange={(open) => !open && closeQuiz()}>
@@ -24,7 +24,15 @@ export function QuizDialog({ services }: { services: ServiceOption[] }) {
             вами.
           </DialogDescription>
         </DialogHeader>
-        <Quiz onDone={closeQuiz} services={services} />
+        {/* key пересоздаёт квиз при повторном открытии с другой услуги —
+            без этого стейт первого открытия (включая уже пройденные шаги)
+            остался бы висеть в памяти между открытиями диалога. */}
+        <Quiz
+          key={quizOpen ? (quizServiceSlug ?? "none") : "closed"}
+          onDone={closeQuiz}
+          services={services}
+          initialServiceSlug={quizServiceSlug}
+        />
       </DialogContent>
     </Dialog>
   );
