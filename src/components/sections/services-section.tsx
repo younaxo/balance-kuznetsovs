@@ -21,11 +21,8 @@ export async function ServicesSection({
     <section className="border-border border-b">
       <div className="container-page py-20 lg:py-28">
         {showHeading && (
-          <Reveal>
-            <p className="text-muted-foreground text-xs font-medium tracking-[0.2em] uppercase">
-              Направления работы и пакетные решения
-            </p>
-            <Heading className="font-display mt-3 text-3xl sm:text-4xl">Наши услуги</Heading>
+          <Reveal className="text-center">
+            <Heading className="font-display text-3xl sm:text-4xl">Наши услуги</Heading>
           </Reveal>
         )}
 
@@ -38,8 +35,9 @@ export async function ServicesSection({
                 key={service.id}
                 delay={(index % 2) * 0.08}
                 id={service.slug}
-                className="group border-border bg-surface hover:border-border-strong flex scroll-mt-28 flex-col justify-between gap-8 rounded-lg border p-8 transition-colors sm:p-10"
+                className="group border-border bg-surface hover:border-border-strong flex scroll-mt-28 flex-col items-center gap-6 rounded-lg border p-8 text-center transition-colors sm:p-10"
               >
+                <Illustration className="text-foreground/70 h-16 w-20 shrink-0 sm:h-20 sm:w-24" />
                 <div>
                   <h3 className="font-display text-2xl leading-tight sm:text-[1.75rem]">
                     {service.title}
@@ -48,15 +46,11 @@ export async function ServicesSection({
                     {service.summary}
                   </p>
                 </div>
-
-                <div className="flex flex-col items-start gap-6 sm:flex-row sm:items-end sm:justify-between">
-                  <ServiceCardCta
-                    slug={service.slug}
-                    ctaLabel={service.ctaLabel}
-                    sourcePrefix="service"
-                  />
-                  <Illustration className="text-foreground/70 h-16 w-20 shrink-0 self-end sm:h-20 sm:w-24" />
-                </div>
+                <ServiceCardCta
+                  slug={service.slug}
+                  ctaLabel={service.ctaLabel}
+                  sourcePrefix="service"
+                />
               </Reveal>
             );
           })}

@@ -16,20 +16,11 @@ export function HeroSection() {
     <section className="border-border relative overflow-hidden border-b">
       <HeroBackdrop />
       <div className="container-page relative py-24 sm:py-32 lg:py-40">
-        <motion.p
-          initial={{ opacity: 0, y: 10 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5 }}
-          className="text-muted-foreground text-xs font-medium tracking-[0.2em] uppercase"
-        >
-          «Баланс Кузнецовы»
-        </motion.p>
-
         <motion.h1
           initial={{ opacity: 0, y: 16 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 0.05, ease: [0.22, 1, 0.36, 1] }}
-          className="font-display mt-6 max-w-4xl text-[2.5rem] leading-[1.08] sm:text-6xl lg:text-7xl"
+          className="font-display max-w-4xl text-[2.5rem] leading-[1.08] sm:text-6xl lg:text-7xl"
         >
           Разработка юридических документов и защита персональных данных для вашего бизнеса
         </motion.h1>
