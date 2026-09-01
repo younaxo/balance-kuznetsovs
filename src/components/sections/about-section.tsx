@@ -64,7 +64,14 @@ function TeamMemberCard({
   );
 }
 
+// Второй рубеж защиты от path traversal (../../..) — на случай, если в
+// БД когда-нибудь окажется "грязное" значение в обход валидации записи
+// (см. admin/team/actions.ts). Имя файла из этой таблицы всегда должно
+// быть "плоским" — без слэшей и точек-переходов.
+const SAFE_FILENAME = /^[a-zA-Z0-9._-]+$/;
+
 function photoFileExists(filename: string): boolean {
+  if (!SAFE_FILENAME.test(filename)) return false;
   try {
     return fs.existsSync(path.join(process.cwd(), "public/team", filename));
   } catch {
