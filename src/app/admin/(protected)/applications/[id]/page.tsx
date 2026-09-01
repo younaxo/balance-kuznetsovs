@@ -8,6 +8,13 @@ import { attributions } from "@/server/db/schema";
 import { eq } from "drizzle-orm";
 import { AdminForm } from "@/components/admin/admin-form";
 import { AdminSubmitButton } from "@/components/admin/admin-submit-button";
+import {
+  Select,
+  SelectTrigger,
+  SelectValue,
+  SelectContent,
+  SelectItem,
+} from "@/components/ui/select";
 
 export const metadata = { title: "Заявка" };
 
@@ -50,17 +57,18 @@ export default async function AdminApplicationDetailPage({
 
         <AdminForm action={updateApplicationStatusAction} className="flex items-start gap-2">
           <input type="hidden" name="id" value={application.id} />
-          <select
-            name="status"
-            defaultValue={application.status}
-            className="border-border-strong bg-surface h-9 rounded-md border px-3 text-sm"
-          >
-            {STATUS_OPTIONS.map((s) => (
-              <option key={s.value} value={s.value}>
-                {s.label}
-              </option>
-            ))}
-          </select>
+          <Select name="status" defaultValue={application.status}>
+            <SelectTrigger className="h-9 w-44">
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              {STATUS_OPTIONS.map((s) => (
+                <SelectItem key={s.value} value={s.value}>
+                  {s.label}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
           <AdminSubmitButton pendingLabel="Сохранение…">Сохранить</AdminSubmitButton>
         </AdminForm>
       </div>
