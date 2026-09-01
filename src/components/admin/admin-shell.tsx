@@ -9,6 +9,8 @@ import {
   FileText,
   Users,
   BarChart3,
+  ScrollText,
+  Megaphone,
   Settings,
   LogOut,
 } from "lucide-react";
@@ -23,7 +25,9 @@ const NAV = [
   { href: "/admin/team", label: "Команда", icon: Users },
   { href: "/admin/contacts", label: "Контакты", icon: Phone },
   { href: "/admin/content", label: "Контент", icon: FileText },
+  { href: "/admin/banner", label: "Баннер", icon: Megaphone },
   { href: "/admin/analytics", label: "Аналитика", icon: BarChart3 },
+  { href: "/admin/logs", label: "Логи", icon: ScrollText },
   { href: "/admin/settings", label: "Настройки", icon: Settings },
 ];
 
@@ -43,7 +47,7 @@ export function AdminShell({
       <aside className="border-border bg-surface hidden w-60 shrink-0 flex-col border-r md:flex">
         <div className="border-border border-b p-5">
           <p className="font-display text-lg">БАЛАНС КУЗНЕЦОВЫ</p>
-          <p className="text-muted-foreground text-xs">Панель управления</p>
+          <p className="text-muted-foreground text-xs">Дашборд</p>
         </div>
         <nav className="flex flex-1 flex-col gap-0.5 p-3">
           {NAV.map((item) => (

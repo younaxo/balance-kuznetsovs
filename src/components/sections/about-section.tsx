@@ -23,7 +23,7 @@ export async function AboutSection() {
 
         <div className="mt-10 flex flex-wrap justify-center gap-8">
           {members.map((member, index) => (
-            <Reveal key={member.id} delay={index * 0.08} className="w-64">
+            <Reveal key={member.id} delay={index * 0.08} className="w-72">
               <TeamMemberCard fullName={member.fullName} photoFilename={member.photoFilename} />
             </Reveal>
           ))}
@@ -59,7 +59,7 @@ function TeamMemberCard({
           {initials(fullName)}
         </span>
       )}
-      <p className="text-[15px] font-medium">{fullName}</p>
+      <p className="text-sm font-medium whitespace-nowrap">{fullName}</p>
     </div>
   );
 }
