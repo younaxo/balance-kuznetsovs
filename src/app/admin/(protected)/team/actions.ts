@@ -14,6 +14,16 @@ const upsertSchema = z.object({
   isPublished: z.coerce.boolean(),
 });
 
+// Имя файла — только то, что реально мог сгенерировать saveTeamPhoto()
+// (uuid + расширение). existingPhotoFilename приходит скрытым полем из
+// формы и в теории может быть подменено на клиенте — без этой проверки
+// туда можно было бы протащить "../../что-угодно" и получить path
+// traversal в fs.existsSync()/<img src> (about-section.tsx).
+const safeFilenameSchema = z
+  .string()
+  .regex(/^[a-zA-Z0-9._-]+$/, "Некорректное имя файла")
+  .max(255);
+
 export async function upsertTeamMemberAction(
   _prevState: AdminActionState,
   formData: FormData,
@@ -35,13 +45,17 @@ export async function upsertTeamMemberAction(
   // уже было (existingPhotoFilename прилетает скрытым полем из формы).
   // Если нажали "убрать фото" — обнуляем, даже если файл тоже не выбрали.
   const photo = formData.get("photo");
-  const existingPhotoFilename = formData.get("existingPhotoFilename");
+  const existingPhotoFilenameRaw = formData.get("existingPhotoFilename");
   const removePhoto = formData.get("removePhoto") === "on";
 
-  let photoFilename: string | null =
-    typeof existingPhotoFilename === "string" && existingPhotoFilename
-      ? existingPhotoFilename
-      : null;
+  let photoFilename: string | null = null;
+  if (typeof existingPhotoFilenameRaw === "string" && existingPhotoFilenameRaw) {
+    const existingCheck = safeFilenameSchema.safeParse(existingPhotoFilenameRaw);
+    if (!existingCheck.success) {
+      return { ok: false, error: "Некорректное имя файла фото" };
+    }
+    photoFilename = existingCheck.data;
+  }
 
   if (removePhoto) {
     photoFilename = null;

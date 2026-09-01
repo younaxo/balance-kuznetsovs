@@ -15,6 +15,16 @@ const schema = z.object({
   buttonHref: z.string().trim().max(2000).optional().or(z.literal("")),
 });
 
+// Имя файла — только то, что реально мог сгенерировать saveBannerImage()
+// (uuid + расширение). existingImageFilename приходит скрытым полем из
+// формы и в теории может быть подменено на клиенте — без этой проверки
+// туда можно было бы протащить "../../что-угодно" и получить path
+// traversal в <img src> на публичном сайте (site-banner.tsx).
+const safeFilenameSchema = z
+  .string()
+  .regex(/^[a-zA-Z0-9._-]+$/, "Некорректное имя файла")
+  .max(255);
+
 export async function updateSiteBannerAction(
   _prevState: AdminActionState,
   formData: FormData,
@@ -33,13 +43,17 @@ export async function updateSiteBannerAction(
   }
 
   const image = formData.get("image");
-  const existingImageFilename = formData.get("existingImageFilename");
+  const existingImageFilenameRaw = formData.get("existingImageFilename");
   const removeImage = formData.get("removeImage") === "on";
 
-  let imageFilename: string | null =
-    typeof existingImageFilename === "string" && existingImageFilename
-      ? existingImageFilename
-      : null;
+  let imageFilename: string | null = null;
+  if (typeof existingImageFilenameRaw === "string" && existingImageFilenameRaw) {
+    const existingCheck = safeFilenameSchema.safeParse(existingImageFilenameRaw);
+    if (!existingCheck.success) {
+      return { ok: false, error: "Некорректное имя файла иконки" };
+    }
+    imageFilename = existingCheck.data;
+  }
 
   if (removeImage) {
     imageFilename = null;
