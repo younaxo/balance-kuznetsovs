@@ -114,6 +114,7 @@ async function afterCreate(application: Application, ctaSource?: string) {
     serviceTitle: service?.title ?? null,
     message: application.message,
     source: application.source,
+    quizAnswers: application.quizAnswers,
     createdAt: application.createdAt,
   });
 

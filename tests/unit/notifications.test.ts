@@ -12,6 +12,7 @@ const basePayload = {
   serviceTitle: null,
   message: null,
   source: "form" as const,
+  quizAnswers: null,
   createdAt: new Date(),
 };
 
@@ -56,6 +57,34 @@ describe("TelegramNotificationProvider", () => {
     const provider = new TelegramNotificationProvider();
     const result = await provider.notifyNewApplication(basePayload);
     expect(result.success).toBe(true);
+  });
+
+  it("включает ответы квиза в текст сообщения для заявок из квиза", async () => {
+    process.env.TELEGRAM_BOT_TOKEN = "test-token";
+    process.env.TELEGRAM_CHAT_ID = "12345";
+    const fetchSpy = vi
+      .fn()
+      .mockResolvedValue(new Response(JSON.stringify({ ok: true }), { status: 200 }));
+    vi.stubGlobal("fetch", fetchSpy);
+
+    const provider = new TelegramNotificationProvider();
+    await provider.notifyNewApplication({
+      ...basePayload,
+      source: "quiz",
+      quizAnswers: {
+        entityType: "llc",
+        urgency: "urgent",
+        hasExistingDocuments: "no",
+        preferredContact: "phone",
+      },
+    });
+
+    const [, requestInit] = fetchSpy.mock.calls[0];
+    const body = JSON.parse(requestInit.body as string);
+    expect(body.text).toContain("ООО");
+    expect(body.text).toContain("Срочно");
+    expect(body.text).toContain("Нет");
+    expect(body.text).toContain("Телефон");
   });
 });
 

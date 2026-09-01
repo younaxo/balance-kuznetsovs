@@ -23,14 +23,16 @@ const handleRegex = /^@?[a-zA-Z0-9_]{3,64}$/;
 
 const trimmedString = (max: number) => z.string().trim().max(max);
 
+// Телефон и email — обязательные способы связи (по требованию владельца).
+// Telegram остаётся полностью опциональным.
 export const applicationBaseSchema = z.object({
   name: trimmedString(200).min(2, "Укажите имя"),
-  phone: trimmedString(25).regex(phoneRegex, "Некорректный телефон").optional().or(z.literal("")),
+  phone: trimmedString(25).min(1, "Укажите телефон").regex(phoneRegex, "Некорректный телефон"),
   telegram: trimmedString(100)
     .regex(handleRegex, "Некорректный Telegram")
     .optional()
     .or(z.literal("")),
-  email: z.string().trim().email("Некорректный email").max(255).optional().or(z.literal("")),
+  email: z.string().trim().min(1, "Укажите email").email("Некорректный email").max(255),
   serviceSlug: serviceSlugSchema.optional(),
   message: trimmedString(4000).optional().or(z.literal("")),
   consent: z.literal(true, "Необходимо согласие на обработку персональных данных"),
@@ -39,13 +41,7 @@ export const applicationBaseSchema = z.object({
   turnstileToken: z.string().optional(),
 });
 
-export const applicationSchema = applicationBaseSchema.refine(
-  (data) => Boolean(data.phone || data.email),
-  {
-    error: "Укажите телефон или email — это обязательные способы связи",
-    path: ["phone"],
-  },
-);
+export const applicationSchema = applicationBaseSchema;
 
 export type ApplicationInput = z.infer<typeof applicationSchema>;
 
@@ -64,10 +60,6 @@ export const quizSubmissionSchema = applicationBaseSchema
   .omit({ serviceSlug: true, message: true })
   .extend({
     quizAnswers: quizAnswersSchema,
-  })
-  .refine((data) => Boolean(data.phone || data.email), {
-    error: "Укажите телефон или email — это обязательные способы связи",
-    path: ["phone"],
   });
 
 export type QuizSubmissionInput = z.infer<typeof quizSubmissionSchema>;

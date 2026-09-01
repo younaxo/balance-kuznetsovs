@@ -24,15 +24,16 @@ test.describe("Форма заявки", () => {
     await page.getByRole("button", { name: "Оставить заявку" }).first().click();
     await page.getByLabel("Имя*").fill("А");
     await page.getByRole("button", { name: "Отправить заявку" }).click();
-    // Без телефона/telegram/email и без согласия форма не должна уйти на сервер.
-    await expect(page.getByText(/способ связи|согласие/i).first()).toBeVisible();
+    // Без телефона/email и без согласия форма не должна уйти на сервер.
+    await expect(page.getByText(/укажите телефон|укажите email|согласие/i).first()).toBeVisible();
   });
 
   test("успешно отправляет валидную заявку", async ({ page }) => {
     await page.getByRole("button", { name: "Оставить заявку" }).first().click();
 
     await page.getByLabel("Имя*").fill("Плейрайт Тест");
-    await page.getByLabel("Телефон").fill("+7 900 000-00-00");
+    await page.getByLabel("Телефон*").fill("+7 900 000-00-00");
+    await page.getByLabel("Email*").fill("playwright-test@example.com");
     await page.getByLabel(/обработку персональных данных/).check();
 
     await page.getByRole("button", { name: "Отправить заявку" }).click();

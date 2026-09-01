@@ -13,18 +13,27 @@ describe("applicationSchema", () => {
     expect(result.success).toBe(false);
   });
 
-  it("отклоняет заявку без единого способа связи", () => {
+  it("отклоняет заявку без контактов вообще", () => {
     const result = applicationSchema.safeParse(base);
     expect(result.success).toBe(false);
   });
 
-  it("принимает заявку с одним телефоном", () => {
+  it("отклоняет заявку с одним только телефоном (email тоже обязателен)", () => {
     const result = applicationSchema.safeParse({ ...base, phone: "+7 900 123-45-67" });
-    expect(result.success).toBe(true);
+    expect(result.success).toBe(false);
   });
 
-  it("принимает заявку только с email", () => {
+  it("отклоняет заявку с одним только email (телефон тоже обязателен)", () => {
     const result = applicationSchema.safeParse({ ...base, email: "test@example.com" });
+    expect(result.success).toBe(false);
+  });
+
+  it("принимает заявку с телефоном и email вместе (оба обязательны, Telegram — нет)", () => {
+    const result = applicationSchema.safeParse({
+      ...base,
+      phone: "+7 900 123-45-67",
+      email: "test@example.com",
+    });
     expect(result.success).toBe(true);
   });
 
@@ -37,6 +46,7 @@ describe("applicationSchema", () => {
     const result = applicationSchema.safeParse({
       ...base,
       phone: "+79001234567",
+      email: "test@example.com",
       serviceSlug: "totally-made-up-service",
     });
     expect(result.success).toBe(true);
@@ -46,6 +56,7 @@ describe("applicationSchema", () => {
     const result = applicationSchema.safeParse({
       ...base,
       phone: "+79001234567",
+      email: "test@example.com",
       serviceSlug: "Некорректный Slug!",
     });
     expect(result.success).toBe(false);
@@ -55,6 +66,7 @@ describe("applicationSchema", () => {
     const result = applicationSchema.safeParse({
       ...base,
       phone: "+79001234567",
+      email: "test@example.com",
       website: "http://spam.example",
     });
     expect(result.success).toBe(false);
@@ -64,6 +76,7 @@ describe("applicationSchema", () => {
     const result = applicationSchema.safeParse({
       ...base,
       phone: "+79001234567",
+      email: "test@example.com",
       message: "a".repeat(5000),
     });
     expect(result.success).toBe(false);
@@ -73,6 +86,7 @@ describe("applicationSchema", () => {
     const result = applicationSchema.safeParse({
       ...base,
       phone: "+79001234567",
+      email: "test@example.com",
       message: "<script>alert(1)</script>",
     });
     expect(result.success).toBe(true);
@@ -83,15 +97,27 @@ describe("applicationSchema", () => {
 });
 
 describe("quizSubmissionSchema", () => {
-  it("принимает валидный ответ квиза с consultation-заглушкой услуги", () => {
+  it("принимает валидный ответ квиза с телефоном и email вместе", () => {
     const result = quizSubmissionSchema.safeParse({
       name: "Пётр",
       phone: "+79001234567",
+      email: "petr@example.com",
       consent: true,
       website: "",
       quizAnswers: { serviceSlug: "consultation", urgency: "urgent" },
     });
     expect(result.success).toBe(true);
+  });
+
+  it("отклоняет квиз с одним только телефоном (email тоже обязателен)", () => {
+    const result = quizSubmissionSchema.safeParse({
+      name: "Пётр",
+      phone: "+79001234567",
+      consent: true,
+      website: "",
+      quizAnswers: { serviceSlug: "consultation" },
+    });
+    expect(result.success).toBe(false);
   });
 
   it("отклоняет квиз без контактов", () => {

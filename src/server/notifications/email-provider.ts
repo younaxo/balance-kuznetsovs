@@ -10,8 +10,33 @@ function escapeHtml(value: string): string {
   return value.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
 }
 
+// Человекочитаемые подписи для ответов квиза — см. те же значения в
+// telegram-provider.ts и quizAnswersSchema (server/validation/application.ts).
+const ENTITY_TYPE_LABELS: Record<string, string> = {
+  individual: "Физическое лицо",
+  sole_proprietor: "ИП",
+  llc: "ООО",
+  other: "Другое",
+};
+const HAS_DOCUMENTS_LABELS: Record<string, string> = {
+  yes: "Да, есть",
+  no: "Нет",
+  not_sure: "Не уверен(а)",
+};
+const URGENCY_LABELS: Record<string, string> = {
+  urgent: "Срочно",
+  standard: "В обычном режиме",
+  flexible: "Сроки гибкие",
+};
+const PREFERRED_CONTACT_LABELS: Record<string, string> = {
+  phone: "Телефон",
+  telegram: "Telegram",
+  email: "Email",
+};
+
 function buildEmailHtml(payload: ApplicationNotificationPayload): string {
   const service = payload.serviceTitle ?? "не указана";
+  const quizAnswers = payload.source === "quiz" ? payload.quizAnswers : null;
 
   const rows: [string, string | null][] = [
     ["Источник", payload.source === "quiz" ? "Квиз" : "Форма"],
@@ -20,6 +45,26 @@ function buildEmailHtml(payload: ApplicationNotificationPayload): string {
     ["Telegram", payload.telegram],
     ["Email", payload.email],
     ["Услуга", service],
+    [
+      "Кто обращается",
+      quizAnswers?.entityType ? (ENTITY_TYPE_LABELS[String(quizAnswers.entityType)] ?? null) : null,
+    ],
+    [
+      "Документы уже есть",
+      quizAnswers?.hasExistingDocuments
+        ? (HAS_DOCUMENTS_LABELS[String(quizAnswers.hasExistingDocuments)] ?? null)
+        : null,
+    ],
+    [
+      "Срочность",
+      quizAnswers?.urgency ? (URGENCY_LABELS[String(quizAnswers.urgency)] ?? null) : null,
+    ],
+    [
+      "Предпочтительная связь",
+      quizAnswers?.preferredContact
+        ? (PREFERRED_CONTACT_LABELS[String(quizAnswers.preferredContact)] ?? null)
+        : null,
+    ],
     ["Сообщение", payload.message],
   ];
 

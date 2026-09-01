@@ -11,6 +11,8 @@ export interface ApplicationNotificationPayload {
   serviceTitle: string | null;
   message: string | null;
   source: "form" | "quiz";
+  /** Ответы квиза «Рассчитать стоимость» — заполнено только при source: "quiz". */
+  quizAnswers: Record<string, unknown> | null;
   createdAt: Date;
 }
 

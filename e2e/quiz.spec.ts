@@ -40,7 +40,8 @@ test.describe("Квиз «Рассчитать стоимость»", () => {
 
     // Шаг 7: контакты
     await page.getByLabel("Имя*").fill("Квиз Тестов");
-    await page.getByLabel("Телефон").fill("+7 900 111-22-33");
+    await page.getByLabel("Телефон*").fill("+7 900 111-22-33");
+    await page.getByLabel("Email*").fill("quiz-test@example.com");
     await page.getByLabel(/обработку персональных данных/).check();
 
     await page.getByRole("button", { name: "Отправить" }).click();
