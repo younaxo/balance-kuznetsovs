@@ -22,122 +22,80 @@ export async function SiteFooter() {
 
   return (
     <footer className="border-graphite-border bg-graphite text-graphite-foreground border-t">
-      <div className="container-page grid gap-12 py-16 lg:grid-cols-[1.3fr_1fr_1fr_1fr]">
-        <div>
-          <TrackedLink href="/" sourceElement="footer_logo">
-            <Logo height={34} />
-          </TrackedLink>
-          <p className="text-graphite-foreground/60 mt-5 max-w-xs text-sm">
-            Юридические документы и защита персональных данных для бизнеса. Работаем удалённо по
-            всей РФ.
-          </p>
-        </div>
+      <div className="container-page flex flex-col items-center py-16 text-center">
+        <TrackedLink href="/" sourceElement="footer_logo">
+          <Logo height={34} />
+        </TrackedLink>
+        <p className="text-graphite-foreground/60 mt-5 max-w-md text-sm">
+          Юридические документы и защита персональных данных для бизнеса. Работаем удалённо по всей
+          РФ.
+        </p>
 
-        <div>
-          <h3 className="text-graphite-foreground/50 text-xs font-medium tracking-wider uppercase">
-            Навигация
-          </h3>
-          <ul className="mt-4 flex flex-col gap-2.5">
+        <div className="mt-14 grid w-full max-w-3xl grid-cols-2 gap-x-6 gap-y-10 sm:grid-cols-4">
+          <FooterColumn title="Навигация">
             {NAV_ITEMS.map((item) => (
-              <li key={item.href}>
-                <TrackedLink
-                  href={item.href}
-                  sourceElement={`footer_nav_${item.href}`}
-                  className="text-graphite-foreground/75 hover:text-graphite-foreground text-sm transition-colors"
-                >
-                  {item.label}
-                </TrackedLink>
-              </li>
+              <FooterLink key={item.href} href={item.href} source={`footer_nav_${item.href}`}>
+                {item.label}
+              </FooterLink>
             ))}
-          </ul>
-        </div>
+          </FooterColumn>
 
-        <div>
-          <h3 className="text-graphite-foreground/50 text-xs font-medium tracking-wider uppercase">
-            Услуги
-          </h3>
-          <ul className="mt-4 flex flex-col gap-2.5">
+          <FooterColumn title="Услуги">
             {services.map((service) => (
-              <li key={service.slug}>
-                <TrackedLink
-                  href={`/services#${service.slug}`}
-                  sourceElement={`footer_service_${service.slug}`}
-                  className="text-graphite-foreground/75 hover:text-graphite-foreground text-sm transition-colors"
-                >
-                  {service.title}
-                </TrackedLink>
-              </li>
+              <FooterLink
+                key={service.slug}
+                href={`/services#${service.slug}`}
+                source={`footer_service_${service.slug}`}
+              >
+                {service.title}
+              </FooterLink>
             ))}
-          </ul>
-        </div>
+          </FooterColumn>
 
-        <div className="flex flex-col gap-8">
           {hasContacts && (
-            <div>
-              <h3 className="text-graphite-foreground/50 text-xs font-medium tracking-wider uppercase">
-                Контакты
-              </h3>
-              <ul className="text-graphite-foreground/75 mt-4 flex flex-col gap-2.5 text-sm">
-                {contacts.phone && (
-                  <li>
-                    <TrackedLink
-                      href={`tel:${contacts.phone}`}
-                      eventType="phone_click"
-                      sourceElement="footer_phone"
-                    >
-                      {contacts.phone}
-                    </TrackedLink>
-                  </li>
-                )}
-                {contacts.email && (
-                  <li>
-                    <TrackedLink
-                      href={`mailto:${contacts.email}`}
-                      eventType="email_click"
-                      sourceElement="footer_email"
-                    >
-                      {contacts.email}
-                    </TrackedLink>
-                  </li>
-                )}
-                {contacts.telegram && (
-                  <li>
-                    <TrackedLink
-                      href={contacts.telegram}
-                      eventType="telegram_click"
-                      sourceElement="footer_telegram"
-                    >
-                      Telegram
-                    </TrackedLink>
-                  </li>
-                )}
-              </ul>
-            </div>
+            <FooterColumn title="Контакты">
+              {contacts.phone && (
+                <FooterLink
+                  href={`tel:${contacts.phone}`}
+                  source="footer_phone"
+                  event="phone_click"
+                >
+                  {contacts.phone}
+                </FooterLink>
+              )}
+              {contacts.email && (
+                <FooterLink
+                  href={`mailto:${contacts.email}`}
+                  source="footer_email"
+                  event="email_click"
+                >
+                  {contacts.email}
+                </FooterLink>
+              )}
+              {contacts.telegram && (
+                <FooterLink
+                  href={contacts.telegram}
+                  source="footer_telegram"
+                  event="telegram_click"
+                >
+                  Telegram
+                </FooterLink>
+              )}
+            </FooterColumn>
           )}
 
-          <div>
-            <h3 className="text-graphite-foreground/50 text-xs font-medium tracking-wider uppercase">
-              Документы
-            </h3>
-            <ul className="mt-4 flex flex-col gap-2.5">
-              {LEGAL_LINKS.map((item) => (
-                <li key={item.href}>
-                  <TrackedLink
-                    href={item.href}
-                    sourceElement={`footer_legal_${item.href}`}
-                    className="text-graphite-foreground/75 hover:text-graphite-foreground text-sm transition-colors"
-                  >
-                    {item.label}
-                  </TrackedLink>
-                </li>
-              ))}
-            </ul>
-          </div>
+          <FooterColumn title="Документы">
+            {LEGAL_LINKS.map((item) => (
+              <FooterLink key={item.href} href={item.href} source={`footer_legal_${item.href}`}>
+                {item.label}
+              </FooterLink>
+            ))}
+          </FooterColumn>
         </div>
       </div>
 
       <div className="border-graphite-border border-t">
-        <div className="container-page text-graphite-foreground/50 flex flex-col items-center justify-between gap-3 py-6 text-xs sm:flex-row">
+        <div className="container-page text-graphite-foreground/50 flex flex-col items-center justify-center gap-2 py-6 text-center text-xs">
           <p>© {new Date().getFullYear()} БАЛАНС КУЗНЕЦОВЫ. Все права защищены.</p>
           <p className="flex items-center gap-1.5">
             Разработано{" "}
@@ -153,7 +111,7 @@ export async function SiteFooter() {
             </TrackedLink>
             {" · Developed by "}
             <TrackedLink
-              href="https://github.com/younaxo/balance-kuznetsovs"
+              href="https://github.com/younaxo"
               eventType="external_link_click"
               sourceElement="footer_github_credit"
               target="_blank"
@@ -166,5 +124,41 @@ export async function SiteFooter() {
         </div>
       </div>
     </footer>
+  );
+}
+
+function FooterColumn({ title, children }: { title: string; children: React.ReactNode }) {
+  return (
+    <div className="text-left">
+      <h3 className="text-graphite-foreground/50 text-xs font-medium tracking-wider uppercase">
+        {title}
+      </h3>
+      <ul className="mt-4 flex flex-col gap-2.5">{children}</ul>
+    </div>
+  );
+}
+
+function FooterLink({
+  href,
+  source,
+  event,
+  children,
+}: {
+  href: string;
+  source: string;
+  event?: "phone_click" | "email_click" | "telegram_click";
+  children: React.ReactNode;
+}) {
+  return (
+    <li>
+      <TrackedLink
+        href={href}
+        sourceElement={source}
+        eventType={event}
+        className="text-graphite-foreground/75 hover:text-graphite-foreground text-sm transition-colors"
+      >
+        {children}
+      </TrackedLink>
+    </li>
   );
 }

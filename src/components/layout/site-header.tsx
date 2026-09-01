@@ -44,7 +44,7 @@ export function SiteHeader() {
               className={cn(
                 "text-[14px] font-medium tracking-wide transition-colors",
                 pathname === item.href
-                  ? "text-foreground"
+                  ? "text-accent"
                   : "text-muted-foreground hover:text-foreground",
               )}
             >
@@ -58,7 +58,7 @@ export function SiteHeader() {
             <ThemeToggle />
           </div>
           <Button
-            variant="outline"
+            variant="primary"
             size="sm"
             className="hidden sm:inline-flex"
             onClick={() => openApplication({ sourceElement: "header_cta" })}
