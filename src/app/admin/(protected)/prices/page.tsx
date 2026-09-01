@@ -4,6 +4,7 @@ import { upsertPriceItemAction, deletePriceItemAction } from "./actions";
 import { AdminForm } from "@/components/admin/admin-form";
 import { AdminSubmitButton } from "@/components/admin/admin-submit-button";
 import { ConfirmDeleteForm } from "@/components/admin/confirm-delete-form";
+import { AdminField } from "@/components/admin/admin-field";
 import { Checkbox } from "@/components/ui/checkbox";
 import {
   Select,
@@ -68,53 +69,62 @@ export default async function AdminPricesPage() {
         >
           <p className="text-sm font-medium">Добавить позицию</p>
           <div className="grid gap-3 sm:grid-cols-2">
-            <input
-              name="title"
-              placeholder="Название"
-              required
-              className="border-border-strong bg-background h-9 rounded-md border px-3 text-sm"
-            />
-            <Select name="serviceSlug" defaultValue="none">
-              <SelectTrigger className="h-9">
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="none">Без привязки к услуге</SelectItem>
-                {services.map((s) => (
-                  <SelectItem key={s.slug} value={s.slug}>
-                    {s.title}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
+            <AdminField label="Название">
+              <input
+                name="title"
+                placeholder="Название позиции"
+                required
+                className="border-border-strong bg-background h-9 rounded-md border px-3 text-sm"
+              />
+            </AdminField>
+            <AdminField label="Привязка к услуге">
+              <Select name="serviceSlug" defaultValue="none">
+                <SelectTrigger className="h-9">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="none">Без привязки к услуге</SelectItem>
+                  {services.map((s) => (
+                    <SelectItem key={s.slug} value={s.slug}>
+                      {s.title}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </AdminField>
           </div>
-          <textarea
-            name="description"
-            placeholder="Описание (необязательно)"
-            rows={2}
-            className="border-border-strong bg-background rounded-md border p-3 text-sm"
-          />
+          <AdminField label="Описание (необязательно)">
+            <textarea
+              name="description"
+              rows={2}
+              className="border-border-strong bg-background rounded-md border p-3 text-sm"
+            />
+          </AdminField>
           <div className="grid gap-3 sm:grid-cols-3">
-            <input
-              name="priceFromKopecks"
-              type="number"
-              step="1"
-              min="0"
-              placeholder="Цена, ₽ (от)"
-              className="border-border-strong bg-background h-9 rounded-md border px-3 text-sm"
-            />
-            <input
-              name="unit"
-              placeholder="Единица (документ, час...)"
-              className="border-border-strong bg-background h-9 rounded-md border px-3 text-sm"
-            />
-            <input
-              name="order"
-              type="number"
-              placeholder="Порядок"
-              defaultValue={items.length + 1}
-              className="border-border-strong bg-background h-9 rounded-md border px-3 text-sm"
-            />
+            <AdminField label="Цена, ₽ (от)">
+              <input
+                name="priceFromKopecks"
+                type="number"
+                step="1"
+                min="0"
+                className="border-border-strong bg-background h-9 rounded-md border px-3 text-sm"
+              />
+            </AdminField>
+            <AdminField label="Единица">
+              <input
+                name="unit"
+                placeholder="документ, час..."
+                className="border-border-strong bg-background h-9 rounded-md border px-3 text-sm"
+              />
+            </AdminField>
+            <AdminField label="Порядок">
+              <input
+                name="order"
+                type="number"
+                defaultValue={items.length + 1}
+                className="border-border-strong bg-background h-9 rounded-md border px-3 text-sm"
+              />
+            </AdminField>
           </div>
           <div className="flex items-center gap-4">
             <label className="flex items-center gap-2 text-sm">

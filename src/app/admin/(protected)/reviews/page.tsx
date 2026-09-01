@@ -2,6 +2,8 @@ import { ReviewRepository } from "@/server/reviews/repository";
 import { importReviewAction, togglePublishReviewAction, deleteReviewAction } from "./actions";
 import { AdminForm } from "@/components/admin/admin-form";
 import { AdminSubmitButton } from "@/components/admin/admin-submit-button";
+import { ConfirmDeleteForm } from "@/components/admin/confirm-delete-form";
+import { AdminField } from "@/components/admin/admin-field";
 import { Checkbox } from "@/components/ui/checkbox";
 import {
   Select,
@@ -49,12 +51,11 @@ export default async function AdminReviewsPage() {
                     {review.isPublished ? "Скрыть" : "Опубликовать"}
                   </AdminSubmitButton>
                 </AdminForm>
-                <AdminForm action={deleteReviewAction}>
-                  <input type="hidden" name="id" value={review.id} />
-                  <AdminSubmitButton variant="destructive" pendingLabel="Удаление…">
-                    Удалить
-                  </AdminSubmitButton>
-                </AdminForm>
+                <ConfirmDeleteForm
+                  action={deleteReviewAction}
+                  id={review.id}
+                  itemLabel={review.authorName}
+                />
               </div>
             </li>
           ))}
@@ -70,49 +71,57 @@ export default async function AdminReviewsPage() {
         >
           <p className="text-sm font-medium">Добавить отзыв вручную</p>
           <div className="grid gap-3 sm:grid-cols-2">
-            <input
-              name="authorName"
-              placeholder="Имя автора"
-              required
-              className="border-border-strong bg-background h-9 rounded-md border px-3 text-sm"
-            />
-            <Select name="source" defaultValue="avito">
-              <SelectTrigger className="h-9">
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="avito">Avito</SelectItem>
-                <SelectItem value="manual">Другой источник</SelectItem>
-              </SelectContent>
-            </Select>
+            <AdminField label="Имя автора">
+              <input
+                name="authorName"
+                required
+                className="border-border-strong bg-background h-9 rounded-md border px-3 text-sm"
+              />
+            </AdminField>
+            <AdminField label="Источник">
+              <Select name="source" defaultValue="avito">
+                <SelectTrigger className="h-9">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="avito">Avito</SelectItem>
+                  <SelectItem value="manual">Другой источник</SelectItem>
+                </SelectContent>
+              </Select>
+            </AdminField>
           </div>
-          <textarea
-            name="text"
-            placeholder="Текст отзыва"
-            required
-            rows={3}
-            className="border-border-strong bg-background rounded-md border p-3 text-sm"
-          />
+          <AdminField label="Текст отзыва">
+            <textarea
+              name="text"
+              required
+              rows={3}
+              className="border-border-strong bg-background rounded-md border p-3 text-sm"
+            />
+          </AdminField>
           <div className="grid gap-3 sm:grid-cols-3">
-            <input
-              name="rating"
-              type="number"
-              min="1"
-              max="5"
-              placeholder="Оценка (1-5)"
-              className="border-border-strong bg-background h-9 rounded-md border px-3 text-sm"
-            />
-            <input
-              name="sourceUrl"
-              type="url"
-              placeholder="Ссылка на отзыв"
-              className="border-border-strong bg-background h-9 rounded-md border px-3 text-sm"
-            />
-            <input
-              name="reviewedAt"
-              type="date"
-              className="border-border-strong bg-background h-9 rounded-md border px-3 text-sm"
-            />
+            <AdminField label="Оценка (1–5)">
+              <input
+                name="rating"
+                type="number"
+                min="1"
+                max="5"
+                className="border-border-strong bg-background h-9 rounded-md border px-3 text-sm"
+              />
+            </AdminField>
+            <AdminField label="Ссылка на отзыв">
+              <input
+                name="sourceUrl"
+                type="url"
+                className="border-border-strong bg-background h-9 rounded-md border px-3 text-sm"
+              />
+            </AdminField>
+            <AdminField label="Дата отзыва">
+              <input
+                name="reviewedAt"
+                type="date"
+                className="border-border-strong bg-background h-9 rounded-md border px-3 text-sm"
+              />
+            </AdminField>
           </div>
           <div className="flex items-center gap-4">
             <label className="flex items-center gap-2 text-sm">

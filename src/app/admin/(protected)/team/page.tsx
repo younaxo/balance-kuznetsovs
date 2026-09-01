@@ -3,6 +3,7 @@ import { upsertTeamMemberAction, deleteTeamMemberAction } from "./actions";
 import { AdminForm } from "@/components/admin/admin-form";
 import { AdminSubmitButton } from "@/components/admin/admin-submit-button";
 import { ConfirmDeleteForm } from "@/components/admin/confirm-delete-form";
+import { AdminField } from "@/components/admin/admin-field";
 import { Checkbox } from "@/components/ui/checkbox";
 
 export const metadata = { title: "Команда" };
@@ -80,29 +81,33 @@ function TeamMemberForm({
       {member && <input type="hidden" name="id" value={member.id} />}
       <input type="hidden" name="existingPhotoFilename" value={member?.photoFilename ?? ""} />
       <div className="grid gap-3 sm:grid-cols-2 sm:items-start">
-        <input
-          name="fullName"
-          placeholder="Фамилия Имя Отчество"
-          defaultValue={member?.fullName}
-          required
-          className="border-border-strong bg-background h-9 rounded-md border px-3 text-sm"
-        />
-        <div className="flex items-center gap-3">
-          {member?.photoFilename && (
-            // eslint-disable-next-line @next/next/no-img-element -- путь по данным из БД, статический импорт невозможен
-            <img
-              src={`/team/${member.photoFilename}`}
-              alt=""
-              className="aspect-3/4 w-12 shrink-0 rounded object-cover"
-            />
-          )}
+        <AdminField label="ФИО">
           <input
-            name="photo"
-            type="file"
-            accept="image/*"
-            className="text-muted-foreground file:border-border-strong file:bg-muted w-full text-sm file:mr-3 file:h-9 file:cursor-pointer file:rounded-md file:border file:px-3 file:text-sm"
+            name="fullName"
+            placeholder="Фамилия Имя Отчество"
+            defaultValue={member?.fullName}
+            required
+            className="border-border-strong bg-background h-9 rounded-md border px-3 text-sm"
           />
-        </div>
+        </AdminField>
+        <AdminField label="Фото">
+          <div className="flex items-center gap-3">
+            {member?.photoFilename && (
+              // eslint-disable-next-line @next/next/no-img-element -- путь по данным из БД, статический импорт невозможен
+              <img
+                src={`/team/${member.photoFilename}`}
+                alt=""
+                className="aspect-3/4 w-12 shrink-0 rounded object-cover"
+              />
+            )}
+            <input
+              name="photo"
+              type="file"
+              accept="image/*"
+              className="text-muted-foreground file:border-border-strong file:bg-muted w-full text-sm file:mr-3 file:h-9 file:cursor-pointer file:rounded-md file:border file:px-3 file:text-sm"
+            />
+          </div>
+        </AdminField>
       </div>
       {member?.photoFilename && (
         <label className="text-muted-foreground flex items-center gap-2 text-sm">
@@ -110,13 +115,14 @@ function TeamMemberForm({
         </label>
       )}
       <div className="flex items-center gap-4">
-        <input
-          name="order"
-          type="number"
-          placeholder="Порядок"
-          defaultValue={order}
-          className="border-border-strong bg-background h-9 w-28 rounded-md border px-3 text-sm"
-        />
+        <AdminField label="Порядок" className="w-28">
+          <input
+            name="order"
+            type="number"
+            defaultValue={order}
+            className="border-border-strong bg-background h-9 w-28 rounded-md border px-3 text-sm"
+          />
+        </AdminField>
         <label className="flex items-center gap-2 text-sm">
           <Checkbox name="isPublished" defaultChecked={member?.isPublished ?? true} /> Опубликовано
         </label>
