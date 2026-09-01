@@ -25,23 +25,44 @@ declare global {
  */
 export function TurnstileWidget({ onVerify }: { onVerify: (token: string | null) => void }) {
   const siteKey = clientEnv.NEXT_PUBLIC_TURNSTILE_SITE_KEY;
+  // resolvedTheme идёт undefined до гидратации и только потом становится
+  // "light"/"dark" — если рендерить виджет сразу, он сначала появляется
+  // с дефолтной темой, а через мгновение пересоздаётся (remove + render)
+  // под реальную тему. Именно это пересоздание и выглядело как "капча
+  // пропадает" — ждём, пока тема действительно определится.
   const { resolvedTheme } = useTheme();
   const containerRef = useRef<HTMLDivElement>(null);
   const widgetIdRef = useRef<string | null>(null);
   const [scriptLoaded, setScriptLoaded] = useState(false);
 
   useEffect(() => {
-    if (!siteKey || !scriptLoaded || !containerRef.current || !window.turnstile) return;
+    if (!siteKey || !scriptLoaded || !resolvedTheme || !containerRef.current || !window.turnstile) {
+      return;
+    }
 
-    widgetIdRef.current = window.turnstile.render(containerRef.current, {
+    const container = containerRef.current;
+    // В dev-режиме React (StrictMode) монтирует эффект дважды подряд
+    // (mount → cleanup → mount) — без этой защиты turnstile.render()
+    // вызывался бы на уже занятый контейнер и виджет ломался/пропадал.
+    let cancelled = false;
+
+    const id = window.turnstile.render(container, {
       sitekey: siteKey,
       theme: resolvedTheme === "dark" ? "dark" : "light",
-      callback: (token: string) => onVerify(token),
-      "expired-callback": () => onVerify(null),
-      "error-callback": () => onVerify(null),
+      callback: (token: string) => {
+        if (!cancelled) onVerify(token);
+      },
+      "expired-callback": () => {
+        if (!cancelled) onVerify(null);
+      },
+      "error-callback": () => {
+        if (!cancelled) onVerify(null);
+      },
     });
+    widgetIdRef.current = id;
 
     return () => {
+      cancelled = true;
       if (widgetIdRef.current && window.turnstile) {
         window.turnstile.remove(widgetIdRef.current);
         widgetIdRef.current = null;

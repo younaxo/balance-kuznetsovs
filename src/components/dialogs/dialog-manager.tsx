@@ -15,7 +15,8 @@ interface DialogsContextValue {
   closeApplication: () => void;
 
   quizOpen: boolean;
-  openQuiz: (options?: { sourceElement?: string }) => void;
+  quizServiceSlug?: string;
+  openQuiz: (options?: { serviceSlug?: string; sourceElement?: string }) => void;
   closeQuiz: () => void;
 }
 
@@ -32,6 +33,7 @@ export function DialogsProvider({ children }: { children: React.ReactNode }) {
     undefined,
   );
   const [quizOpen, setQuizOpen] = React.useState(false);
+  const [quizServiceSlug, setQuizServiceSlug] = React.useState<string | undefined>(undefined);
 
   const openApplication = React.useCallback((options?: OpenApplicationOptions) => {
     setApplicationServiceSlug(options?.serviceSlug);
@@ -45,10 +47,14 @@ export function DialogsProvider({ children }: { children: React.ReactNode }) {
 
   const closeApplication = React.useCallback(() => setApplicationOpen(false), []);
 
-  const openQuiz = React.useCallback((options?: { sourceElement?: string }) => {
-    setQuizOpen(true);
-    trackEvent({ eventType: "quiz_open", sourceElement: options?.sourceElement });
-  }, []);
+  const openQuiz = React.useCallback(
+    (options?: { serviceSlug?: string; sourceElement?: string }) => {
+      setQuizServiceSlug(options?.serviceSlug);
+      setQuizOpen(true);
+      trackEvent({ eventType: "quiz_open", sourceElement: options?.sourceElement });
+    },
+    [],
+  );
 
   const closeQuiz = React.useCallback(() => setQuizOpen(false), []);
 
@@ -59,6 +65,7 @@ export function DialogsProvider({ children }: { children: React.ReactNode }) {
       openApplication,
       closeApplication,
       quizOpen,
+      quizServiceSlug,
       openQuiz,
       closeQuiz,
     }),
@@ -68,6 +75,7 @@ export function DialogsProvider({ children }: { children: React.ReactNode }) {
       openApplication,
       closeApplication,
       quizOpen,
+      quizServiceSlug,
       openQuiz,
       closeQuiz,
     ],

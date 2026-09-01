@@ -16,12 +16,15 @@ export function AdminForm({
   action,
   resetOnSuccess = false,
   successMessage = "Сохранено",
+  onSuccess,
   className,
   children,
 }: {
   action: (prevState: AdminActionState, formData: FormData) => Promise<AdminActionState>;
   resetOnSuccess?: boolean;
   successMessage?: string;
+  /** Зовём один раз при переходе в успех — например, закрыть диалог подтверждения. */
+  onSuccess?: () => void;
   className?: string;
   children: React.ReactNode;
 }) {
@@ -36,7 +39,10 @@ export function AdminForm({
   const [lastState, setLastState] = React.useState(state);
   if (state !== lastState) {
     setLastState(state);
-    if (state.ok) setSuccessTick((n) => n + 1);
+    if (state.ok) {
+      setSuccessTick((n) => n + 1);
+      onSuccess?.();
+    }
   }
 
   // А вот сброс полей формы — реальная синхронизация с DOM вне React,

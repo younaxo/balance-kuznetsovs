@@ -14,9 +14,13 @@ export async function upsertPriceItemAction(
   if (!admin) return { ok: false, error: "Unauthorized" };
 
   const rawPrice = formData.get("priceFromKopecks");
+  // "none" — служебное значение пункта Select "Без привязки к услуге"
+  // (у Radix Select пункт не может иметь пустое value) — приравниваем
+  // его к отсутствию значения, как и раньше делал пустой <option>.
+  const serviceSlugRaw = formData.get("serviceSlug");
   const parsed = priceItemUpsertSchema.safeParse({
     id: formData.get("id") || undefined,
-    serviceSlug: formData.get("serviceSlug") || "",
+    serviceSlug: serviceSlugRaw === "none" ? "" : (serviceSlugRaw ?? ""),
     title: formData.get("title"),
     description: formData.get("description") || "",
     priceFromKopecks: rawPrice ? Math.round(Number(rawPrice) * 100) : undefined,

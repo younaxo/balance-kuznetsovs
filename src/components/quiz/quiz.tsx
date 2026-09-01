@@ -46,9 +46,23 @@ const INITIAL_STATE: QuizState = {
 
 const TOTAL_STEPS = 7;
 
-export function Quiz({ onDone, services }: { onDone?: () => void; services: ServiceOption[] }) {
-  const [step, setStep] = React.useState(1);
-  const [state, setState] = React.useState<QuizState>(INITIAL_STATE);
+export function Quiz({
+  onDone,
+  services,
+  initialServiceSlug,
+}: {
+  onDone?: () => void;
+  services: ServiceOption[];
+  /** Если квиз открыт со страницы конкретной услуги — первый шаг
+   *  (выбор услуги) пропускается и сразу отмечен этой услугой, но
+   *  остаётся доступным через «Назад», чтобы можно было поменять выбор. */
+  initialServiceSlug?: string;
+}) {
+  const [step, setStep] = React.useState(initialServiceSlug ? 2 : 1);
+  const [state, setState] = React.useState<QuizState>(() => ({
+    ...INITIAL_STATE,
+    serviceSlug: initialServiceSlug,
+  }));
   const [turnstileToken, setTurnstileToken] = React.useState<string | null>(null);
   const [status, setStatus] = React.useState<"idle" | "submitting" | "success" | "error">("idle");
   const [error, setError] = React.useState<string | null>(null);

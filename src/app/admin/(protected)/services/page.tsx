@@ -3,6 +3,15 @@ import { ILLUSTRATION_KEYS } from "@/components/icons/legal-illustrations";
 import { upsertServiceAction, deleteServiceAction } from "./actions";
 import { AdminForm } from "@/components/admin/admin-form";
 import { AdminSubmitButton } from "@/components/admin/admin-submit-button";
+import { ConfirmDeleteForm } from "@/components/admin/confirm-delete-form";
+import { Checkbox } from "@/components/ui/checkbox";
+import {
+  Select,
+  SelectTrigger,
+  SelectValue,
+  SelectContent,
+  SelectItem,
+} from "@/components/ui/select";
 
 export const metadata = { title: "Услуги" };
 
@@ -22,8 +31,8 @@ export default async function AdminServicesPage() {
       <div>
         <h1 className="font-display text-2xl">Услуги</h1>
         <p className="text-muted-foreground mt-1 text-sm">
-          Полное управление направлениями услуг — заголовок, текст, CTA, иллюстрация, порядок и
-          публикация. Изменения сразу отражаются на публичном сайте.
+          Здесь все услуги — правьте что угодно: заголовок, текст, кнопку, картинку, порядок и видна
+          ли услуга на сайте. Сохранили — сайт обновится сразу же.
         </p>
       </div>
 
@@ -63,14 +72,14 @@ function ServiceRow({
           </span>
           <span className="text-muted-foreground text-xs">Редактировать ▾</span>
         </summary>
-        <div className="mt-4">
+        <div className="mt-4 flex flex-col gap-3">
           <ServiceForm service={service} order={service.order} />
-          <AdminForm action={deleteServiceAction} className="mt-3">
-            <input type="hidden" name="id" value={service.id} />
-            <AdminSubmitButton variant="destructive" pendingLabel="Удаление…">
-              Удалить услугу
-            </AdminSubmitButton>
-          </AdminForm>
+          <ConfirmDeleteForm
+            action={deleteServiceAction}
+            id={service.id}
+            itemLabel={service.title}
+            triggerLabel="Удалить услугу"
+          />
         </div>
       </details>
     </li>
@@ -118,17 +127,18 @@ function ServiceForm({
           defaultValue={service?.ctaLabel ?? "Заказать услугу"}
           className="border-border-strong bg-background h-9 rounded-md border px-3 text-sm"
         />
-        <select
-          name="illustration"
-          defaultValue={service?.illustration ?? "contract"}
-          className="border-border-strong bg-background h-9 rounded-md border px-3 text-sm"
-        >
-          {ILLUSTRATION_KEYS.map((key) => (
-            <option key={key} value={key}>
-              {ILLUSTRATION_LABELS[key] ?? key}
-            </option>
-          ))}
-        </select>
+        <Select name="illustration" defaultValue={service?.illustration ?? "contract"}>
+          <SelectTrigger className="h-9">
+            <SelectValue />
+          </SelectTrigger>
+          <SelectContent>
+            {ILLUSTRATION_KEYS.map((key) => (
+              <SelectItem key={key} value={key}>
+                {ILLUSTRATION_LABELS[key] ?? key}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
         <input
           name="order"
           type="number"
@@ -139,8 +149,7 @@ function ServiceForm({
       </div>
       <div className="flex items-center gap-4">
         <label className="flex items-center gap-2 text-sm">
-          <input type="checkbox" name="isPublished" defaultChecked={service?.isPublished ?? true} />{" "}
-          Опубликовано
+          <Checkbox name="isPublished" defaultChecked={service?.isPublished ?? true} /> Опубликовано
         </label>
         <AdminSubmitButton pendingLabel="Сохранение…" className="ml-auto">
           Сохранить

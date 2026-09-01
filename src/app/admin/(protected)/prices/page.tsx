@@ -3,6 +3,15 @@ import { ServiceRepository } from "@/server/services/repository";
 import { upsertPriceItemAction, deletePriceItemAction } from "./actions";
 import { AdminForm } from "@/components/admin/admin-form";
 import { AdminSubmitButton } from "@/components/admin/admin-submit-button";
+import { ConfirmDeleteForm } from "@/components/admin/confirm-delete-form";
+import { Checkbox } from "@/components/ui/checkbox";
+import {
+  Select,
+  SelectTrigger,
+  SelectValue,
+  SelectContent,
+  SelectItem,
+} from "@/components/ui/select";
 
 export const metadata = { title: "Прайс" };
 
@@ -17,8 +26,8 @@ export default async function AdminPricesPage() {
       <div>
         <h1 className="font-display text-2xl">Прайс</h1>
         <p className="text-muted-foreground mt-1 text-sm">
-          Реальные цены пока не заданы владельцем — раздел «Прайс» на сайте показывает честный
-          pre-launch экран, пока здесь пусто.
+          Пока пусто — раздел «Прайс» на сайте так и говорит гостям: цены уточняются. Как только
+          добавите здесь позиции, они сразу появятся на сайте.
         </p>
       </div>
 
@@ -40,12 +49,11 @@ export default async function AdminPricesPage() {
                   {item.unit ? ` / ${item.unit}` : ""}
                 </p>
               </div>
-              <AdminForm action={deletePriceItemAction}>
-                <input type="hidden" name="id" value={item.id} />
-                <AdminSubmitButton variant="destructive" pendingLabel="Удаление…">
-                  Удалить
-                </AdminSubmitButton>
-              </AdminForm>
+              <ConfirmDeleteForm
+                action={deletePriceItemAction}
+                id={item.id}
+                itemLabel={item.title}
+              />
             </li>
           ))}
           {items.length === 0 && (
@@ -66,17 +74,19 @@ export default async function AdminPricesPage() {
               required
               className="border-border-strong bg-background h-9 rounded-md border px-3 text-sm"
             />
-            <select
-              name="serviceSlug"
-              className="border-border-strong bg-background h-9 rounded-md border px-3 text-sm"
-            >
-              <option value="">Без привязки к услуге</option>
-              {services.map((s) => (
-                <option key={s.slug} value={s.slug}>
-                  {s.title}
-                </option>
-              ))}
-            </select>
+            <Select name="serviceSlug" defaultValue="none">
+              <SelectTrigger className="h-9">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="none">Без привязки к услуге</SelectItem>
+                {services.map((s) => (
+                  <SelectItem key={s.slug} value={s.slug}>
+                    {s.title}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
           </div>
           <textarea
             name="description"
@@ -108,7 +118,7 @@ export default async function AdminPricesPage() {
           </div>
           <div className="flex items-center gap-4">
             <label className="flex items-center gap-2 text-sm">
-              <input type="checkbox" name="isPublished" defaultChecked /> Опубликовано
+              <Checkbox name="isPublished" defaultChecked /> Опубликовано
             </label>
             <AdminSubmitButton pendingLabel="Сохранение…" className="ml-auto">
               Сохранить

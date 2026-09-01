@@ -2,6 +2,14 @@ import { ReviewRepository } from "@/server/reviews/repository";
 import { importReviewAction, togglePublishReviewAction, deleteReviewAction } from "./actions";
 import { AdminForm } from "@/components/admin/admin-form";
 import { AdminSubmitButton } from "@/components/admin/admin-submit-button";
+import { Checkbox } from "@/components/ui/checkbox";
+import {
+  Select,
+  SelectTrigger,
+  SelectValue,
+  SelectContent,
+  SelectItem,
+} from "@/components/ui/select";
 
 export const metadata = { title: "Отзывы" };
 
@@ -13,9 +21,9 @@ export default async function AdminReviewsPage() {
       <div>
         <h1 className="font-display text-2xl">Отзывы</h1>
         <p className="text-muted-foreground mt-1 text-sm">
-          Автоматический импорт с Avito недоступен: публичная страница профиля закрыта
-          antibot-защитой (QRATOR, CAPTCHA) — обходить её запрещено политикой проекта. Добавляйте
-          отзывы вручную ниже, указывая источник и ссылку.
+          С Avito отзывы сами не подтянутся — их профиль закрыт от ботов (QRATOR, капча), а обходить
+          такую защиту мы не станем. Так что добавляйте отзывы сюда руками: текст, источник и ссылку
+          на оригинал.
         </p>
       </div>
 
@@ -68,14 +76,15 @@ export default async function AdminReviewsPage() {
               required
               className="border-border-strong bg-background h-9 rounded-md border px-3 text-sm"
             />
-            <select
-              name="source"
-              defaultValue="avito"
-              className="border-border-strong bg-background h-9 rounded-md border px-3 text-sm"
-            >
-              <option value="avito">Avito</option>
-              <option value="manual">Другой источник</option>
-            </select>
+            <Select name="source" defaultValue="avito">
+              <SelectTrigger className="h-9">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="avito">Avito</SelectItem>
+                <SelectItem value="manual">Другой источник</SelectItem>
+              </SelectContent>
+            </Select>
           </div>
           <textarea
             name="text"
@@ -107,7 +116,7 @@ export default async function AdminReviewsPage() {
           </div>
           <div className="flex items-center gap-4">
             <label className="flex items-center gap-2 text-sm">
-              <input type="checkbox" name="isPublished" /> Опубликовать сразу
+              <Checkbox name="isPublished" /> Опубликовать сразу
             </label>
             <AdminSubmitButton pendingLabel="Сохранение…" className="ml-auto">
               Добавить

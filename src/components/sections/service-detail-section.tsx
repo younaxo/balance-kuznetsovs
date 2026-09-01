@@ -46,7 +46,12 @@ export function ServiceDetailSection({ service }: { service: ServiceDetailData }
               variant="outline"
               eventType="cta_click"
               sourceElement={`service_detail_quiz_${service.slug}`}
-              onClick={() => openQuiz({ sourceElement: `service_detail_${service.slug}` })}
+              onClick={() =>
+                openQuiz({
+                  serviceSlug: service.slug,
+                  sourceElement: `service_detail_${service.slug}`,
+                })
+              }
             >
               Рассчитать стоимость
             </TrackedButton>
