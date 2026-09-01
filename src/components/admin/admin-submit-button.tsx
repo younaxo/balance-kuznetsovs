@@ -27,7 +27,7 @@ export function AdminSubmitButton({
   const { pending } = useFormStatus();
 
   const variants = {
-    primary: "bg-foreground text-background hover:bg-foreground/90",
+    primary: "bg-accent text-accent-foreground hover:bg-accent/90",
     destructive: "text-destructive hover:underline",
     ghost: "text-accent hover:underline",
   } as const;
