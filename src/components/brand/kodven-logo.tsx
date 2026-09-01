@@ -21,5 +21,5 @@ export function KodvenLogo({ className }: { className?: string }) {
     );
   }
 
-  return <span className={className}>KODVEN STUDIO</span>;
+  return <span className={className}>Kodven Studio</span>;
 }

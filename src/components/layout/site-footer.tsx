@@ -1,7 +1,6 @@
 import { Logo } from "@/components/brand/logo";
 import { KodvenLogo } from "@/components/brand/kodven-logo";
 import { TrackedLink } from "@/components/analytics/tracked-link";
-import { FooterCta } from "./footer-cta";
 import { NAV_ITEMS } from "./nav-items";
 import { ServiceRepository } from "@/server/services/repository";
 import { getContactSettings } from "@/server/content/contact-settings";
@@ -28,27 +27,23 @@ export async function SiteFooter() {
       <div className="container-page grid gap-10 py-16 lg:grid-cols-[1.3fr_1fr_1fr_1fr_1fr]">
         <div>
           <TrackedLink href="/" sourceElement="footer_logo">
-            <Logo height={34} />
+            <Logo height={34} variant="dark" />
           </TrackedLink>
-          <p className="text-graphite-foreground/60 mt-5 max-w-xs text-sm">
-            Юридические документы и защита персональных данных для бизнеса. Работаем удалённо по
-            всей РФ.
-          </p>
-
-          <div className="mt-5">
-            <FooterCta />
-          </div>
 
           {/* Реквизиты оператора — только реальные, из /admin/contacts.
               Пока владелец их не заполнил, блок просто не показывается —
               никаких выдуманных ООО/ИНН на публичном сайте. */}
           {hasOperatorInfo && (
-            <div className="text-graphite-foreground/50 mt-6 flex flex-col gap-1 text-xs leading-relaxed">
+            <div className="text-graphite-foreground/60 mt-5 flex flex-col gap-1 text-sm leading-relaxed">
               {contacts.operatorFullName && <p>{contacts.operatorFullName}</p>}
               {contacts.operatorInn && <p>ИНН {contacts.operatorInn}</p>}
               {contacts.operatorOgrn && <p>ОГРН {contacts.operatorOgrn}</p>}
             </div>
           )}
+
+          <p className="text-graphite-foreground/50 mt-6 text-xs">
+            © {new Date().getFullYear()} БАЛАНС КУЗНЕЦОВЫ. Все права защищены.
+          </p>
         </div>
 
         <FooterColumn title="Навигация">
@@ -105,8 +100,7 @@ export async function SiteFooter() {
       </div>
 
       <div className="border-graphite-border border-t">
-        <div className="container-page text-graphite-foreground/50 flex flex-col items-center justify-between gap-3 py-6 text-xs sm:flex-row">
-          <p>© {new Date().getFullYear()} БАЛАНС КУЗНЕЦОВЫ. Все права защищены.</p>
+        <div className="container-page text-graphite-foreground/50 flex flex-col items-center gap-1 py-6 text-center text-xs">
           <p className="flex items-center gap-1.5">
             Разработано{" "}
             <TrackedLink
@@ -119,7 +113,9 @@ export async function SiteFooter() {
             >
               <KodvenLogo className="inline-block" />
             </TrackedLink>
-            {" · Developed by "}
+          </p>
+          <p>
+            Developed by{" "}
             <TrackedLink
               href="https://github.com/younaxo"
               eventType="external_link_click"
