@@ -28,8 +28,57 @@ function pingUsernames(): string[] {
     .map((u) => (u.startsWith("@") ? u : `@${u}`));
 }
 
+// Человекочитаемые подписи для ответов квиза «Рассчитать стоимость» —
+// serviceSlug и taskDescription сюда не входят, они уже показаны через
+// payload.serviceTitle/payload.message (совпадают по смыслу, дублировать
+// незачем). См. quizAnswersSchema в server/validation/application.ts —
+// значения enum'ов должны совпадать с теми, что описаны там.
+const ENTITY_TYPE_LABELS: Record<string, string> = {
+  individual: "Физическое лицо",
+  sole_proprietor: "ИП",
+  llc: "ООО",
+  other: "Другое",
+};
+const HAS_DOCUMENTS_LABELS: Record<string, string> = {
+  yes: "Да, есть",
+  no: "Нет",
+  not_sure: "Не уверен(а)",
+};
+const URGENCY_LABELS: Record<string, string> = {
+  urgent: "Срочно",
+  standard: "В обычном режиме",
+  flexible: "Сроки гибкие",
+};
+const PREFERRED_CONTACT_LABELS: Record<string, string> = {
+  phone: "Телефон",
+  telegram: "Telegram",
+  email: "Email",
+};
+
+function formatQuizAnswers(quizAnswers: Record<string, unknown> | null): string | null {
+  if (!quizAnswers) return null;
+
+  const lines = [
+    quizAnswers.entityType
+      ? `Кто обращается: ${ENTITY_TYPE_LABELS[String(quizAnswers.entityType)] ?? escapeHtml(String(quizAnswers.entityType))}`
+      : null,
+    quizAnswers.hasExistingDocuments
+      ? `Документы уже есть: ${HAS_DOCUMENTS_LABELS[String(quizAnswers.hasExistingDocuments)] ?? escapeHtml(String(quizAnswers.hasExistingDocuments))}`
+      : null,
+    quizAnswers.urgency
+      ? `Срочность: ${URGENCY_LABELS[String(quizAnswers.urgency)] ?? escapeHtml(String(quizAnswers.urgency))}`
+      : null,
+    quizAnswers.preferredContact
+      ? `Предпочтительная связь: ${PREFERRED_CONTACT_LABELS[String(quizAnswers.preferredContact)] ?? escapeHtml(String(quizAnswers.preferredContact))}`
+      : null,
+  ].filter(Boolean);
+
+  return lines.length > 0 ? lines.join("\n") : null;
+}
+
 function buildMessage(payload: ApplicationNotificationPayload): string {
   const service = payload.serviceTitle ?? "не указана";
+  const quizAnswers = payload.source === "quiz" ? formatQuizAnswers(payload.quizAnswers) : null;
 
   const lines = [
     `🆕 <b>Новая заявка (${payload.source === "quiz" ? "квиз" : "форма"})</b>`,
@@ -38,6 +87,7 @@ function buildMessage(payload: ApplicationNotificationPayload): string {
     payload.telegram ? `Telegram: ${escapeHtml(payload.telegram)}` : null,
     payload.email ? `Email: ${escapeHtml(payload.email)}` : null,
     `Услуга: <code>${escapeHtml(service)}</code>`,
+    quizAnswers ? `\nОтветы квиза:\n${quizAnswers}` : null,
     payload.message ? `\nСообщение:\n<pre>${escapeHtml(payload.message)}</pre>` : null,
   ].filter(Boolean);
 

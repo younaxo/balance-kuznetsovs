@@ -161,7 +161,7 @@ export function ApplicationForm({
 
       <div className="grid gap-4 sm:grid-cols-2">
         <div className="grid gap-1.5">
-          <Label htmlFor="phone">Телефон</Label>
+          <Label htmlFor="phone">Телефон*</Label>
           <Input
             id="phone"
             type="tel"
@@ -170,7 +170,9 @@ export function ApplicationForm({
             aria-invalid={Boolean(errors.phone)}
             autoComplete="tel"
             placeholder="+7 900 000-00-00"
+            required
           />
+          {errors.phone && <p className="text-destructive text-xs">{errors.phone}</p>}
         </div>
         <div className="grid gap-1.5">
           <Label htmlFor="telegram">Telegram</Label>
@@ -184,7 +186,7 @@ export function ApplicationForm({
       </div>
 
       <div className="grid gap-1.5">
-        <Label htmlFor="email">Email</Label>
+        <Label htmlFor="email">Email*</Label>
         <Input
           id="email"
           type="email"
@@ -192,9 +194,10 @@ export function ApplicationForm({
           onChange={(e) => update("email", e.target.value)}
           aria-invalid={Boolean(errors.email)}
           autoComplete="email"
+          required
         />
+        {errors.email && <p className="text-destructive text-xs">{errors.email}</p>}
       </div>
-      {errors.phone && <p className="text-destructive -mt-2 text-xs">{errors.phone}</p>}
 
       <div className="grid gap-1.5">
         <Label htmlFor="serviceSlug">Тип услуги</Label>

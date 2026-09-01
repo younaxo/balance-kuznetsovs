@@ -96,7 +96,8 @@ export function Quiz({
       case 7:
         return (
           Boolean(state.name.trim()) &&
-          (Boolean(state.phone) || Boolean(state.telegram) || Boolean(state.email)) &&
+          Boolean(state.phone) &&
+          Boolean(state.email) &&
           state.consent
         );
       default:
@@ -343,13 +344,14 @@ export function Quiz({
               </div>
               <div className="grid gap-4 sm:grid-cols-2">
                 <div className="grid gap-1.5">
-                  <Label htmlFor="quiz-phone">Телефон</Label>
+                  <Label htmlFor="quiz-phone">Телефон*</Label>
                   <Input
                     id="quiz-phone"
                     type="tel"
                     value={state.phone}
                     onChange={(e) => update("phone", e.target.value)}
                     placeholder="+7 900 000-00-00"
+                    required
                   />
                 </div>
                 <div className="grid gap-1.5">
@@ -363,13 +365,14 @@ export function Quiz({
                 </div>
               </div>
               <div className="grid gap-1.5">
-                <Label htmlFor="quiz-email">Email</Label>
+                <Label htmlFor="quiz-email">Email*</Label>
                 <Input
                   id="quiz-email"
                   type="email"
                   value={state.email}
                   onChange={(e) => update("email", e.target.value)}
                   autoComplete="email"
+                  required
                 />
               </div>
               <label className="text-muted-foreground flex items-start gap-3 text-sm">
