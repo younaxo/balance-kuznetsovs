@@ -18,6 +18,15 @@ COPY . .
 # контейнера переменными окружения, а не этими build-time плейсхолдерами.
 ENV DATABASE_URL="postgresql://placeholder:placeholder@localhost:5432/placeholder"
 ENV SESSION_SECRET="build-time-placeholder-not-used-in-runtime-00000000"
+# NEXT_PUBLIC_* — другое дело: Next.js вклеивает их в клиентский бандл
+# ПРЯМО ВО ВРЕМЯ `next build`, а не читает при старте контейнера — поэтому
+# их нельзя просто положить в .env и передать через env_file в
+# docker-compose (это работает только для серверных переменных). Нужно
+# передать их как build args (см. docker-compose.example.yml).
+ARG NEXT_PUBLIC_SITE_URL
+ARG NEXT_PUBLIC_TURNSTILE_SITE_KEY
+ENV NEXT_PUBLIC_SITE_URL=$NEXT_PUBLIC_SITE_URL
+ENV NEXT_PUBLIC_TURNSTILE_SITE_KEY=$NEXT_PUBLIC_TURNSTILE_SITE_KEY
 RUN npm run build
 
 FROM node:22-alpine AS runner
