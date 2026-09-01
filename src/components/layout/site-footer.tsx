@@ -10,7 +10,6 @@ const LEGAL_LINKS = [
   { label: "Политика конфиденциальности", href: "/confidentiality" },
   { label: "Публичная оферта", href: "/offer" },
   { label: "Согласие на обработку ПДн", href: "/personal-data-consent" },
-  { label: "Cookie policy", href: "/cookies" },
   { label: "Пользовательское соглашение", href: "/terms" },
 ];
 
@@ -30,26 +29,6 @@ export async function SiteFooter() {
           <TrackedLink href="/" sourceElement="footer_logo">
             <Logo height={48} variant="dark" />
           </TrackedLink>
-
-          <p className="text-graphite-foreground/50 mt-5 text-xs">
-            © {new Date().getFullYear()} БАЛАНС КУЗНЕЦОВЫ. Все права защищены.
-          </p>
-
-          {/* Реквизиты оператора — только реальные, из /admin/contacts.
-              Пока владелец их не заполнил, блок просто не показывается —
-              никаких выдуманных ООО/ИНН на публичном сайте. */}
-          {hasOperatorInfo && (
-            <div className="text-graphite-foreground/60 mt-4 flex flex-col gap-1 text-sm leading-relaxed">
-              {contacts.operatorFullName && (
-                <p>
-                  {contacts.operatorStatus
-                    ? `${contacts.operatorStatus} ${contacts.operatorFullName}`
-                    : contacts.operatorFullName}
-                </p>
-              )}
-              {contacts.operatorInn && <p>ИНН {contacts.operatorInn}</p>}
-            </div>
-          )}
         </div>
 
         <FooterColumn title="Навигация">
@@ -107,7 +86,31 @@ export async function SiteFooter() {
 
       <div className="border-graphite-border border-t">
         <div className="container-page text-graphite-foreground/50 flex flex-col items-center gap-1 py-6 text-center text-xs">
-          <p className="flex items-center gap-1.5">
+          <p className="whitespace-normal sm:whitespace-nowrap">
+            © {new Date().getFullYear()} БАЛАНС КУЗНЕЦОВЫ. Все права защищены.
+          </p>
+
+          {/* Реквизиты оператора — только реальные, из БД (см. /admin/contacts —
+              там они уже не редактируются). Пока не заполнены, блок просто не
+              показывается — никаких выдуманных ООО/ИНН на публичном сайте.
+              В полноширинной нижней полосе, а не в узкой колонке с логотипом —
+              чтобы длинные строки не переносились на несколько строк. */}
+          {hasOperatorInfo && (
+            <>
+              {contacts.operatorFullName && (
+                <p className="whitespace-normal sm:whitespace-nowrap">
+                  {contacts.operatorStatus
+                    ? `${contacts.operatorStatus} ${contacts.operatorFullName}`
+                    : contacts.operatorFullName}
+                </p>
+              )}
+              {contacts.operatorInn && (
+                <p className="whitespace-normal sm:whitespace-nowrap">ИНН {contacts.operatorInn}</p>
+              )}
+            </>
+          )}
+
+          <p className="mt-1 flex items-center gap-1.5">
             Разработано{" "}
             <TrackedLink
               href="https://profi.ru/profile/BaranovKA34"
