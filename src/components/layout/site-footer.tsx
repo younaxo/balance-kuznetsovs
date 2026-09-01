@@ -27,23 +27,23 @@ export async function SiteFooter() {
       <div className="container-page grid gap-10 py-16 lg:grid-cols-[1.3fr_1fr_1fr_1fr_1fr]">
         <div>
           <TrackedLink href="/" sourceElement="footer_logo">
-            <Logo height={34} variant="dark" />
+            <Logo height={48} variant="dark" />
           </TrackedLink>
+
+          <p className="text-graphite-foreground/50 mt-5 text-xs">
+            © {new Date().getFullYear()} БАЛАНС КУЗНЕЦОВЫ. Все права защищены.
+          </p>
 
           {/* Реквизиты оператора — только реальные, из /admin/contacts.
               Пока владелец их не заполнил, блок просто не показывается —
               никаких выдуманных ООО/ИНН на публичном сайте. */}
           {hasOperatorInfo && (
-            <div className="text-graphite-foreground/60 mt-5 flex flex-col gap-1 text-sm leading-relaxed">
+            <div className="text-graphite-foreground/60 mt-4 flex flex-col gap-1 text-sm leading-relaxed">
               {contacts.operatorFullName && <p>{contacts.operatorFullName}</p>}
               {contacts.operatorInn && <p>ИНН {contacts.operatorInn}</p>}
               {contacts.operatorOgrn && <p>ОГРН {contacts.operatorOgrn}</p>}
             </div>
           )}
-
-          <p className="text-graphite-foreground/50 mt-6 text-xs">
-            © {new Date().getFullYear()} БАЛАНС КУЗНЕЦОВЫ. Все права защищены.
-          </p>
         </div>
 
         <FooterColumn title="Навигация">
