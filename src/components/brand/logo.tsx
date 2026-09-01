@@ -1,34 +1,41 @@
 import Image from "next/image";
 import { cn } from "@/lib/cn";
-import logoAsset from "../../../public/brand/logo.jpg";
+import logoMain from "../../../public/brand/main_logo.png";
+import logoWhite from "../../../public/brand/white_logo.png";
 
 /**
  * Логотип «БАЛАНС КУЗНЕЦОВЫ» — единственное место в кодовой базе,
- * которое ссылается на файл ассета. Чтобы заменить логотип на новую
- * версию (например, вариант с прозрачным фоном), достаточно положить
- * новый файл в public/brand/logo.jpg с тем же именем — весь сайт
- * подхватит его автоматически без правок кода.
+ * которое ссылается на файлы ассетов. Чтобы заменить логотип на новую
+ * версию, достаточно положить новые файлы в public/brand/ с теми же
+ * именами (main_logo.png / white_logo.png) — весь сайт подхватит их
+ * автоматически без правок кода.
  *
- * Пропорции оригинала (1280×470) сохраняются через next/image —
- * искажений нет ни на одном брейкпоинте.
+ * variant="light" (по умолчанию) — тёмный текст, для светлых мест
+ * (шапка, светлые страницы). variant="dark" — белый текст, для тёмных
+ * поверхностей (подвал на graphite-фоне).
+ *
+ * Пропорции оригинала сохраняются через next/image — искажений нет ни
+ * на одном брейкпоинте.
  */
 export function Logo({
   className,
   height = 40,
   priority = false,
+  variant = "light",
 }: {
   className?: string;
   height?: number;
   priority?: boolean;
+  variant?: "light" | "dark";
 }) {
   return (
     <Image
-      src={logoAsset}
+      src={variant === "dark" ? logoWhite : logoMain}
       alt="БАЛАНС КУЗНЕЦОВЫ"
       height={height}
       style={{ height, width: "auto" }}
       priority={priority}
-      className={cn("rounded-[3px] select-none", className)}
+      className={cn("select-none", className)}
     />
   );
 }
