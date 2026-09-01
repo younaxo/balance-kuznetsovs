@@ -56,7 +56,10 @@ export function SiteHeader() {
           <Button
             variant="primary"
             size="sm"
-            className="hidden sm:inline-flex"
+            // Единственная кнопка на сайте не в общем accent-цвете (по
+            // просьбе владельца) — тёмный графит вместо коричневого,
+            // тот же цвет, что у подложки секции "Наша команда".
+            className="bg-graphite text-graphite-foreground hover:bg-graphite/90 hidden sm:inline-flex"
             onClick={() => openApplication({ sourceElement: "header_cta" })}
           >
             Оставить заявку
