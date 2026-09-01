@@ -2,7 +2,6 @@ import type { Metadata } from "next";
 import { LegalPageShell } from "@/components/legal/legal-page-shell";
 
 export const metadata: Metadata = {
-  title: "Cookie policy",
   description: "Какие cookie использует сайт и как ими управлять.",
 };
 

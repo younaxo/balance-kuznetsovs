@@ -208,6 +208,20 @@ export const teamMembers = pgTable("team_members", {
   updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow(),
 });
 
+export const siteBanner = pgTable("site_banner", {
+  // Синглтон-таблица, как contact_settings: единственная строка id='default'.
+  id: varchar("id", { length: 20 }).primaryKey().default("default"),
+  enabled: boolean("enabled").notNull().default(false),
+  // Markdown (жирный/курсив/ссылки) — рендерится через MarkdownText.
+  text: text("text"),
+  buttonLabel: varchar("button_label", { length: 100 }),
+  buttonHref: text("button_href"),
+  // Имя файла маленькой иконки в public/banner/<imageFilename> —
+  // тот же asset-slot приём, что и у фото команды.
+  imageFilename: varchar("image_filename", { length: 255 }),
+  updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow(),
+});
+
 // ---------------------------------------------------------------------------
 // REVIEWS (отзывы)
 // ---------------------------------------------------------------------------
@@ -354,6 +368,23 @@ export const consentRecords = pgTable("consent_records", {
     onDelete: "set null",
   }),
   analyticsAccepted: boolean("analytics_accepted").notNull(),
+  createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
+});
+
+// ---------------------------------------------------------------------------
+// LOGS (доставка уведомлений — для /admin/logs)
+// ---------------------------------------------------------------------------
+
+export const notificationChannelEnum = pgEnum("notification_channel", ["telegram", "email"]);
+
+export const notificationLogs = pgTable("notification_logs", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  channel: notificationChannelEnum("channel").notNull(),
+  success: boolean("success").notNull(),
+  errorMessage: text("error_message"),
+  applicationId: uuid("application_id").references(() => applications.id, {
+    onDelete: "set null",
+  }),
   createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
 });
 

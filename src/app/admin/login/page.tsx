@@ -2,7 +2,6 @@ import { LoginForm } from "@/components/admin/login-form";
 import { Logo } from "@/components/brand/logo";
 
 export const metadata = {
-  title: "Вход в панель управления",
   robots: { index: false, follow: false },
 };
 

@@ -3,7 +3,6 @@ import { LegalPageShell, OperatorRequisites } from "@/components/legal/legal-pag
 import { getContactSettings } from "@/server/content/contact-settings";
 
 export const metadata: Metadata = {
-  title: "Согласие на обработку персональных данных",
   description: "Согласие субъекта на обработку персональных данных при отправке заявки на сайте.",
 };
 

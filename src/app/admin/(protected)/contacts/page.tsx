@@ -3,7 +3,7 @@ import { updateContactSettingsAction } from "./actions";
 import { AdminForm } from "@/components/admin/admin-form";
 import { AdminSubmitButton } from "@/components/admin/admin-submit-button";
 
-export const metadata = { title: "Контакты" };
+export const metadata = {};
 
 function Field({
   label,

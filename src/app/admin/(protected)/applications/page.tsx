@@ -3,7 +3,7 @@ import { ApplicationRepository, type ApplicationStatus } from "@/server/applicat
 import { ServiceRepository } from "@/server/services/repository";
 import { cn } from "@/lib/cn";
 
-export const metadata = { title: "Заявки" };
+export const metadata = {};
 
 const STATUSES: { value: ApplicationStatus | "all"; label: string }[] = [
   { value: "all", label: "Все" },
@@ -63,7 +63,9 @@ export default async function AdminApplicationsPage({
               }
               className={cn(
                 "rounded-md px-3 py-1.5 text-sm transition-colors",
-                statusParam === s.value ? "bg-foreground text-background" : "hover:bg-muted",
+                statusParam === s.value
+                  ? "bg-accent text-accent-foreground"
+                  : "text-foreground hover:bg-muted",
               )}
             >
               {s.label}
@@ -147,7 +149,9 @@ export default async function AdminApplicationsPage({
               href={`/admin/applications?page=${i + 1}${status ? `&status=${status}` : ""}`}
               className={cn(
                 "flex size-8 items-center justify-center rounded-md text-sm",
-                page === i + 1 ? "bg-foreground text-background" : "hover:bg-muted",
+                page === i + 1
+                  ? "bg-accent text-accent-foreground"
+                  : "text-foreground hover:bg-muted",
               )}
             >
               {i + 1}

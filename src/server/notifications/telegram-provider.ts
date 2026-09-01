@@ -11,18 +11,40 @@ function escapeHtml(value: string): string {
   return value.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
 }
 
+/**
+ * Кому пинговать в чате при новой заявке — список @юзернеймов через
+ * запятую в TELEGRAM_PING_USERNAMES (необязательно). Обычный текст
+ * "@username" в сообщении Telegram и так подсвечивается кликабельно и
+ * присылает уведомление тому пользователю, если бот с ним знаком по
+ * этому чату — отдельного API для "пинга" не нужно.
+ */
+function pingUsernames(): string[] {
+  const raw = process.env.TELEGRAM_PING_USERNAMES;
+  if (!raw) return [];
+  return raw
+    .split(",")
+    .map((u) => u.trim())
+    .filter(Boolean)
+    .map((u) => (u.startsWith("@") ? u : `@${u}`));
+}
+
 function buildMessage(payload: ApplicationNotificationPayload): string {
   const service = payload.serviceTitle ?? "не указана";
 
   const lines = [
-    `<b>Новая заявка (${payload.source === "quiz" ? "квиз" : "форма"})</b>`,
-    `Имя: ${escapeHtml(payload.name)}`,
+    `🆕 <b>Новая заявка (${payload.source === "quiz" ? "квиз" : "форма"})</b>`,
+    `Имя: <code>${escapeHtml(payload.name)}</code>`,
     payload.phone ? `Телефон: ${escapeHtml(payload.phone)}` : null,
     payload.telegram ? `Telegram: ${escapeHtml(payload.telegram)}` : null,
     payload.email ? `Email: ${escapeHtml(payload.email)}` : null,
-    `Услуга: ${escapeHtml(service)}`,
-    payload.message ? `Сообщение: ${escapeHtml(payload.message)}` : null,
+    `Услуга: <code>${escapeHtml(service)}</code>`,
+    payload.message ? `\nСообщение:\n<pre>${escapeHtml(payload.message)}</pre>` : null,
   ].filter(Boolean);
+
+  const ping = pingUsernames();
+  if (ping.length > 0) {
+    lines.push("", ping.join(" "));
+  }
 
   return lines.join("\n");
 }

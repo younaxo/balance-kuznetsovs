@@ -14,7 +14,7 @@ import {
   SelectItem,
 } from "@/components/ui/select";
 
-export const metadata = { title: "Прайс" };
+export const metadata = {};
 
 export default async function AdminPricesPage() {
   const [items, services] = await Promise.all([

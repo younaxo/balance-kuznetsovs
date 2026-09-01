@@ -90,7 +90,7 @@ npm run dev           # http://localhost:3000
 | БД | `DATABASE_URL` | строка подключения PostgreSQL |
 | Сессии | `SESSION_SECRET` | случайная строка ≥32 символов |
 | Bootstrap администратора | `ADMIN_EMAIL`, `ADMIN_INITIAL_PASSWORD` | только для `npm run seed:admin`, потом можно удалить из `.env` |
-| Telegram | `TELEGRAM_BOT_TOKEN`, `TELEGRAM_CHAT_ID` | уведомления о заявках в Telegram |
+| Telegram | `TELEGRAM_BOT_TOKEN`, `TELEGRAM_CHAT_ID`, `TELEGRAM_PING_USERNAMES` | уведомления о заявках в Telegram, кого пинговать (опционально) |
 | SMTP | `SMTP_HOST`, `SMTP_PORT`, `SMTP_USER`, `SMTP_PASS`, `SMTP_FROM`, `APPLICATION_EMAIL_TO` | уведомления о заявках на email |
 | Turnstile | `TURNSTILE_SECRET_KEY`, `NEXT_PUBLIC_TURNSTILE_SITE_KEY` | антиспам-виджет Cloudflare (опционально) |
 | Аналитика | `ANALYTICS_IP_HASH_SALT` | соль хеширования IP для rate limiting |
@@ -132,9 +132,11 @@ npm run seed:admin
 2. Узнайте `chat_id` получателя (например, через `@userinfobot` или
    `getUpdates` Bot API).
 3. Заполните `TELEGRAM_BOT_TOKEN`/`TELEGRAM_CHAT_ID` в `.env`.
+4. Опционально: `TELEGRAM_PING_USERNAMES` — через запятую, кого пинговать
+   в чате при каждой новой заявке (например, `@ivanov,@petrov`).
 
-Без этих переменных Telegram-уведомления просто не отправляются —
-заявка всё равно сохраняется в БД.
+Без `TELEGRAM_BOT_TOKEN`/`TELEGRAM_CHAT_ID` уведомления просто не
+отправляются — заявка всё равно сохраняется в БД.
 
 ## Email-уведомления (SMTP)
 

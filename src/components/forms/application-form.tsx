@@ -173,7 +173,7 @@ export function ApplicationForm({
           />
         </div>
         <div className="grid gap-1.5">
-          <Label htmlFor="telegram">Telegram / MAX</Label>
+          <Label htmlFor="telegram">Telegram</Label>
           <Input
             id="telegram"
             value={form.telegram}

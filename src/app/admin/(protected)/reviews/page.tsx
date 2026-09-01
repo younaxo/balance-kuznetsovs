@@ -13,7 +13,7 @@ import {
   SelectItem,
 } from "@/components/ui/select";
 
-export const metadata = { title: "Отзывы" };
+export const metadata = {};
 
 export default async function AdminReviewsPage() {
   const items = await ReviewRepository.listAll();

@@ -3,7 +3,6 @@ import { LegalPageShell, OperatorRequisites } from "@/components/legal/legal-pag
 import { getContactSettings } from "@/server/content/contact-settings";
 
 export const metadata: Metadata = {
-  title: "Пользовательское соглашение",
   description: "Правила использования сайта «Баланс Кузнецовы».",
 };
 

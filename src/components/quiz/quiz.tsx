@@ -306,7 +306,7 @@ export function Quiz({
                 onClick={() => update("preferredContact", "phone")}
               />
               <OptionCard
-                label="Telegram / MAX"
+                label="Telegram"
                 selected={state.preferredContact === "telegram"}
                 onClick={() => update("preferredContact", "telegram")}
               />
@@ -353,7 +353,7 @@ export function Quiz({
                   />
                 </div>
                 <div className="grid gap-1.5">
-                  <Label htmlFor="quiz-telegram">Telegram / MAX</Label>
+                  <Label htmlFor="quiz-telegram">Telegram</Label>
                   <Input
                     id="quiz-telegram"
                     value={state.telegram}

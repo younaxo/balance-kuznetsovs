@@ -14,7 +14,7 @@ import {
 } from "@/components/ui/select";
 import { createAdminUserAction, toggleAdminUserActiveAction } from "./actions";
 
-export const metadata = { title: "Настройки" };
+export const metadata = {};
 
 export default async function AdminSettingsPage() {
   const session = await getCurrentAdmin();

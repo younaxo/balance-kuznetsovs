@@ -4,7 +4,7 @@ import { cn } from "@/lib/cn";
 import { BarList } from "@/components/admin/bar-list";
 import { UtmBuilder } from "@/components/admin/utm-builder";
 
-export const metadata = { title: "Аналитика" };
+export const metadata = {};
 
 const EVENT_LABELS: Record<string, string> = {
   page_view: "Просмотры страниц",

@@ -18,7 +18,7 @@ const serviceSlugSchema = z
 
 // Достаточно либеральный формат телефона: цифры, пробелы, +, -, (), от 10 знаков.
 const phoneRegex = /^[+()\-\s\d]{10,25}$/;
-// Telegram/MAX-юзернейм: латиница/цифры/подчёркивание, 3-64 символа, опциональный @.
+// Telegram-юзернейм: латиница/цифры/подчёркивание, 3-64 символа, опциональный @.
 const handleRegex = /^@?[a-zA-Z0-9_]{3,64}$/;
 
 const trimmedString = (max: number) => z.string().trim().max(max);
@@ -27,7 +27,7 @@ export const applicationBaseSchema = z.object({
   name: trimmedString(200).min(2, "Укажите имя"),
   phone: trimmedString(25).regex(phoneRegex, "Некорректный телефон").optional().or(z.literal("")),
   telegram: trimmedString(100)
-    .regex(handleRegex, "Некорректный Telegram/MAX")
+    .regex(handleRegex, "Некорректный Telegram")
     .optional()
     .or(z.literal("")),
   email: z.string().trim().email("Некорректный email").max(255).optional().or(z.literal("")),
@@ -40,9 +40,9 @@ export const applicationBaseSchema = z.object({
 });
 
 export const applicationSchema = applicationBaseSchema.refine(
-  (data) => Boolean(data.phone || data.telegram || data.email),
+  (data) => Boolean(data.phone || data.email),
   {
-    error: "Укажите хотя бы один способ связи: телефон, Telegram/MAX или email",
+    error: "Укажите телефон или email — это обязательные способы связи",
     path: ["phone"],
   },
 );
@@ -65,8 +65,8 @@ export const quizSubmissionSchema = applicationBaseSchema
   .extend({
     quizAnswers: quizAnswersSchema,
   })
-  .refine((data) => Boolean(data.phone || data.telegram || data.email), {
-    error: "Укажите хотя бы один способ связи: телефон, Telegram/MAX или email",
+  .refine((data) => Boolean(data.phone || data.email), {
+    error: "Укажите телефон или email — это обязательные способы связи",
     path: ["phone"],
   });
 

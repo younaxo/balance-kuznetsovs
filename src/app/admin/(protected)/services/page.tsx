@@ -14,7 +14,7 @@ import {
   SelectItem,
 } from "@/components/ui/select";
 
-export const metadata = { title: "Услуги" };
+export const metadata = {};
 
 const ILLUSTRATION_LABELS: Record<string, string> = {
   "personal-data": "Персональные данные (щит)",
