@@ -2,6 +2,7 @@ import Link from "next/link";
 import { getAnalyticsSummary } from "@/server/analytics/reporting";
 import { cn } from "@/lib/cn";
 import { BarList } from "@/components/admin/bar-list";
+import { UtmBuilder } from "@/components/admin/utm-builder";
 
 export const metadata = { title: "Аналитика" };
 
@@ -56,7 +57,9 @@ export default async function AdminAnalyticsPage({ searchParams }: PageProps<"/a
               href={`/admin/analytics?days=${opt.days}`}
               className={cn(
                 "rounded-md px-3 py-1.5 text-sm",
-                days === opt.days ? "bg-foreground text-background" : "hover:bg-muted",
+                days === opt.days
+                  ? "bg-accent text-accent-foreground"
+                  : "text-foreground hover:bg-muted",
               )}
             >
               {opt.label}
@@ -71,6 +74,8 @@ export default async function AdminAnalyticsPage({ searchParams }: PageProps<"/a
         <StatCard label="Заявки" value={summary.applications} />
         <StatCard label="Конверсия в заявку" value={`${conversion.toFixed(1)}%`} />
       </div>
+
+      <UtmBuilder />
 
       <div className="grid gap-6 lg:grid-cols-2">
         <Panel title="События">
