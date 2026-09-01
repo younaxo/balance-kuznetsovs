@@ -15,6 +15,7 @@ import {
   LogOut,
 } from "lucide-react";
 import { logoutAction } from "@/app/admin/logout-action";
+import { Logo } from "@/components/brand/logo";
 
 const NAV = [
   { href: "/admin", label: "Дашборд", icon: LayoutDashboard },
@@ -46,8 +47,8 @@ export function AdminShell({
     <div className="bg-muted/30 flex min-h-screen">
       <aside className="border-border bg-surface hidden w-60 shrink-0 flex-col border-r md:flex">
         <div className="border-border border-b p-5">
-          <p className="font-display text-lg">БАЛАНС КУЗНЕЦОВЫ</p>
-          <p className="text-muted-foreground text-xs">Дашборд</p>
+          <Logo height={32} />
+          <p className="text-muted-foreground mt-2 text-xs">Дашборд</p>
         </div>
         <nav className="flex flex-1 flex-col gap-0.5 p-3">
           {NAV.map((item) => (

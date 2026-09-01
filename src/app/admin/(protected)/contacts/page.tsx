@@ -34,13 +34,7 @@ export default async function AdminContactsPage() {
 
   return (
     <div className="flex flex-col gap-8">
-      <div>
-        <h1 className="font-display text-2xl">Контакты</h1>
-        <p className="text-muted-foreground mt-1 text-sm">
-          Пока поля пустые — публичный сайт не показывает выдуманные контакты. Заполните реальные
-          данные, чтобы они появились в шапке, футере и на странице «Контакты».
-        </p>
-      </div>
+      <h1 className="font-display text-2xl">Контакты</h1>
 
       <AdminForm action={updateContactSettingsAction} className="grid max-w-2xl gap-8">
         <section className="border-border bg-surface grid gap-4 rounded-lg border p-6">

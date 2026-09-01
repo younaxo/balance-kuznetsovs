@@ -10,10 +10,10 @@ export function TasksSection() {
           <h2 className="font-display text-3xl sm:text-4xl">С какими задачами к нам обращаются?</h2>
         </Reveal>
 
-        {/* flex-wrap + justify-center вместо grid: нечётное число карточек
-            (5) не даёт кривой раскладки "3 сверху + 2 внизу прижаты
-            влево" — последняя неполная строка просто центрируется, все
-            карточки при этом остаются одного размера. */}
+        {/* flex-wrap + justify-center вместо grid: ровно 3 карточки в
+            ряд на десктопе (basis считает ширину под 3 колонки с учётом
+            gap), нечётный остаток (2 карточки) просто центрируется в
+            своём ряду, а не прижимается влево — как просили. */}
         <div className="mt-12 flex flex-wrap justify-center gap-6">
           {CLIENT_TASKS.map((task, index) => {
             const Illustration = ILLUSTRATIONS[task.illustration];
@@ -21,7 +21,7 @@ export function TasksSection() {
               <Reveal
                 key={task.title}
                 delay={index * 0.05}
-                className="border-border bg-surface flex w-full max-w-80 flex-1 basis-72 flex-col items-center rounded-lg border p-7 text-center"
+                className="border-border bg-surface flex basis-full flex-col items-center rounded-lg border p-7 text-center sm:basis-[calc(50%-0.75rem)] lg:basis-[calc(33.333%-1rem)]"
               >
                 <Illustration className="text-foreground/80 h-14 w-16" />
                 <h3 className="mt-6 text-lg font-semibold">{task.title}</h3>

@@ -29,9 +29,9 @@ export function SiteHeader() {
         scrolled ? "glass-surface shadow-[0_1px_0_0_var(--color-border)]" : "bg-background/0",
       )}
     >
-      <div className="container-page flex h-18 items-center justify-between py-3">
+      <div className="container-page flex h-22 items-center justify-between py-3">
         <TrackedLink href="/" sourceElement="header_logo" className="shrink-0">
-          <Logo height={36} priority />
+          <Logo height={52} priority />
         </TrackedLink>
 
         <nav className="hidden items-center gap-7 lg:flex" aria-label="Основная навигация">

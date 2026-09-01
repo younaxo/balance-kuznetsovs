@@ -44,12 +44,7 @@ export default async function AdminAnalyticsPage({ searchParams }: PageProps<"/a
   return (
     <div className="flex flex-col gap-8">
       <div className="flex flex-wrap items-center justify-between gap-4">
-        <div>
-          <h1 className="font-display text-2xl">Аналитика</h1>
-          <p className="text-muted-foreground mt-1 text-sm">
-            Собственная first-party аналитика (только с согласия посетителя)
-          </p>
-        </div>
+        <h1 className="font-display text-2xl">Аналитика</h1>
         <nav className="flex gap-1">
           {RANGE_OPTIONS.map((opt) => (
             <Link

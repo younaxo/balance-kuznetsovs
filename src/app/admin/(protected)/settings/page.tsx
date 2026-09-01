@@ -36,9 +36,6 @@ export default async function AdminSettingsPage() {
 
       <section className="border-border bg-surface max-w-sm rounded-lg border p-6">
         <h2 className="font-medium">Смена пароля</h2>
-        <p className="text-muted-foreground mt-1 text-sm">
-          Смените пароль — и все остальные ваши сессии сразу же завершатся.
-        </p>
         <div className="mt-4">
           <ChangePasswordForm />
         </div>
@@ -46,9 +43,6 @@ export default async function AdminSettingsPage() {
 
       <section className="border-border bg-surface max-w-xl rounded-lg border p-6">
         <h2 className="font-medium">Активные сессии</h2>
-        <p className="text-muted-foreground mt-1 text-sm">
-          Все устройства, с которых сейчас открыт вход в админку под вашей учёткой.
-        </p>
         <ul className="divide-border mt-4 flex flex-col divide-y">
           {sessions.map((s) => {
             const isCurrent = s.id === currentSessionId;
@@ -82,10 +76,6 @@ export default async function AdminSettingsPage() {
       {session.adminUser.role === "owner" && (
         <section className="border-border bg-surface max-w-xl rounded-lg border p-6">
           <h2 className="font-medium">Сотрудники</h2>
-          <p className="text-muted-foreground mt-1 text-sm">
-            У кого есть свой вход в админку. Выключить доступ можно в любой момент — учётка
-            останется, просто перестанет пускать.
-          </p>
 
           <ul className="divide-border mt-4 flex flex-col divide-y">
             {employees.map((e) => (

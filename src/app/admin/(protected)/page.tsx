@@ -20,10 +20,7 @@ export default async function AdminDashboardPage() {
 
   return (
     <div className="flex flex-col gap-8">
-      <div>
-        <h1 className="font-display text-2xl">Дашборд</h1>
-        <p className="text-muted-foreground mt-1 text-sm">Обзор заявок и активности сайта</p>
-      </div>
+      <h1 className="font-display text-2xl">Дашборд</h1>
 
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
         <StatCard label="Всего заявок" value={total} />
