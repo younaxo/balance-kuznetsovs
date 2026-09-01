@@ -22,7 +22,7 @@ export function HeroSection() {
           transition={{ duration: 0.5 }}
           className="text-muted-foreground text-xs font-medium tracking-[0.2em] uppercase"
         >
-          Юридическая компания «Баланс Кузнецовы»
+          «Баланс Кузнецовы»
         </motion.p>
 
         <motion.h1

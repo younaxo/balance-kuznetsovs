@@ -7,7 +7,7 @@ import { ServiceRepository } from "@/server/services/repository";
 
 export const metadata: Metadata = {
   title: "Контакты",
-  description: "Свяжитесь с юридической компанией «Баланс Кузнецовы».",
+  description: "Свяжитесь с «Баланс Кузнецовы».",
 };
 
 export default async function ContactsPage() {
