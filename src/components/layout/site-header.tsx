@@ -25,7 +25,7 @@ export function SiteHeader() {
   return (
     <header
       className={cn(
-        "sticky top-0 z-40 w-full transition-shadow duration-300",
+        "sticky top-0 z-40 w-full transition-shadow duration-300 print:hidden",
         scrolled ? "glass-surface shadow-[0_1px_0_0_var(--color-border)]" : "bg-background/0",
       )}
     >

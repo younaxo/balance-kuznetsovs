@@ -8,6 +8,8 @@ const PAGES: { path: string; heading: string | RegExp }[] = [
   { path: "/reviews", heading: "Отзывы клиентов" },
   { path: "/contacts", heading: "Контакты" },
   { path: "/privacy", heading: /персональных данных/i },
+  { path: "/confidentiality", heading: /конфиденциальности/i },
+  { path: "/offer", heading: /оферта/i },
   { path: "/personal-data-consent", heading: /Согласие/ },
   { path: "/cookies", heading: /cookie/i },
   { path: "/terms", heading: /соглашение/i },

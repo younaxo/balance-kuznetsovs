@@ -19,7 +19,7 @@ export async function SiteBanner() {
   const hasSafeImage = Boolean(banner.imageFilename && SAFE_FILENAME.test(banner.imageFilename));
 
   return (
-    <div className="bg-graphite text-graphite-foreground">
+    <div className="bg-graphite text-graphite-foreground print:hidden">
       <div className="container-page flex flex-wrap items-center justify-between gap-3 py-2.5 text-sm">
         <div className="flex items-center gap-3">
           {hasSafeImage && (

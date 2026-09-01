@@ -21,10 +21,6 @@ export async function updateContactSettingsAction(
     maxMessenger: formData.get("maxMessenger") || "",
     address: formData.get("address") || "",
     workingHours: formData.get("workingHours") || "",
-    operatorFullName: formData.get("operatorFullName") || "",
-    operatorInn: formData.get("operatorInn") || "",
-    operatorOgrn: formData.get("operatorOgrn") || "",
-    operatorAddress: formData.get("operatorAddress") || "",
   });
   if (!parsed.success) {
     return { ok: false, error: parsed.error.issues[0]?.message ?? "Некорректные данные" };

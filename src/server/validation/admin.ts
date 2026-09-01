@@ -34,6 +34,10 @@ export const priceItemUpsertSchema = z.object({
   isPublished: z.boolean(),
 });
 
+// Реквизиты оператора ПДн (ФИО, статус, ИНН, email, адрес) сюда
+// намеренно не входят — они больше не редактируются из админки (это
+// официальные юридические данные из подписанных документов, менять их
+// через форму настроек больше нельзя), см. /admin/contacts.
 export const contactSettingsUpdateSchema = z.object({
   phone: z.string().trim().max(40).optional().or(z.literal("")),
   email: z.string().trim().email().max(255).optional().or(z.literal("")),
@@ -41,8 +45,4 @@ export const contactSettingsUpdateSchema = z.object({
   maxMessenger: z.string().trim().max(150).optional().or(z.literal("")),
   address: z.string().trim().max(1000).optional().or(z.literal("")),
   workingHours: z.string().trim().max(255).optional().or(z.literal("")),
-  operatorFullName: z.string().trim().max(1000).optional().or(z.literal("")),
-  operatorInn: z.string().trim().max(20).optional().or(z.literal("")),
-  operatorOgrn: z.string().trim().max(20).optional().or(z.literal("")),
-  operatorAddress: z.string().trim().max(1000).optional().or(z.literal("")),
 });

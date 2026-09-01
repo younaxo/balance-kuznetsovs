@@ -170,10 +170,17 @@ export const contactSettings = pgTable("contact_settings", {
   address: text("address"),
   workingHours: varchar("working_hours", { length: 255 }),
 
-  // Реквизиты оператора ПДн для юридических страниц.
+  // Реквизиты оператора ПДн для юридических страниц. Оператор —
+  // самозанятая (плательщик НПД), поэтому ОГРН/ОГРНИП у неё нет:
+  // operatorOgrn оставлен в схеме для обратной совместимости, но больше
+  // нигде не используется — вместо него operatorStatus ("плательщик
+  // налога на профессиональный доход" и т.п.). Эти поля больше не
+  // редактируются из админки (см. /admin/contacts) — только напрямую в БД.
   operatorFullName: text("operator_full_name"),
+  operatorStatus: varchar("operator_status", { length: 200 }),
   operatorInn: varchar("operator_inn", { length: 20 }),
   operatorOgrn: varchar("operator_ogrn", { length: 20 }),
+  operatorEmail: varchar("operator_email", { length: 255 }),
   operatorAddress: text("operator_address"),
 
   updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow(),
