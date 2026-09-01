@@ -12,14 +12,7 @@ export default async function AdminBannerPage() {
 
   return (
     <div className="flex flex-col gap-8">
-      <div>
-        <h1 className="font-display text-2xl">Баннер</h1>
-        <p className="text-muted-foreground mt-1 text-sm">
-          Узкая плашка над шапкой сайта — для акций, новостей, всего важного. Текст понимает
-          markdown (**жирный**), можно добавить кнопку-ссылку и маленькую иконку. Пока не включена —
-          на сайте её не видно.
-        </p>
-      </div>
+      <h1 className="font-display text-2xl">Баннер</h1>
 
       <AdminForm
         action={updateSiteBannerAction}

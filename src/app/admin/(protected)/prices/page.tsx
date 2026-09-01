@@ -24,13 +24,7 @@ export default async function AdminPricesPage() {
 
   return (
     <div className="flex flex-col gap-8">
-      <div>
-        <h1 className="font-display text-2xl">Прайс</h1>
-        <p className="text-muted-foreground mt-1 text-sm">
-          Пока пусто — раздел «Прайс» на сайте так и говорит гостям: цены уточняются. Как только
-          добавите здесь позиции, они сразу появятся на сайте.
-        </p>
-      </div>
+      <h1 className="font-display text-2xl">Прайс</h1>
 
       <section className="border-border bg-surface rounded-lg border">
         <ul className="divide-border divide-y">

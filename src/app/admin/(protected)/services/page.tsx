@@ -29,13 +29,7 @@ export default async function AdminServicesPage() {
 
   return (
     <div className="flex flex-col gap-8">
-      <div>
-        <h1 className="font-display text-2xl">Услуги</h1>
-        <p className="text-muted-foreground mt-1 text-sm">
-          Здесь все услуги — правьте что угодно: заголовок, текст, кнопку, картинку, порядок и видна
-          ли услуга на сайте. Сохранили — сайт обновится сразу же.
-        </p>
-      </div>
+      <h1 className="font-display text-2xl">Услуги</h1>
 
       <section className="border-border bg-surface rounded-lg border">
         <ul className="divide-border divide-y">

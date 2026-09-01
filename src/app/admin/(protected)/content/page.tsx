@@ -16,13 +16,7 @@ export default async function AdminContentPage() {
 
   return (
     <div className="flex flex-col gap-8">
-      <div>
-        <h1 className="font-display text-2xl">Контент</h1>
-        <p className="text-muted-foreground mt-1 text-sm">
-          Блоки, для которых пока не предоставлен текст. Пока блок не опубликован — на сайте он не
-          показывается.
-        </p>
-      </div>
+      <h1 className="font-display text-2xl">Контент</h1>
 
       <div className="grid gap-6">
         {CONTENT_BLOCK_KEYS.map(({ key, label }) => {

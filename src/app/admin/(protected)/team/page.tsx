@@ -13,14 +13,7 @@ export default async function AdminTeamPage() {
 
   return (
     <div className="flex flex-col gap-8">
-      <div>
-        <h1 className="font-display text-2xl">Команда</h1>
-        <p className="text-muted-foreground mt-1 text-sm">
-          У карточки сотрудника всего два поля — ФИО и фото, без придуманных должностей и стажа.
-          Загрузите любое фото — мы сами обрежем и подгоним его под общий размер, чтобы карточки
-          смотрелись одинаково.
-        </p>
-      </div>
+      <h1 className="font-display text-2xl">Команда</h1>
 
       <section className="border-border bg-surface rounded-lg border">
         <ul className="divide-border divide-y">

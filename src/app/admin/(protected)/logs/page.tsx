@@ -13,13 +13,7 @@ export default async function AdminLogsPage() {
 
   return (
     <div className="flex flex-col gap-8">
-      <div>
-        <h1 className="font-display text-2xl">Логи</h1>
-        <p className="text-muted-foreground mt-1 text-sm">
-          Кто и когда пытался отправить уведомление о заявке — Telegram, email — и получилось ли.
-          Последние 150 записей.
-        </p>
-      </div>
+      <h1 className="font-display text-2xl">Логи</h1>
 
       <section className="border-border bg-surface rounded-lg border">
         <ul className="divide-border divide-y">
