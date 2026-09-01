@@ -194,6 +194,20 @@ export const contentBlocks = pgTable(
   (table) => [uniqueIndex("content_blocks_key_unique").on(table.key)],
 );
 
+export const teamMembers = pgTable("team_members", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  fullName: varchar("full_name", { length: 200 }).notNull(),
+  // Имя файла фото в public/team/<photoFilename> (asset-slot: файл
+  // подкладывается на сервер вручную, БД хранит только имя — см.
+  // components/sections/about-section.tsx). NULL — рендерится плейсхолдер
+  // с инициалами вместо фото.
+  photoFilename: varchar("photo_filename", { length: 255 }),
+  order: integer("order").notNull().default(0),
+  isPublished: boolean("is_published").notNull().default(true),
+  createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
+  updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow(),
+});
+
 // ---------------------------------------------------------------------------
 // REVIEWS (отзывы)
 // ---------------------------------------------------------------------------

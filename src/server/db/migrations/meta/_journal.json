@@ -15,6 +15,13 @@
       "when": 1788188522195,
       "tag": "0001_amazing_leech",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1788266869905,
+      "tag": "0002_sweet_emma_frost",
+      "breakpoints": true
     }
   ]
 }

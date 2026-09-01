@@ -4,31 +4,30 @@
 /*
  * Design tokens «БАЛАНС КУЗНЕЦОВЫ».
  *
- * Строго монохромная база (белый / off-white / графит / чёрный) —
- * никакого синего или другого цветного акцента: "accent" — это чёрный
- * в светлой теме и белый в тёмной (используется и для выделения текста,
- * и для фокус-кольца, и для CTA-акцентов). Радиусы небольшие, границы
- * тонкие — издательская, архитектурная эстетика вместо типового
- * SaaS-скругления и цветных градиентов. Токены продублированы для
- * light/dark и не зависят от порядка загрузки — тема применяется без
- * "мигания".
+ * Тёплая нейтральная база (белый / бежевый / серый / графит) — никакого
+ * синего или другого цветного акцента: "accent" — это чёрный в светлой
+ * теме и белый в тёмной (используется и для выделения текста, и для
+ * фокус-кольца, и для CTA-акцентов). Радиусы небольшие, границы тонкие —
+ * издательская, архитектурная эстетика вместо типового SaaS-скругления
+ * и цветных градиентов. Токены продублированы для light/dark и не
+ * зависят от порядка загрузки — тема применяется без "мигания".
  */
 
 :root {
-  --background: #fbfbf9;
-  --foreground: #14161a;
+  --background: #faf8f4;
+  --foreground: #1c1a17;
 
   --surface: #ffffff;
-  --surface-foreground: #14161a;
+  --surface-foreground: #1c1a17;
 
-  --muted: #f0efec;
-  --muted-foreground: #5b5f66;
+  --muted: #f0ebe3;
+  --muted-foreground: #6b6459;
 
-  --border: #e3e2dd;
-  --border-strong: #c9c8c2;
+  --border: #e6e1d8;
+  --border-strong: #cac2b3;
 
-  --graphite: #1c1d20;
-  --graphite-foreground: #f4f4f2;
+  --graphite: #201d18;
+  --graphite-foreground: #f5f1ea;
   --graphite-border: rgba(255, 255, 255, 0.1);
 
   --accent: #000000;
@@ -37,63 +36,63 @@
   --destructive: #8c2f2f;
   --destructive-foreground: #ffffff;
 
-  --ring: #14161a;
+  --ring: #1c1a17;
 
   --radius: 0.5rem;
 }
 
 :root:not([data-theme="light"]) {
   @media (prefers-color-scheme: dark) {
-    --background: #0a0b0d;
-    --foreground: #f1f1ef;
+    --background: #0c0b09;
+    --foreground: #f2efe9;
 
-    --surface: #131417;
-    --surface-foreground: #f1f1ef;
+    --surface: #161510;
+    --surface-foreground: #f2efe9;
 
-    --muted: #1a1b1f;
-    --muted-foreground: #9a9da5;
+    --muted: #1f1c16;
+    --muted-foreground: #a89f8f;
 
-    --border: #232429;
-    --border-strong: #33353b;
+    --border: #28241c;
+    --border-strong: #3a352a;
 
-    --graphite: #0e0f11;
-    --graphite-foreground: #f4f4f2;
+    --graphite: #100e0a;
+    --graphite-foreground: #f5f1ea;
     --graphite-border: rgba(255, 255, 255, 0.08);
 
     --accent: #ffffff;
-    --accent-foreground: #0a0b0d;
+    --accent-foreground: #0c0b09;
 
     --destructive: #d97a7a;
     --destructive-foreground: #1a0a0a;
 
-    --ring: #f1f1ef;
+    --ring: #f2efe9;
   }
 }
 
 :root[data-theme="dark"] {
-  --background: #0a0b0d;
-  --foreground: #f1f1ef;
+  --background: #0c0b09;
+  --foreground: #f2efe9;
 
-  --surface: #131417;
-  --surface-foreground: #f1f1ef;
+  --surface: #161510;
+  --surface-foreground: #f2efe9;
 
-  --muted: #1a1b1f;
-  --muted-foreground: #9a9da5;
+  --muted: #1f1c16;
+  --muted-foreground: #a89f8f;
 
-  --border: #232429;
-  --border-strong: #33353b;
+  --border: #28241c;
+  --border-strong: #3a352a;
 
-  --graphite: #0e0f11;
-  --graphite-foreground: #f4f4f2;
+  --graphite: #100e0a;
+  --graphite-foreground: #f5f1ea;
   --graphite-border: rgba(255, 255, 255, 0.08);
 
   --accent: #ffffff;
-  --accent-foreground: #0a0b0d;
+  --accent-foreground: #0c0b09;
 
   --destructive: #d97a7a;
   --destructive-foreground: #1a0a0a;
 
-  --ring: #f1f1ef;
+  --ring: #f2efe9;
 }
 
 @theme inline {

@@ -3,7 +3,7 @@ import { PricesSection } from "@/components/sections/prices-section";
 
 export const metadata: Metadata = {
   title: "Прайс",
-  description: "Стоимость юридических услуг компании «Баланс Кузнецовы».",
+  description: "Стоимость юридических услуг «Баланс Кузнецовы».",
 };
 
 export default function PricesPage() {

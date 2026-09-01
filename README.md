@@ -93,10 +93,10 @@ npm run dev           # http://localhost:3000
 | Telegram | `TELEGRAM_BOT_TOKEN`, `TELEGRAM_CHAT_ID` | уведомления о заявках в Telegram |
 | SMTP | `SMTP_HOST`, `SMTP_PORT`, `SMTP_USER`, `SMTP_PASS`, `SMTP_FROM`, `APPLICATION_EMAIL_TO` | уведомления о заявках на email |
 | Turnstile | `TURNSTILE_SECRET_KEY`, `NEXT_PUBLIC_TURNSTILE_SITE_KEY` | антиспам-виджет Cloudflare (опционально) |
-| Аналитика | `ANALYTICS_IP_HASH_SALT`, `NEXT_PUBLIC_YANDEX_METRICA_ID` | соль хеширования IP для rate limiting; ID счётчика Метрики |
+| Аналитика | `ANALYTICS_IP_HASH_SALT` | соль хеширования IP для rate limiting |
 | Прочее | `NEXT_PUBLIC_SITE_URL` | публичный адрес сайта (canonical/OG) |
 
-Каждая интеграция (Telegram/SMTP/Turnstile/Метрика) **опциональна** —
+Каждая интеграция (Telegram/SMTP/Turnstile) **опциональна** —
 если переменные не заданы, соответствующая функциональность просто не
 активируется, приложение не падает.
 
@@ -141,12 +141,6 @@ npm run seed:admin
 Заполните `SMTP_HOST`/`SMTP_PORT`/`SMTP_USER`/`SMTP_PASS`/`SMTP_FROM`/
 `APPLICATION_EMAIL_TO` в `.env`. Поддерживается любой стандартный SMTP
 (порт 465 — implicit TLS, остальные — STARTTLS).
-
-## Яндекс.Метрика
-
-Задайте `NEXT_PUBLIC_YANDEX_METRICA_ID`. Счётчик подключается на клиенте
-только после согласия пользователя на аналитику (cookie-баннер) и
-независимо от собственной first-party аналитики сайта.
 
 ## Cloudflare Turnstile
 

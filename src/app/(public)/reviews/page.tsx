@@ -3,7 +3,7 @@ import { ReviewsSection } from "@/components/sections/reviews-section";
 
 export const metadata: Metadata = {
   title: "Отзывы",
-  description: "Отзывы клиентов юридической компании «Баланс Кузнецовы».",
+  description: "Отзывы клиентов «Баланс Кузнецовы».",
 };
 
 export default function ReviewsPage() {
