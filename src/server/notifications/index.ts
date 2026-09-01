@@ -1,6 +1,7 @@
 import "server-only";
 import { TelegramNotificationProvider } from "./telegram-provider";
 import { EmailNotificationProvider } from "./email-provider";
+import { NotificationLogRepository } from "./log-repository";
 import type { ApplicationNotificationPayload, NotificationProvider } from "./types";
 
 const providers: NotificationProvider[] = [
@@ -41,6 +42,15 @@ export async function dispatchApplicationNotifications(
     const { name, outcome } = item.value;
     if (name === "telegram") result.telegram = outcome.success;
     if (name === "email") result.email = outcome.success;
+
+    if (name === "telegram" || name === "email") {
+      await NotificationLogRepository.log({
+        channel: name,
+        success: outcome.success,
+        errorMessage: outcome.error,
+        applicationId: payload.id,
+      });
+    }
   }
 
   return result;
