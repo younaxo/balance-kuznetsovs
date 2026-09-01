@@ -13,7 +13,6 @@ import {
   LogOut,
 } from "lucide-react";
 import { logoutAction } from "@/app/admin/logout-action";
-import { ThemeToggle } from "@/components/layout/theme-toggle";
 
 const NAV = [
   { href: "/admin", label: "Дашборд", icon: LayoutDashboard },
@@ -42,12 +41,9 @@ export function AdminShell({
   return (
     <div className="bg-muted/30 flex min-h-screen">
       <aside className="border-border bg-surface hidden w-60 shrink-0 flex-col border-r md:flex">
-        <div className="border-border flex items-start justify-between border-b p-5">
-          <div>
-            <p className="font-display text-lg">БАЛАНС КУЗНЕЦОВЫ</p>
-            <p className="text-muted-foreground text-xs">Панель управления</p>
-          </div>
-          <ThemeToggle />
+        <div className="border-border border-b p-5">
+          <p className="font-display text-lg">БАЛАНС КУЗНЕЦОВЫ</p>
+          <p className="text-muted-foreground text-xs">Панель управления</p>
         </div>
         <nav className="flex flex-1 flex-col gap-0.5 p-3">
           {NAV.map((item) => (

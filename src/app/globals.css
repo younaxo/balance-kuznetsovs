@@ -6,12 +6,10 @@
  *
  * Тёплая нейтральная база (белый / бежевый / серый / графит) — никакого
  * синего. "accent" — единственное цветное пятно на весь сайт: наш
- * коричневый в светлой теме (кнопки, выделение текста, фокус-кольцо),
- * белый в тёмной (там акцент остаётся монохромным). Радиусы небольшие,
- * границы тонкие — издательская, архитектурная эстетика вместо типового
- * SaaS-скругления и цветных градиентов. Токены продублированы для
- * light/dark и не зависят от порядка загрузки — тема применяется без
- * "мигания".
+ * коричневый (кнопки, выделение текста, фокус-кольцо). Сайт только
+ * светлый — тёмной темы больше нет (было — убрали по просьбе клиента).
+ * Радиусы небольшие, границы тонкие — издательская, архитектурная
+ * эстетика вместо типового SaaS-скругления и цветных градиентов.
  */
 
 :root {
@@ -31,69 +29,15 @@
   --graphite-foreground: #f5f1ea;
   --graphite-border: rgba(255, 255, 255, 0.1);
 
-  --accent: #6f4a30;
+  --accent: #5c3d29;
   --accent-foreground: #faf8f4;
 
   --destructive: #8c2f2f;
   --destructive-foreground: #ffffff;
 
-  --ring: #6f4a30;
+  --ring: #5c3d29;
 
   --radius: 0.5rem;
-}
-
-:root:not([data-theme="light"]) {
-  @media (prefers-color-scheme: dark) {
-    --background: #0c0b09;
-    --foreground: #f2efe9;
-
-    --surface: #161510;
-    --surface-foreground: #f2efe9;
-
-    --muted: #1f1c16;
-    --muted-foreground: #a89f8f;
-
-    --border: #28241c;
-    --border-strong: #3a352a;
-
-    --graphite: #100e0a;
-    --graphite-foreground: #f5f1ea;
-    --graphite-border: rgba(255, 255, 255, 0.08);
-
-    --accent: #ffffff;
-    --accent-foreground: #0c0b09;
-
-    --destructive: #d97a7a;
-    --destructive-foreground: #1a0a0a;
-
-    --ring: #f2efe9;
-  }
-}
-
-:root[data-theme="dark"] {
-  --background: #0c0b09;
-  --foreground: #f2efe9;
-
-  --surface: #161510;
-  --surface-foreground: #f2efe9;
-
-  --muted: #1f1c16;
-  --muted-foreground: #a89f8f;
-
-  --border: #28241c;
-  --border-strong: #3a352a;
-
-  --graphite: #100e0a;
-  --graphite-foreground: #f5f1ea;
-  --graphite-border: rgba(255, 255, 255, 0.08);
-
-  --accent: #ffffff;
-  --accent-foreground: #0c0b09;
-
-  --destructive: #d97a7a;
-  --destructive-foreground: #1a0a0a;
-
-  --ring: #f2efe9;
 }
 
 @theme inline {
@@ -129,10 +73,6 @@
 
   html {
     color-scheme: light;
-  }
-
-  html[data-theme="dark"] {
-    color-scheme: dark;
   }
 
   body {
@@ -251,22 +191,4 @@ html {
 ::-webkit-scrollbar-thumb:hover {
   background-color: var(--color-muted-foreground);
   background-clip: padding-box;
-}
-
-/* "Большая" анимация переключения темы (View Transitions API) — круг
-   расширяется из точки клика по кнопке темы. Отключаем стандартный
-   next/prev кросс-фейд, чтобы был виден только наш clip-path-круг
-   (см. src/lib/view-transition-theme.ts). */
-::view-transition-old(root),
-::view-transition-new(root) {
-  animation: none;
-  mix-blend-mode: normal;
-}
-
-::view-transition-old(root) {
-  z-index: 1;
-}
-
-::view-transition-new(root) {
-  z-index: 2;
 }

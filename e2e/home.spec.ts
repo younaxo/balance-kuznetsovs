@@ -47,13 +47,4 @@ test.describe("Главная страница", () => {
     await page.getByRole("button", { name: "Закрыть меню" }).click();
     await expect(page.getByRole("button", { name: "Закрыть меню" })).toBeHidden();
   });
-
-  test("переключение темы работает и не ломает страницу", async ({ page }) => {
-    await page.setViewportSize({ width: 1440, height: 900 });
-    await page.goto("/");
-    const toggle = page.getByRole("button", { name: /тёмную тему|светлую тему/ });
-    await toggle.click();
-    await expect(page.locator("html")).toHaveAttribute("data-theme", /light|dark/);
-    await expect(page.getByRole("heading", { level: 1 })).toBeVisible();
-  });
 });

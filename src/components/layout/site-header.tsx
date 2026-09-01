@@ -5,7 +5,6 @@ import { usePathname } from "next/navigation";
 import { Logo } from "@/components/brand/logo";
 import { TrackedLink } from "@/components/analytics/tracked-link";
 import { Button } from "@/components/ui/button";
-import { ThemeToggle } from "./theme-toggle";
 import { MobileMenu } from "./mobile-menu";
 import { NAV_ITEMS } from "./nav-items";
 import { useDialogs } from "@/components/dialogs/dialog-manager";
@@ -54,9 +53,6 @@ export function SiteHeader() {
         </nav>
 
         <div className="flex items-center gap-1.5">
-          <div className="hidden lg:block">
-            <ThemeToggle />
-          </div>
           <Button
             variant="primary"
             size="sm"
