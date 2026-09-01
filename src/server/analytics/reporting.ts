@@ -17,7 +17,10 @@ export interface AnalyticsSummary {
   quizCompletions: number;
   topLandingPaths: { path: string; count: number }[];
   topUtmSources: { source: string; count: number }[];
+  topUtmMediums: { medium: string; count: number }[];
   topUtmCampaigns: { campaign: string; count: number }[];
+  topUtmContents: { content: string; count: number }[];
+  topUtmTerms: { term: string; count: number }[];
 }
 
 /**
@@ -65,11 +68,35 @@ export async function getAnalyticsSummary(range: AnalyticsDateRange): Promise<An
     .orderBy(desc(count()))
     .limit(10);
 
+  const topUtmMediums = await db
+    .select({ medium: analyticsSessions.utmMedium, n: count() })
+    .from(analyticsSessions)
+    .where(and(sessionWhere, sql`${analyticsSessions.utmMedium} is not null`))
+    .groupBy(analyticsSessions.utmMedium)
+    .orderBy(desc(count()))
+    .limit(10);
+
   const topUtmCampaigns = await db
     .select({ campaign: analyticsSessions.utmCampaign, n: count() })
     .from(analyticsSessions)
     .where(and(sessionWhere, sql`${analyticsSessions.utmCampaign} is not null`))
     .groupBy(analyticsSessions.utmCampaign)
+    .orderBy(desc(count()))
+    .limit(10);
+
+  const topUtmContents = await db
+    .select({ content: analyticsSessions.utmContent, n: count() })
+    .from(analyticsSessions)
+    .where(and(sessionWhere, sql`${analyticsSessions.utmContent} is not null`))
+    .groupBy(analyticsSessions.utmContent)
+    .orderBy(desc(count()))
+    .limit(10);
+
+  const topUtmTerms = await db
+    .select({ term: analyticsSessions.utmTerm, n: count() })
+    .from(analyticsSessions)
+    .where(and(sessionWhere, sql`${analyticsSessions.utmTerm} is not null`))
+    .groupBy(analyticsSessions.utmTerm)
     .orderBy(desc(count()))
     .limit(10);
 
@@ -82,9 +109,12 @@ export async function getAnalyticsSummary(range: AnalyticsDateRange): Promise<An
     quizCompletions: Number(findCount("quiz_complete")),
     topLandingPaths: topLandingPaths.map((r) => ({ path: r.path ?? "—", count: Number(r.n) })),
     topUtmSources: topUtmSources.map((r) => ({ source: r.source ?? "—", count: Number(r.n) })),
+    topUtmMediums: topUtmMediums.map((r) => ({ medium: r.medium ?? "—", count: Number(r.n) })),
     topUtmCampaigns: topUtmCampaigns.map((r) => ({
       campaign: r.campaign ?? "—",
       count: Number(r.n),
     })),
+    topUtmContents: topUtmContents.map((r) => ({ content: r.content ?? "—", count: Number(r.n) })),
+    topUtmTerms: topUtmTerms.map((r) => ({ term: r.term ?? "—", count: Number(r.n) })),
   };
 }
