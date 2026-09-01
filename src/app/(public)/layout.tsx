@@ -2,7 +2,6 @@ import { DialogsProvider } from "@/components/dialogs/dialog-manager";
 import { ApplicationDialog } from "@/components/forms/application-dialog";
 import { QuizDialog } from "@/components/quiz/quiz-dialog";
 import { AnalyticsProvider } from "@/components/analytics/analytics-provider";
-import { YandexMetrica } from "@/components/analytics/yandex-metrica";
 import { CookieConsentBanner } from "@/components/consent/cookie-consent-banner";
 import { SiteHeader } from "@/components/layout/site-header";
 import { SiteFooter } from "@/components/layout/site-footer";
@@ -10,7 +9,7 @@ import { ServiceRepository } from "@/server/services/repository";
 
 /**
  * Layout публичного сайта: header, footer, диалоги заявки/квиза,
- * cookie-баннер, first-party аналитика и Яндекс.Метрика. Не применяется
+ * cookie-баннер и first-party аналитика. Не применяется
  * к /admin/* — та ветка использует только корневой layout + AdminShell.
  *
  * force-dynamic: SiteFooter читает контакты из БД на каждой странице
@@ -43,7 +42,6 @@ export default async function PublicLayout({ children }: { children: React.React
       <QuizDialog services={serviceOptions} />
       <CookieConsentBanner />
       <AnalyticsProvider />
-      <YandexMetrica />
     </DialogsProvider>
   );
 }

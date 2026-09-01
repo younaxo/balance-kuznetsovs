@@ -19,3 +19,13 @@ process.env.DATABASE_URL =
 // Cloudflare для ручной проверки формы в браузере — юнит/интеграционные
 // тесты всё равно должны оставаться детерминированными и офлайн.
 delete process.env.TURNSTILE_SECRET_KEY;
+
+// То же самое для Telegram/SMTP: разработчик может держать в .env реальные
+// боевые данные для ручной проверки уведомлений — тесты "провайдер
+// неактивен без настроек" должны оставаться истинными независимо от
+// того, что лежит в локальном .env.
+delete process.env.TELEGRAM_BOT_TOKEN;
+delete process.env.TELEGRAM_CHAT_ID;
+delete process.env.SMTP_HOST;
+delete process.env.SMTP_USER;
+delete process.env.SMTP_PASS;

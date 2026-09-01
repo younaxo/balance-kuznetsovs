@@ -4,8 +4,8 @@ const isProd = process.env.NODE_ENV === "production";
 
 /**
  * Content-Security-Policy подобрана под реальный набор внешних ресурсов
- * сайта: шрифты Google Fonts, счётчик Яндекс.Метрики и виджет Cloudflare
- * Turnstile (оба подключаются условно, только если заданы ENV-ключи).
+ * сайта: шрифты Google Fonts и виджет Cloudflare Turnstile (подключается
+ * условно, только если заданы ENV-ключи).
  * 'unsafe-inline' для style-src нужен Tailwind/Next для инлайн-стилей
  * критического CSS — script-src инлайн-скрипты не разрешает.
  */
@@ -18,11 +18,11 @@ const contentSecurityPolicy = [
   // 'unsafe-eval' нужен ТОЛЬКО в dev: React/Turbopack используют eval()
   // для Fast Refresh и восстановления call stack при отладке. В продакшене
   // React eval() не использует — эта директива присутствует только не-prod.
-  `script-src 'self' 'unsafe-inline' ${isProd ? "" : "'unsafe-eval' "}https://mc.yandex.ru https://challenges.cloudflare.com`,
+  `script-src 'self' 'unsafe-inline' ${isProd ? "" : "'unsafe-eval' "}https://challenges.cloudflare.com`,
   "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
   "font-src 'self' https://fonts.gstatic.com",
-  "img-src 'self' data: https://mc.yandex.ru",
-  "connect-src 'self' https://mc.yandex.ru",
+  "img-src 'self' data:",
+  "connect-src 'self'",
   "frame-src https://challenges.cloudflare.com",
   isProd ? "upgrade-insecure-requests" : "",
 ]
