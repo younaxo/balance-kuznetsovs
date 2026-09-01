@@ -3,6 +3,7 @@ import { ApplicationDialog } from "@/components/forms/application-dialog";
 import { QuizDialog } from "@/components/quiz/quiz-dialog";
 import { AnalyticsProvider } from "@/components/analytics/analytics-provider";
 import { CookieConsentBanner } from "@/components/consent/cookie-consent-banner";
+import { SiteBanner } from "@/components/layout/site-banner";
 import { SiteHeader } from "@/components/layout/site-header";
 import { SiteFooter } from "@/components/layout/site-footer";
 import { ServiceRepository } from "@/server/services/repository";
@@ -33,6 +34,7 @@ export default async function PublicLayout({ children }: { children: React.React
       >
         Перейти к содержанию
       </a>
+      <SiteBanner />
       <SiteHeader />
       <main id="main-content" className="flex-1">
         {children}
