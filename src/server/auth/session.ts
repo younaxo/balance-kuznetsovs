@@ -1,7 +1,7 @@
 import "server-only";
 import { cookies } from "next/headers";
 import { randomBytes, createHash } from "node:crypto";
-import { eq } from "drizzle-orm";
+import { desc, eq } from "drizzle-orm";
 import { db } from "@/server/db/client";
 import { adminSessions, adminUsers } from "@/server/db/schema";
 import { isProduction } from "@/lib/env.server";
@@ -100,6 +100,24 @@ export async function invalidateSession(token: string): Promise<void> {
   await db.delete(adminSessions).where(eq(adminSessions.id, sessionId));
 }
 
+/**
+ * Завершить сессию по её id (хешу токена) — для страницы "активные
+ * сессии" в настройках, где сам токен недоступен (в БД лежит только
+ * хеш), только список сессий с их id.
+ */
+export async function invalidateSessionById(sessionId: string): Promise<void> {
+  await db.delete(adminSessions).where(eq(adminSessions.id, sessionId));
+}
+
+/** Список активных сессий пользователя — для страницы настроек. */
+export async function listSessionsForUser(adminUserId: string) {
+  return db
+    .select()
+    .from(adminSessions)
+    .where(eq(adminSessions.adminUserId, adminUserId))
+    .orderBy(desc(adminSessions.createdAt));
+}
+
 export async function invalidateAllSessionsForUser(adminUserId: string): Promise<void> {
   await db.delete(adminSessions).where(eq(adminSessions.adminUserId, adminUserId));
 }
@@ -125,6 +143,12 @@ export async function clearSessionCookie() {
 export async function getSessionTokenFromCookies(): Promise<string | null> {
   const store = await cookies();
   return store.get(SESSION_COOKIE_NAME)?.value ?? null;
+}
+
+/** id (хеш) текущей сессии из cookie — чтобы пометить её в списке сессий. */
+export async function getCurrentSessionId(): Promise<string | null> {
+  const token = await getSessionTokenFromCookies();
+  return token ? hashToken(token) : null;
 }
 
 /** Хелпер для Server Components/Actions: текущий администратор или null. */

@@ -1,18 +1,21 @@
 "use server";
 
-import { eq } from "drizzle-orm";
+import { and, eq, ne } from "drizzle-orm";
 import { z } from "zod";
+import { revalidatePath } from "next/cache";
 import {
   getCurrentAdmin,
   invalidateAllSessionsForUser,
+  invalidateSessionById,
   createSession,
   setSessionCookie,
 } from "@/server/auth/session";
 import { hashPassword, verifyPassword } from "@/server/auth/password";
 import { db } from "@/server/db/client";
-import { adminUsers } from "@/server/db/schema";
+import { adminUsers, adminSessions } from "@/server/db/schema";
 import { getClientIp, hashIp } from "@/server/security/ip";
 import { headers } from "next/headers";
+import type { AdminActionState } from "@/server/admin/action-state";
 
 const schema = z
   .object({
@@ -74,4 +77,113 @@ export async function changePasswordAction(
   await setSessionCookie(token, expiresAt);
 
   return { success: true };
+}
+
+/** Завершить одну сессию из списка "активные сессии" в настройках. */
+export async function revokeSessionAction(
+  _prevState: AdminActionState,
+  formData: FormData,
+): Promise<AdminActionState> {
+  const session = await getCurrentAdmin();
+  if (!session) return { ok: false, error: "Unauthorized" };
+
+  const sessionId = formData.get("sessionId");
+  if (typeof sessionId !== "string") return { ok: false, error: "Некорректный id сессии" };
+
+  // Сессия обязательно должна принадлежать текущему пользователю — иначе
+  // можно было бы подставить чужой id и завершить сессию другого админа.
+  const [row] = await db
+    .select({ adminUserId: adminSessions.adminUserId })
+    .from(adminSessions)
+    .where(eq(adminSessions.id, sessionId))
+    .limit(1);
+  if (!row || row.adminUserId !== session.adminUser.id) {
+    return { ok: false, error: "Сессия не найдена" };
+  }
+
+  await invalidateSessionById(sessionId);
+  revalidatePath("/admin/settings");
+  return { ok: true };
+}
+
+const employeeSchema = z.object({
+  email: z.email("Некорректный email"),
+  password: z.string().min(12, "Пароль должен быть не короче 12 символов"),
+  role: z.enum(["owner", "editor"]),
+});
+
+/** Добавить нового сотрудника с доступом в админку. Только для owner. */
+export async function createAdminUserAction(
+  _prevState: AdminActionState,
+  formData: FormData,
+): Promise<AdminActionState> {
+  const session = await getCurrentAdmin();
+  if (!session || session.adminUser.role !== "owner") {
+    return { ok: false, error: "Добавлять сотрудников может только владелец аккаунта" };
+  }
+
+  const parsed = employeeSchema.safeParse({
+    email: formData.get("email"),
+    password: formData.get("password"),
+    role: formData.get("role") || "editor",
+  });
+  if (!parsed.success) {
+    return { ok: false, error: parsed.error.issues[0]?.message ?? "Проверьте поля" };
+  }
+
+  const email = parsed.data.email.trim().toLowerCase();
+  const existing = await db
+    .select({ id: adminUsers.id })
+    .from(adminUsers)
+    .where(eq(adminUsers.email, email))
+    .limit(1);
+  if (existing.length > 0) {
+    return { ok: false, error: "Такой email уже зарегистрирован" };
+  }
+
+  const passwordHash = await hashPassword(parsed.data.password);
+  await db.insert(adminUsers).values({ email, passwordHash, role: parsed.data.role });
+
+  revalidatePath("/admin/settings");
+  return { ok: true };
+}
+
+/** Включить/выключить доступ сотрудника. Только для owner. */
+export async function toggleAdminUserActiveAction(
+  _prevState: AdminActionState,
+  formData: FormData,
+): Promise<AdminActionState> {
+  const session = await getCurrentAdmin();
+  if (!session || session.adminUser.role !== "owner") {
+    return { ok: false, error: "Управлять сотрудниками может только владелец аккаунта" };
+  }
+
+  const id = formData.get("id");
+  const nextActive = formData.get("nextActive") === "true";
+  if (typeof id !== "string") return { ok: false, error: "Некорректный id" };
+
+  if (id === session.adminUser.id && !nextActive) {
+    return { ok: false, error: "Нельзя выключить самого себя" };
+  }
+
+  if (!nextActive) {
+    // Не даём выключить последнего активного владельца — иначе управлять
+    // сотрудниками станет некому.
+    const owners = await db
+      .select({ id: adminUsers.id })
+      .from(adminUsers)
+      .where(
+        and(eq(adminUsers.role, "owner"), eq(adminUsers.isActive, true), ne(adminUsers.id, id)),
+      );
+    const target = await db.select().from(adminUsers).where(eq(adminUsers.id, id)).limit(1);
+    if (target[0]?.role === "owner" && owners.length === 0) {
+      return { ok: false, error: "Нельзя выключить последнего владельца аккаунта" };
+    }
+  }
+
+  await db.update(adminUsers).set({ isActive: nextActive }).where(eq(adminUsers.id, id));
+  if (!nextActive) await invalidateAllSessionsForUser(id);
+
+  revalidatePath("/admin/settings");
+  return { ok: true };
 }
