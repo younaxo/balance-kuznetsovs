@@ -17,13 +17,12 @@ const siteUrl = clientEnv.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000";
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
-  title: {
-    default: "БАЛАНС КУЗНЕЦОВЫ — юридические документы и защита персональных данных",
-    template: "%s — БАЛАНС КУЗНЕЦОВЫ",
-  },
+  // По просьбе владельца — везде в браузерной вкладке просто «БАЛАНС
+  // КУЗНЕЦОВЫ», без "Страница — ...". Страничные title.tsx/metadata
+  // ниже по дереву не переопределяют его (см. остальные page.tsx).
+  title: "БАЛАНС КУЗНЕЦОВЫ",
   description:
     "Разработка юридических документов и защита персональных данных для бизнеса. Договоры, документы для сайтов, регистрация товарных знаков, сопровождение в Роскомнадзоре по 152-ФЗ.",
-  icons: { icon: "/favicon.ico" },
 };
 
 export const viewport: Viewport = {

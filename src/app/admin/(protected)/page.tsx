@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { ApplicationRepository } from "@/server/applications/repository";
 
-export const metadata = { title: "Дашборд" };
+export const metadata = {};
 
 const STATUS_LABELS: Record<string, string> = {
   new: "Новые",

@@ -5,9 +5,10 @@ import { updateContentBlockAction } from "./actions";
 import { AdminForm } from "@/components/admin/admin-form";
 import { AdminSubmitButton } from "@/components/admin/admin-submit-button";
 import { AdminField } from "@/components/admin/admin-field";
+import { MarkdownEditorField } from "@/components/admin/markdown-editor-field";
 import { Checkbox } from "@/components/ui/checkbox";
 
-export const metadata = { title: "Контент" };
+export const metadata = {};
 
 export default async function AdminContentPage() {
   const rows = await db.select().from(contentBlocks);
@@ -42,11 +43,10 @@ export default async function AdminContentPage() {
                 />
               </AdminField>
               <AdminField label="Текст блока">
-                <textarea
+                <MarkdownEditorField
                   name="body"
-                  rows={4}
                   defaultValue={block?.body ?? ""}
-                  className="border-border-strong bg-background rounded-md border p-3 text-sm"
+                  isFaq={key === "faq"}
                 />
               </AdminField>
               <div className="flex items-center gap-4">

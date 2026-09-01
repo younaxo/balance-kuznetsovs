@@ -16,7 +16,7 @@ import {
   SelectItem,
 } from "@/components/ui/select";
 
-export const metadata = { title: "Заявка" };
+export const metadata = {};
 
 const STATUS_OPTIONS = [
   { value: "new", label: "Новая" },

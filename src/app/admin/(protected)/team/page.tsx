@@ -6,7 +6,7 @@ import { ConfirmDeleteForm } from "@/components/admin/confirm-delete-form";
 import { AdminField } from "@/components/admin/admin-field";
 import { Checkbox } from "@/components/ui/checkbox";
 
-export const metadata = { title: "Команда" };
+export const metadata = {};
 
 export default async function AdminTeamPage() {
   const members = await TeamRepository.listAll();

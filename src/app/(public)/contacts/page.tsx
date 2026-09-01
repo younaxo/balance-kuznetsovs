@@ -6,7 +6,6 @@ import { ApplicationForm } from "@/components/forms/application-form";
 import { ServiceRepository } from "@/server/services/repository";
 
 export const metadata: Metadata = {
-  title: "Контакты",
   description: "Свяжитесь с «Баланс Кузнецовы».",
 };
 
