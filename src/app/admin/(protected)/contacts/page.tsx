@@ -69,31 +69,37 @@ export default async function AdminContactsPage() {
           />
         </section>
 
-        <section className="border-border bg-surface grid gap-4 rounded-lg border p-6">
-          <h2 className="font-medium">Реквизиты оператора ПДн</h2>
-          <p className="text-muted-foreground text-xs">
-            Используются на страницах политики конфиденциальности и пользовательского соглашения.
-          </p>
-          <Field
-            label="Полное наименование"
-            name="operatorFullName"
-            defaultValue={contacts.operatorFullName}
-          />
-          <div className="grid gap-4 sm:grid-cols-2">
-            <Field label="ИНН" name="operatorInn" defaultValue={contacts.operatorInn} />
-            <Field label="ОГРН/ОГРНИП" name="operatorOgrn" defaultValue={contacts.operatorOgrn} />
-          </div>
-          <Field
-            label="Юридический адрес"
-            name="operatorAddress"
-            defaultValue={contacts.operatorAddress}
-          />
-        </section>
-
         <AdminSubmitButton pendingLabel="Сохранение…" className="h-10 w-fit px-6">
           Сохранить
         </AdminSubmitButton>
       </AdminForm>
+
+      <section className="border-border bg-surface grid max-w-2xl gap-4 rounded-lg border p-6">
+        <h2 className="font-medium">Реквизиты оператора ПДн</h2>
+        <p className="text-muted-foreground text-xs">
+          Официальные юридические данные — не редактируются из панели, только напрямую в БД.
+          Используются на страницах политики конфиденциальности, оферты и пользовательского
+          соглашения.
+        </p>
+        <ReadOnlyField label="Полное наименование" value={contacts.operatorFullName} />
+        <ReadOnlyField label="Статус" value={contacts.operatorStatus} />
+        <div className="grid gap-4 sm:grid-cols-2">
+          <ReadOnlyField label="ИНН" value={contacts.operatorInn} />
+          <ReadOnlyField label="Email" value={contacts.operatorEmail} />
+        </div>
+        <ReadOnlyField label="Адрес" value={contacts.operatorAddress} />
+      </section>
+    </div>
+  );
+}
+
+function ReadOnlyField({ label, value }: { label: string; value: string | null }) {
+  return (
+    <div className="grid gap-1.5 text-sm">
+      <span className="font-medium">{label}</span>
+      <p className="border-border bg-background text-muted-foreground rounded-md border px-3 py-2">
+        {value ?? "—"}
+      </p>
     </div>
   );
 }

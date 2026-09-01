@@ -13,8 +13,10 @@ const EMPTY: ContactSettings = {
   address: null,
   workingHours: null,
   operatorFullName: null,
+  operatorStatus: null,
   operatorInn: null,
   operatorOgrn: null,
+  operatorEmail: null,
   operatorAddress: null,
   updatedAt: new Date(0),
 };

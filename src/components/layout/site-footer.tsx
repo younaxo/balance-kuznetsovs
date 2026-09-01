@@ -6,7 +6,9 @@ import { ServiceRepository } from "@/server/services/repository";
 import { getContactSettings } from "@/server/content/contact-settings";
 
 const LEGAL_LINKS = [
-  { label: "Политика конфиденциальности", href: "/privacy" },
+  { label: "Политика обработки ПДн", href: "/privacy" },
+  { label: "Политика конфиденциальности", href: "/confidentiality" },
+  { label: "Публичная оферта", href: "/offer" },
   { label: "Согласие на обработку ПДн", href: "/personal-data-consent" },
   { label: "Cookie policy", href: "/cookies" },
   { label: "Пользовательское соглашение", href: "/terms" },
@@ -19,11 +21,10 @@ export async function SiteFooter() {
   ]);
   const hasContacts =
     contacts.phone || contacts.email || contacts.telegram || contacts.maxMessenger;
-  const hasOperatorInfo =
-    contacts.operatorFullName || contacts.operatorInn || contacts.operatorOgrn;
+  const hasOperatorInfo = contacts.operatorFullName || contacts.operatorInn;
 
   return (
-    <footer className="border-graphite-border bg-graphite text-graphite-foreground border-t">
+    <footer className="border-graphite-border bg-graphite text-graphite-foreground border-t print:hidden">
       <div className="container-page grid gap-10 py-16 lg:grid-cols-[1.3fr_1fr_1fr_1fr_1fr]">
         <div>
           <TrackedLink href="/" sourceElement="footer_logo">
@@ -39,9 +40,14 @@ export async function SiteFooter() {
               никаких выдуманных ООО/ИНН на публичном сайте. */}
           {hasOperatorInfo && (
             <div className="text-graphite-foreground/60 mt-4 flex flex-col gap-1 text-sm leading-relaxed">
-              {contacts.operatorFullName && <p>{contacts.operatorFullName}</p>}
+              {contacts.operatorFullName && (
+                <p>
+                  {contacts.operatorStatus
+                    ? `${contacts.operatorStatus} ${contacts.operatorFullName}`
+                    : contacts.operatorFullName}
+                </p>
+              )}
               {contacts.operatorInn && <p>ИНН {contacts.operatorInn}</p>}
-              {contacts.operatorOgrn && <p>ОГРН {contacts.operatorOgrn}</p>}
             </div>
           )}
         </div>
