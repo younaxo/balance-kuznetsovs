@@ -11,7 +11,7 @@ export function LegalPageShell({
   updatedNote?: string;
   /** Путь к оригинальному PDF в public/documents — включает кнопку «Скачать PDF». */
   pdfHref?: string;
-  children: ReactNode;
+  children?: ReactNode;
 }) {
   return (
     <section>
@@ -19,9 +19,11 @@ export function LegalPageShell({
         <h1 className="font-display text-3xl sm:text-4xl">{title}</h1>
         {updatedNote && <p className="text-muted-foreground mt-2 text-sm">{updatedNote}</p>}
         {pdfHref && <LegalPageActions pdfHref={pdfHref} />}
-        <div className="prose-legal text-foreground [&_h2]:font-display mt-10 flex flex-col gap-6 text-[15px] leading-relaxed [&_h2]:mt-6 [&_h2]:text-xl [&_ol]:list-decimal [&_ol]:pl-5 [&_ul]:list-disc [&_ul]:pl-5">
-          {children}
-        </div>
+        {children && (
+          <div className="prose-legal text-foreground [&_h2]:font-display mt-10 flex flex-col gap-6 text-[15px] leading-relaxed [&_h2]:mt-6 [&_h2]:text-xl [&_ol]:list-decimal [&_ol]:pl-5 [&_ul]:list-disc [&_ul]:pl-5">
+            {children}
+          </div>
+        )}
       </div>
     </section>
   );
