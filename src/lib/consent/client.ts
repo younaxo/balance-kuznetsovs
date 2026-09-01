@@ -3,8 +3,15 @@
 /**
  * Клиентское чтение/запись согласия на cookie (согласуется с сервером —
  * src/server/consent/cookies.ts). Cookie bk_consent намеренно НЕ
- * HttpOnly, чтобы баннер согласия мог прочитать его без лишнего запроса
- * и не показываться повторно.
+ * HttpOnly, чтобы баннер согласия мог прочитать его без лишнего запроса.
+ *
+ * По решению владельца баннер должен появляться заново при каждом новом
+ * визите, а не запоминаться на год, как обычно делают — поэтому cookie
+ * НЕ имеет max-age/expires: это классическая session-cookie, браузер
+ * сам удаляет её при полном закрытии (не просто вкладки — именно
+ * браузера/профиля). Пока браузер не закрыт — баннер повторно не
+ * всплывает при переходах по сайту и перезагрузках, а после
+ * перезапуска браузера — снова спросит.
  */
 
 const COOKIE_NAME = "bk_consent";
@@ -34,8 +41,8 @@ export function readStoredConsent(): ConsentState | null {
  * и запись в consent_records; его провал не блокирует UI.
  */
 export function submitConsent(analytics: boolean): void {
-  const maxAge = 60 * 60 * 24 * 365;
-  document.cookie = `${COOKIE_NAME}=${encodeURIComponent(JSON.stringify({ analytics }))}; path=/; max-age=${maxAge}; SameSite=Lax`;
+  // Без max-age/expires — session cookie, см. комментарий в шапке файла.
+  document.cookie = `${COOKIE_NAME}=${encodeURIComponent(JSON.stringify({ analytics }))}; path=/; SameSite=Lax`;
 
   window.dispatchEvent(
     new CustomEvent<ConsentState>(CONSENT_CHANGE_EVENT, { detail: { analytics } }),

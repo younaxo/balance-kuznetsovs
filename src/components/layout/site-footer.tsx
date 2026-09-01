@@ -1,6 +1,7 @@
 import { Logo } from "@/components/brand/logo";
 import { KodvenLogo } from "@/components/brand/kodven-logo";
 import { TrackedLink } from "@/components/analytics/tracked-link";
+import { FooterCta } from "./footer-cta";
 import { NAV_ITEMS } from "./nav-items";
 import { ServiceRepository } from "@/server/services/repository";
 import { getContactSettings } from "@/server/content/contact-settings";
@@ -19,83 +20,92 @@ export async function SiteFooter() {
   ]);
   const hasContacts =
     contacts.phone || contacts.email || contacts.telegram || contacts.maxMessenger;
+  const hasOperatorInfo =
+    contacts.operatorFullName || contacts.operatorInn || contacts.operatorOgrn;
 
   return (
     <footer className="border-graphite-border bg-graphite text-graphite-foreground border-t">
-      <div className="container-page flex flex-col items-center py-16 text-center">
-        <TrackedLink href="/" sourceElement="footer_logo">
-          <Logo height={34} />
-        </TrackedLink>
-        <p className="text-graphite-foreground/60 mt-5 max-w-md text-sm">
-          Юридические документы и защита персональных данных для бизнеса. Работаем удалённо по всей
-          РФ.
-        </p>
+      <div className="container-page grid gap-10 py-16 lg:grid-cols-[1.3fr_1fr_1fr_1fr_1fr]">
+        <div>
+          <TrackedLink href="/" sourceElement="footer_logo">
+            <Logo height={34} />
+          </TrackedLink>
+          <p className="text-graphite-foreground/60 mt-5 max-w-xs text-sm">
+            Юридические документы и защита персональных данных для бизнеса. Работаем удалённо по
+            всей РФ.
+          </p>
 
-        <div className="mt-14 grid w-full max-w-3xl grid-cols-2 gap-x-6 gap-y-10 sm:grid-cols-4">
-          <FooterColumn title="Навигация">
-            {NAV_ITEMS.map((item) => (
-              <FooterLink key={item.href} href={item.href} source={`footer_nav_${item.href}`}>
-                {item.label}
-              </FooterLink>
-            ))}
-          </FooterColumn>
+          <div className="mt-5">
+            <FooterCta />
+          </div>
 
-          <FooterColumn title="Услуги">
-            {services.map((service) => (
-              <FooterLink
-                key={service.slug}
-                href={`/services#${service.slug}`}
-                source={`footer_service_${service.slug}`}
-              >
-                {service.title}
-              </FooterLink>
-            ))}
-          </FooterColumn>
-
-          {hasContacts && (
-            <FooterColumn title="Контакты">
-              {contacts.phone && (
-                <FooterLink
-                  href={`tel:${contacts.phone}`}
-                  source="footer_phone"
-                  event="phone_click"
-                >
-                  {contacts.phone}
-                </FooterLink>
-              )}
-              {contacts.email && (
-                <FooterLink
-                  href={`mailto:${contacts.email}`}
-                  source="footer_email"
-                  event="email_click"
-                >
-                  {contacts.email}
-                </FooterLink>
-              )}
-              {contacts.telegram && (
-                <FooterLink
-                  href={contacts.telegram}
-                  source="footer_telegram"
-                  event="telegram_click"
-                >
-                  Telegram
-                </FooterLink>
-              )}
-            </FooterColumn>
+          {/* Реквизиты оператора — только реальные, из /admin/contacts.
+              Пока владелец их не заполнил, блок просто не показывается —
+              никаких выдуманных ООО/ИНН на публичном сайте. */}
+          {hasOperatorInfo && (
+            <div className="text-graphite-foreground/50 mt-6 flex flex-col gap-1 text-xs leading-relaxed">
+              {contacts.operatorFullName && <p>{contacts.operatorFullName}</p>}
+              {contacts.operatorInn && <p>ИНН {contacts.operatorInn}</p>}
+              {contacts.operatorOgrn && <p>ОГРН {contacts.operatorOgrn}</p>}
+            </div>
           )}
-
-          <FooterColumn title="Документы">
-            {LEGAL_LINKS.map((item) => (
-              <FooterLink key={item.href} href={item.href} source={`footer_legal_${item.href}`}>
-                {item.label}
-              </FooterLink>
-            ))}
-          </FooterColumn>
         </div>
+
+        <FooterColumn title="Навигация">
+          {NAV_ITEMS.map((item) => (
+            <FooterLink key={item.href} href={item.href} source={`footer_nav_${item.href}`}>
+              {item.label}
+            </FooterLink>
+          ))}
+        </FooterColumn>
+
+        <FooterColumn title="Услуги">
+          {services.map((service) => (
+            <FooterLink
+              key={service.slug}
+              href={`/services#${service.slug}`}
+              source={`footer_service_${service.slug}`}
+            >
+              {service.title}
+            </FooterLink>
+          ))}
+        </FooterColumn>
+
+        <FooterColumn title="Документы">
+          {LEGAL_LINKS.map((item) => (
+            <FooterLink key={item.href} href={item.href} source={`footer_legal_${item.href}`}>
+              {item.label}
+            </FooterLink>
+          ))}
+        </FooterColumn>
+
+        {hasContacts && (
+          <FooterColumn title="Контакты">
+            {contacts.phone && (
+              <FooterLink href={`tel:${contacts.phone}`} source="footer_phone" event="phone_click">
+                {contacts.phone}
+              </FooterLink>
+            )}
+            {contacts.email && (
+              <FooterLink
+                href={`mailto:${contacts.email}`}
+                source="footer_email"
+                event="email_click"
+              >
+                {contacts.email}
+              </FooterLink>
+            )}
+            {contacts.telegram && (
+              <FooterLink href={contacts.telegram} source="footer_telegram" event="telegram_click">
+                Telegram
+              </FooterLink>
+            )}
+          </FooterColumn>
+        )}
       </div>
 
       <div className="border-graphite-border border-t">
-        <div className="container-page text-graphite-foreground/50 flex flex-col items-center justify-center gap-2 py-6 text-center text-xs">
+        <div className="container-page text-graphite-foreground/50 flex flex-col items-center justify-between gap-3 py-6 text-xs sm:flex-row">
           <p>© {new Date().getFullYear()} БАЛАНС КУЗНЕЦОВЫ. Все права защищены.</p>
           <p className="flex items-center gap-1.5">
             Разработано{" "}
@@ -129,7 +139,7 @@ export async function SiteFooter() {
 
 function FooterColumn({ title, children }: { title: string; children: React.ReactNode }) {
   return (
-    <div className="text-left">
+    <div>
       <h3 className="text-graphite-foreground/50 text-xs font-medium tracking-wider uppercase">
         {title}
       </h3>

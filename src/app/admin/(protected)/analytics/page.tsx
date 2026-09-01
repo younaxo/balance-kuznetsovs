@@ -93,16 +93,32 @@ export default async function AdminAnalyticsPage({ searchParams }: PageProps<"/a
           />
         </Panel>
 
-        <Panel title="Источники (UTM Source)">
+        <Panel title="Источники (utm_source)">
           <BarList
             items={summary.topUtmSources.map((s) => ({ label: s.source, value: s.count }))}
           />
         </Panel>
 
-        <Panel title="Кампании (UTM Campaign)">
+        <Panel title="Каналы (utm_medium)">
+          <BarList
+            items={summary.topUtmMediums.map((m) => ({ label: m.medium, value: m.count }))}
+          />
+        </Panel>
+
+        <Panel title="Кампании (utm_campaign)">
           <BarList
             items={summary.topUtmCampaigns.map((c) => ({ label: c.campaign, value: c.count }))}
           />
+        </Panel>
+
+        <Panel title="Объявления (utm_content)">
+          <BarList
+            items={summary.topUtmContents.map((c) => ({ label: c.content, value: c.count }))}
+          />
+        </Panel>
+
+        <Panel title="Ключевые слова (utm_term)">
+          <BarList items={summary.topUtmTerms.map((t) => ({ label: t.term, value: t.count }))} />
         </Panel>
       </div>
     </div>

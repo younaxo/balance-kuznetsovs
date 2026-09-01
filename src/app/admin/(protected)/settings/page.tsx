@@ -4,6 +4,7 @@ import { adminUsers } from "@/server/db/schema";
 import { ChangePasswordForm } from "@/components/admin/change-password-form";
 import { AdminForm } from "@/components/admin/admin-form";
 import { AdminSubmitButton } from "@/components/admin/admin-submit-button";
+import { RevokeSessionForm } from "@/components/admin/revoke-session-form";
 import {
   Select,
   SelectTrigger,
@@ -11,7 +12,7 @@ import {
   SelectContent,
   SelectItem,
 } from "@/components/ui/select";
-import { revokeSessionAction, createAdminUserAction, toggleAdminUserActiveAction } from "./actions";
+import { createAdminUserAction, toggleAdminUserActiveAction } from "./actions";
 
 export const metadata = { title: "Настройки" };
 
@@ -67,12 +68,10 @@ export default async function AdminSettingsPage() {
                   </p>
                 </div>
                 {!isCurrent && (
-                  <AdminForm action={revokeSessionAction}>
-                    <input type="hidden" name="sessionId" value={s.id} />
-                    <AdminSubmitButton variant="destructive" pendingLabel="Завершение…">
-                      Завершить
-                    </AdminSubmitButton>
-                  </AdminForm>
+                  <RevokeSessionForm
+                    sessionId={s.id}
+                    deviceLabel={s.userAgent ? shortenUserAgent(s.userAgent) : "Это устройство"}
+                  />
                 )}
               </li>
             );
@@ -118,23 +117,30 @@ export default async function AdminSettingsPage() {
             <h3 className="text-sm font-medium">Добавить сотрудника</h3>
             <AdminForm action={createAdminUserAction} resetOnSuccess className="mt-3 grid gap-3">
               <div className="grid gap-3 sm:grid-cols-2">
-                <input
-                  name="email"
-                  type="email"
-                  placeholder="Email"
-                  required
-                  className="border-border-strong bg-background h-9 rounded-md border px-3 text-sm"
-                />
-                <input
-                  name="password"
-                  type="password"
-                  placeholder="Пароль (от 12 символов)"
-                  minLength={12}
-                  required
-                  className="border-border-strong bg-background h-9 rounded-md border px-3 text-sm"
-                />
+                <label className="grid gap-1.5 text-sm">
+                  <span className="font-medium">Email сотрудника</span>
+                  <input
+                    name="email"
+                    type="email"
+                    placeholder="mail@example.com"
+                    required
+                    className="border-border-strong bg-background h-9 rounded-md border px-3 text-sm"
+                  />
+                </label>
+                <label className="grid gap-1.5 text-sm">
+                  <span className="font-medium">Пароль сотрудника</span>
+                  <input
+                    name="password"
+                    type="password"
+                    placeholder="от 12 символов"
+                    minLength={12}
+                    required
+                    className="border-border-strong bg-background h-9 rounded-md border px-3 text-sm"
+                  />
+                </label>
               </div>
-              <div className="flex items-center gap-4">
+              <label className="grid gap-1.5 text-sm">
+                <span className="font-medium">Роль</span>
                 <Select name="role" defaultValue="editor">
                   <SelectTrigger className="h-9 w-40">
                     <SelectValue />
@@ -144,19 +150,25 @@ export default async function AdminSettingsPage() {
                     <SelectItem value="owner">Владелец</SelectItem>
                   </SelectContent>
                 </Select>
-                <AdminSubmitButton pendingLabel="Добавление…" className="ml-auto">
-                  Добавить
-                </AdminSubmitButton>
-              </div>
+              </label>
+              <label className="grid gap-1.5 text-sm">
+                <span className="font-medium">Ваш пароль (подтверждение)</span>
+                <input
+                  name="confirmPassword"
+                  type="password"
+                  autoComplete="current-password"
+                  placeholder="чтобы подтвердить, что это точно вы"
+                  required
+                  className="border-border-strong bg-background h-9 rounded-md border px-3 text-sm"
+                />
+              </label>
+              <AdminSubmitButton pendingLabel="Добавление…" className="ml-auto">
+                Добавить
+              </AdminSubmitButton>
             </AdminForm>
           </div>
         </section>
       )}
-
-      <section className="border-border-strong text-muted-foreground max-w-sm rounded-lg border border-dashed p-6 text-sm">
-        Двухфакторная аутентификация (2FA) пока не подключена. Схема таблиц (admin_users/
-        admin_sessions) готова к её добавлению без переделки.
-      </section>
     </div>
   );
 }

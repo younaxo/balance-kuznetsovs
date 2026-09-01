@@ -4,6 +4,7 @@ import { upsertServiceAction, deleteServiceAction } from "./actions";
 import { AdminForm } from "@/components/admin/admin-form";
 import { AdminSubmitButton } from "@/components/admin/admin-submit-button";
 import { ConfirmDeleteForm } from "@/components/admin/confirm-delete-form";
+import { AdminField } from "@/components/admin/admin-field";
 import { Checkbox } from "@/components/ui/checkbox";
 import {
   Select,
@@ -97,55 +98,66 @@ function ServiceForm({
     <AdminForm action={upsertServiceAction} resetOnSuccess={!service} className="grid gap-3">
       {service && <input type="hidden" name="id" value={service.id} />}
       <div className="grid gap-3 sm:grid-cols-2">
-        <input
-          name="slug"
-          placeholder="slug-latinicej"
-          defaultValue={service?.slug}
-          required
-          className="border-border-strong bg-background h-9 rounded-md border px-3 text-sm"
-        />
-        <input
-          name="title"
-          placeholder="Название"
-          defaultValue={service?.title}
-          required
-          className="border-border-strong bg-background h-9 rounded-md border px-3 text-sm"
-        />
+        <AdminField label="Slug (для ссылки)">
+          <input
+            name="slug"
+            placeholder="slug-latinicej"
+            defaultValue={service?.slug}
+            required
+            className="border-border-strong bg-background h-9 rounded-md border px-3 text-sm"
+          />
+        </AdminField>
+        <AdminField label="Название">
+          <input
+            name="title"
+            placeholder="Название услуги"
+            defaultValue={service?.title}
+            required
+            className="border-border-strong bg-background h-9 rounded-md border px-3 text-sm"
+          />
+        </AdminField>
       </div>
-      <textarea
-        name="summary"
-        placeholder="Описание"
-        defaultValue={service?.summary}
-        required
-        rows={3}
-        className="border-border-strong bg-background rounded-md border p-3 text-sm"
-      />
+      <AdminField label="Описание">
+        <textarea
+          name="summary"
+          placeholder="Описание услуги"
+          defaultValue={service?.summary}
+          required
+          rows={3}
+          className="border-border-strong bg-background rounded-md border p-3 text-sm"
+        />
+      </AdminField>
       <div className="grid gap-3 sm:grid-cols-3">
-        <input
-          name="ctaLabel"
-          placeholder="Текст кнопки"
-          defaultValue={service?.ctaLabel ?? "Заказать услугу"}
-          className="border-border-strong bg-background h-9 rounded-md border px-3 text-sm"
-        />
-        <Select name="illustration" defaultValue={service?.illustration ?? "contract"}>
-          <SelectTrigger className="h-9">
-            <SelectValue />
-          </SelectTrigger>
-          <SelectContent>
-            {ILLUSTRATION_KEYS.map((key) => (
-              <SelectItem key={key} value={key}>
-                {ILLUSTRATION_LABELS[key] ?? key}
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
-        <input
-          name="order"
-          type="number"
-          placeholder="Порядок"
-          defaultValue={order}
-          className="border-border-strong bg-background h-9 rounded-md border px-3 text-sm"
-        />
+        <AdminField label="Текст на кнопке">
+          <input
+            name="ctaLabel"
+            placeholder="Заказать услугу"
+            defaultValue={service?.ctaLabel ?? "Заказать услугу"}
+            className="border-border-strong bg-background h-9 rounded-md border px-3 text-sm"
+          />
+        </AdminField>
+        <AdminField label="Картинка">
+          <Select name="illustration" defaultValue={service?.illustration ?? "contract"}>
+            <SelectTrigger className="h-9">
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              {ILLUSTRATION_KEYS.map((key) => (
+                <SelectItem key={key} value={key}>
+                  {ILLUSTRATION_LABELS[key] ?? key}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </AdminField>
+        <AdminField label="Порядок на странице">
+          <input
+            name="order"
+            type="number"
+            defaultValue={order}
+            className="border-border-strong bg-background h-9 rounded-md border px-3 text-sm"
+          />
+        </AdminField>
       </div>
       <div className="flex items-center gap-4">
         <label className="flex items-center gap-2 text-sm">

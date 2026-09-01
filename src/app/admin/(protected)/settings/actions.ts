@@ -87,6 +87,17 @@ export async function revokeSessionAction(
   const session = await getCurrentAdmin();
   if (!session) return { ok: false, error: "Unauthorized" };
 
+  // Завершение чужой (или своей же) сессии — чувствительное действие,
+  // просим подтвердить текущим паролем (защита на случай, если админку
+  // на секунду оставили открытой без присмотра).
+  const password = formData.get("password");
+  if (typeof password !== "string" || !password) {
+    return { ok: false, error: "Введите пароль для подтверждения" };
+  }
+  if (!(await verifyPassword(session.adminUser.passwordHash, password))) {
+    return { ok: false, error: "Неверный пароль" };
+  }
+
   const sessionId = formData.get("sessionId");
   if (typeof sessionId !== "string") return { ok: false, error: "Некорректный id сессии" };
 
@@ -110,6 +121,7 @@ const employeeSchema = z.object({
   email: z.email("Некорректный email"),
   password: z.string().min(12, "Пароль должен быть не короче 12 символов"),
   role: z.enum(["owner", "editor"]),
+  confirmPassword: z.string().min(1, "Введите пароль для подтверждения"),
 });
 
 /** Добавить нового сотрудника с доступом в админку. Только для owner. */
@@ -126,9 +138,16 @@ export async function createAdminUserAction(
     email: formData.get("email"),
     password: formData.get("password"),
     role: formData.get("role") || "editor",
+    confirmPassword: formData.get("confirmPassword"),
   });
   if (!parsed.success) {
     return { ok: false, error: parsed.error.issues[0]?.message ?? "Проверьте поля" };
+  }
+
+  // Добавление нового человека с доступом в админку — чувствительное
+  // действие, просим подтвердить СВОИМ текущим паролем.
+  if (!(await verifyPassword(session.adminUser.passwordHash, parsed.data.confirmPassword))) {
+    return { ok: false, error: "Неверный пароль" };
   }
 
   const email = parsed.data.email.trim().toLowerCase();

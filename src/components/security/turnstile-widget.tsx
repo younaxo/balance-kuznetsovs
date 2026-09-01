@@ -2,7 +2,6 @@
 
 import { useEffect, useRef, useState } from "react";
 import Script from "next/script";
-import { useTheme } from "next-themes";
 import { clientEnv } from "@/lib/env.client";
 
 declare global {
@@ -25,18 +24,12 @@ declare global {
  */
 export function TurnstileWidget({ onVerify }: { onVerify: (token: string | null) => void }) {
   const siteKey = clientEnv.NEXT_PUBLIC_TURNSTILE_SITE_KEY;
-  // resolvedTheme идёт undefined до гидратации и только потом становится
-  // "light"/"dark" — если рендерить виджет сразу, он сначала появляется
-  // с дефолтной темой, а через мгновение пересоздаётся (remove + render)
-  // под реальную тему. Именно это пересоздание и выглядело как "капча
-  // пропадает" — ждём, пока тема действительно определится.
-  const { resolvedTheme } = useTheme();
   const containerRef = useRef<HTMLDivElement>(null);
   const widgetIdRef = useRef<string | null>(null);
   const [scriptLoaded, setScriptLoaded] = useState(false);
 
   useEffect(() => {
-    if (!siteKey || !scriptLoaded || !resolvedTheme || !containerRef.current || !window.turnstile) {
+    if (!siteKey || !scriptLoaded || !containerRef.current || !window.turnstile) {
       return;
     }
 
@@ -48,7 +41,7 @@ export function TurnstileWidget({ onVerify }: { onVerify: (token: string | null)
 
     const id = window.turnstile.render(container, {
       sitekey: siteKey,
-      theme: resolvedTheme === "dark" ? "dark" : "light",
+      theme: "light",
       callback: (token: string) => {
         if (!cancelled) onVerify(token);
       },
@@ -68,7 +61,7 @@ export function TurnstileWidget({ onVerify }: { onVerify: (token: string | null)
         widgetIdRef.current = null;
       }
     };
-  }, [siteKey, scriptLoaded, resolvedTheme, onVerify]);
+  }, [siteKey, scriptLoaded, onVerify]);
 
   if (!siteKey) return null;
 

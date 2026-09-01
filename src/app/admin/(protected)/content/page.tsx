@@ -4,6 +4,7 @@ import { CONTENT_BLOCK_KEYS } from "@/domain/content-blocks";
 import { updateContentBlockAction } from "./actions";
 import { AdminForm } from "@/components/admin/admin-form";
 import { AdminSubmitButton } from "@/components/admin/admin-submit-button";
+import { AdminField } from "@/components/admin/admin-field";
 import { Checkbox } from "@/components/ui/checkbox";
 
 export const metadata = { title: "Контент" };
@@ -33,19 +34,21 @@ export default async function AdminContentPage() {
             >
               <input type="hidden" name="key" value={key} />
               <h2 className="font-medium">{label}</h2>
-              <input
-                name="title"
-                placeholder="Заголовок (необязательно)"
-                defaultValue={block?.title ?? ""}
-                className="border-border-strong bg-background h-9 rounded-md border px-3 text-sm"
-              />
-              <textarea
-                name="body"
-                placeholder="Текст блока"
-                rows={4}
-                defaultValue={block?.body ?? ""}
-                className="border-border-strong bg-background rounded-md border p-3 text-sm"
-              />
+              <AdminField label="Заголовок блока (необязательно)">
+                <input
+                  name="title"
+                  defaultValue={block?.title ?? ""}
+                  className="border-border-strong bg-background h-9 rounded-md border px-3 text-sm"
+                />
+              </AdminField>
+              <AdminField label="Текст блока">
+                <textarea
+                  name="body"
+                  rows={4}
+                  defaultValue={block?.body ?? ""}
+                  className="border-border-strong bg-background rounded-md border p-3 text-sm"
+                />
+              </AdminField>
               <div className="flex items-center gap-4">
                 <label className="flex items-center gap-2 text-sm">
                   <Checkbox name="isPublished" defaultChecked={block?.isPublished ?? false} />

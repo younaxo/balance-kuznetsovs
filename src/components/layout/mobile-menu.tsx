@@ -6,7 +6,6 @@ import * as DialogPrimitive from "@radix-ui/react-dialog";
 import { Button } from "@/components/ui/button";
 import { DialogClose } from "@/components/ui/dialog";
 import { TrackedLink } from "@/components/analytics/tracked-link";
-import { ThemeToggle } from "./theme-toggle";
 import { NAV_ITEMS } from "./nav-items";
 import { useDialogs } from "@/components/dialogs/dialog-manager";
 import { X } from "lucide-react";
@@ -49,14 +48,11 @@ export function MobileMenu() {
           <DialogPrimitive.Title className="sr-only">Меню навигации</DialogPrimitive.Title>
           <div className="flex items-center justify-between">
             <span className="font-display text-lg">Меню</span>
-            <div className="flex items-center gap-1">
-              <ThemeToggle />
-              <DialogClose asChild>
-                <Button variant="ghost" size="icon" aria-label="Закрыть меню">
-                  <X className="size-5" />
-                </Button>
-              </DialogClose>
-            </div>
+            <DialogClose asChild>
+              <Button variant="ghost" size="icon" aria-label="Закрыть меню">
+                <X className="size-5" />
+              </Button>
+            </DialogClose>
           </div>
 
           <nav className="mt-10 flex flex-1 flex-col gap-1" aria-label="Основная навигация">
