@@ -10,10 +10,13 @@ import { consentRecords } from "@/server/db/schema";
  * или cookie самого consent-выбора) и Analytics (first-party аналитика
  * переходов). Пока пользователь не дал согласие,
  * никакие analytics-cookie не создаются и события не пишутся в БД.
+ *
+ * bk_consent — session cookie (без maxAge): по решению владельца баннер
+ * должен спрашивать заново в каждой новой сессии, а не запоминаться на
+ * год. Браузер сам удаляет такую cookie при полном закрытии.
  */
 
 const CONSENT_COOKIE = "bk_consent";
-const CONSENT_MAX_AGE = 60 * 60 * 24 * 365; // 1 год
 
 export interface ConsentState {
   analytics: boolean;
@@ -38,7 +41,7 @@ export async function setConsent(analytics: boolean, sessionId: string | null): 
     secure: isProduction,
     sameSite: "lax",
     path: "/",
-    maxAge: CONSENT_MAX_AGE,
+    // без maxAge — session cookie, см. комментарий в шапке файла
   });
 
   await db.insert(consentRecords).values({
