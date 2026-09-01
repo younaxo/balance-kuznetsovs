@@ -100,6 +100,21 @@ async function main() {
       .onConflictDoNothing({ target: schema.services.slug });
   }
 
+  // Команда: имена предоставлены владельцем (2026-09-01), фото — нет.
+  // По его решению карточка содержит только ФИО, без выдуманных
+  // должностей/стажа. Сидируется один раз; дальше правится из /admin/team.
+  const TEAM = ["Дмитрий Александрович Кузнецов", "София Максимовна Кузнецова-Морева"];
+  for (const [index, fullName] of TEAM.entries()) {
+    const existing = await db
+      .select({ id: schema.teamMembers.id })
+      .from(schema.teamMembers)
+      .where(eq(schema.teamMembers.fullName, fullName))
+      .limit(1);
+    if (existing.length === 0) {
+      await db.insert(schema.teamMembers).values({ fullName, order: index, isPublished: true });
+    }
+  }
+
   console.log("Сидирование базового контента завершено.");
   await client.end();
 }
