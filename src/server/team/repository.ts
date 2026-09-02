@@ -7,8 +7,8 @@ export type TeamMember = typeof teamMembers.$inferSelect;
 export type NewTeamMember = typeof teamMembers.$inferInsert;
 
 /**
- * Репозиторий команды/специалистов. По запросу клиента карточка
- * содержит только ФИО и (опционально) фото — никаких выдуманных
+ * Репозиторий команды/специалистов. Карточка — ФИО, (опционально) фото
+ * и короткое описание экспертизы (bio) — никаких выдуманных
  * должностей/стажа/статистики. Полностью управляется из /admin/team.
  */
 export const TeamRepository = {

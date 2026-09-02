@@ -209,6 +209,9 @@ export const teamMembers = pgTable("team_members", {
   // components/sections/about-section.tsx). NULL — рендерится плейсхолдер
   // с инициалами вместо фото.
   photoFilename: varchar("photo_filename", { length: 255 }),
+  // Короткое описание экспертизы под карточкой (не должность/стаж —
+  // просто "эксперт по..."). NULL — строка под карточкой не рендерится.
+  bio: text("bio"),
   order: integer("order").notNull().default(0),
   isPublished: boolean("is_published").notNull().default(true),
   createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),

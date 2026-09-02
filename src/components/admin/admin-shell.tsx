@@ -1,36 +1,9 @@
 import Link from "next/link";
-import {
-  LayoutDashboard,
-  Inbox,
-  Briefcase,
-  Tag,
-  Star,
-  Phone,
-  FileText,
-  Users,
-  BarChart3,
-  ScrollText,
-  Megaphone,
-  Settings,
-  LogOut,
-} from "lucide-react";
+import { LogOut } from "lucide-react";
 import { logoutAction } from "@/app/admin/logout-action";
 import { Logo } from "@/components/brand/logo";
-
-const NAV = [
-  { href: "/admin", label: "Дашборд", icon: LayoutDashboard },
-  { href: "/admin/applications", label: "Заявки", icon: Inbox },
-  { href: "/admin/services", label: "Услуги", icon: Briefcase },
-  { href: "/admin/prices", label: "Прайс", icon: Tag },
-  { href: "/admin/reviews", label: "Отзывы", icon: Star },
-  { href: "/admin/team", label: "Команда", icon: Users },
-  { href: "/admin/contacts", label: "Контакты", icon: Phone },
-  { href: "/admin/content", label: "Контент", icon: FileText },
-  { href: "/admin/banner", label: "Баннер", icon: Megaphone },
-  { href: "/admin/analytics", label: "Аналитика", icon: BarChart3 },
-  { href: "/admin/logs", label: "Логи", icon: ScrollText },
-  { href: "/admin/settings", label: "Настройки", icon: Settings },
-];
+import { ADMIN_NAV } from "./admin-nav-items";
+import { AdminMobileNav } from "./admin-mobile-nav";
 
 /**
  * Каркас админ-панели: утилитарный, быстрый, клавиатурно-дружелюбный.
@@ -51,7 +24,7 @@ export function AdminShell({
           <p className="text-muted-foreground mt-2 text-xs">Дашборд</p>
         </div>
         <nav className="flex flex-1 flex-col gap-0.5 p-3">
-          {NAV.map((item) => (
+          {ADMIN_NAV.map((item) => (
             <Link
               key={item.href}
               href={item.href}
@@ -76,7 +49,8 @@ export function AdminShell({
         </div>
       </aside>
 
-      <div className="flex-1">
+      <div className="min-w-0 flex-1">
+        <AdminMobileNav adminEmail={adminEmail} />
         <main className="p-5 md:p-8">{children}</main>
       </div>
     </div>

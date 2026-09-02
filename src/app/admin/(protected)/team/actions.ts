@@ -10,6 +10,7 @@ import type { AdminActionState } from "@/server/admin/action-state";
 const upsertSchema = z.object({
   id: z.uuid().optional(),
   fullName: z.string().trim().min(1).max(200),
+  bio: z.string().trim().max(500).optional().or(z.literal("")),
   order: z.coerce.number().int().default(0),
   isPublished: z.coerce.boolean(),
 });
@@ -34,6 +35,7 @@ export async function upsertTeamMemberAction(
   const parsed = upsertSchema.safeParse({
     id: formData.get("id") || undefined,
     fullName: formData.get("fullName"),
+    bio: formData.get("bio") || "",
     order: formData.get("order") || 0,
     isPublished: formData.get("isPublished") === "on",
   });
@@ -70,8 +72,8 @@ export async function upsertTeamMemberAction(
     }
   }
 
-  const { id, ...rest } = parsed.data;
-  const data = { ...rest, photoFilename };
+  const { id, bio, ...rest } = parsed.data;
+  const data = { ...rest, bio: bio || null, photoFilename };
   if (id) {
     await TeamRepository.update(id, data);
   } else {

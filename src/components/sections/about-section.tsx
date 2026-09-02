@@ -4,10 +4,10 @@ import { Reveal } from "@/components/motion/reveal";
 import { TeamRepository } from "@/server/team/repository";
 
 /**
- * Тёмная секция «Команда» — карточки специалистов. По решению владельца
- * карточка содержит только ФИО и (опционально) фото — БЕЗ выдуманных
- * должностей/стажа/регалий. Данные полностью управляются из /admin/team;
- * если команда ещё не заполнена, секция вообще не рендерится (а не
+ * Тёмная секция «Команда» — карточки специалистов: фото, ФИО и короткое
+ * описание экспертизы ("эксперт по...") — без выдуманных должностей/
+ * стажа/регалий, только то, что реально заполнено в /admin/team. Если
+ * команда ещё не заполнена, секция вообще не рендерится (а не
  * показывает пустые/выдуманные плейсхолдеры).
  */
 export async function AboutSection() {
@@ -24,7 +24,11 @@ export async function AboutSection() {
         <div className="mt-10 flex flex-wrap justify-center gap-8">
           {members.map((member, index) => (
             <Reveal key={member.id} delay={index * 0.08} className="w-72">
-              <TeamMemberCard fullName={member.fullName} photoFilename={member.photoFilename} />
+              <TeamMemberCard
+                fullName={member.fullName}
+                bio={member.bio}
+                photoFilename={member.photoFilename}
+              />
             </Reveal>
           ))}
         </div>
@@ -35,9 +39,11 @@ export async function AboutSection() {
 
 function TeamMemberCard({
   fullName,
+  bio,
   photoFilename,
 }: {
   fullName: string;
+  bio: string | null;
   photoFilename: string | null;
 }) {
   const hasPhoto = photoFilename ? photoFileExists(photoFilename) : false;
@@ -59,7 +65,10 @@ function TeamMemberCard({
           {initials(fullName)}
         </span>
       )}
-      <p className="text-sm font-medium whitespace-nowrap">{fullName}</p>
+      <div className="flex flex-col gap-1.5">
+        <p className="text-sm font-medium whitespace-nowrap">{fullName}</p>
+        {bio && <p className="text-graphite-foreground/60 text-[13px] leading-relaxed">{bio}</p>}
+      </div>
     </div>
   );
 }
