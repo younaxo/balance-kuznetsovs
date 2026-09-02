@@ -2,6 +2,7 @@ import { Star, Lock } from "lucide-react";
 import { ReviewRepository } from "@/server/reviews/repository";
 import { TrackedLink } from "@/components/analytics/tracked-link";
 import { Reveal } from "@/components/motion/reveal";
+import { REVIEW_PROFILES } from "@/domain/review-profiles";
 
 // Заглушка-"спойлер" для пока не запущенного раздела отзывов: несколько
 // нейтральных скелетон-карточек размыты фоном, поверх — плашка
@@ -58,8 +59,24 @@ export async function ReviewsSection({
                 <Lock className="text-muted-foreground size-6" />
                 <p className="font-medium">Раздел в разработке</p>
                 <p className="text-muted-foreground max-w-xs text-sm">
-                  Реальные отзывы клиентов появятся здесь совсем скоро.
+                  Реальные отзывы клиентов появятся здесь совсем скоро. А пока их можно почитать на
+                  внешних площадках:
                 </p>
+                <div className="mt-1 flex flex-wrap justify-center gap-2">
+                  {REVIEW_PROFILES.map((profile) => (
+                    <TrackedLink
+                      key={profile.url}
+                      href={profile.url}
+                      eventType="external_link_click"
+                      sourceElement="reviews_placeholder_profile"
+                      target="_blank"
+                      rel="noopener noreferrer nofollow"
+                      className="border-border-strong hover:bg-muted rounded-md border px-3 py-1.5 text-sm font-medium"
+                    >
+                      Отзывы на {profile.label}
+                    </TrackedLink>
+                  ))}
+                </div>
               </div>
             </div>
           </div>
