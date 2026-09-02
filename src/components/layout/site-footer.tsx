@@ -123,7 +123,7 @@ export async function SiteFooter() {
             <KodvenLogo className="inline-block" />
           </TrackedLink>
         </p>
-        <p className="flex items-center gap-1">
+        <p className="flex items-center gap-1.5">
           Developed by{" "}
           <TrackedLink
             href="https://github.com/younaxo"
@@ -135,6 +135,17 @@ export async function SiteFooter() {
           >
             <GithubMark className="size-3.5" />
             younaxo
+          </TrackedLink>
+          <TrackedLink
+            href="https://github.com/kleek-code"
+            eventType="external_link_click"
+            sourceElement="footer_github_credit_2"
+            target="_blank"
+            rel="noopener noreferrer nofollow"
+            className="hover:text-graphite-foreground inline-flex items-center gap-1 underline underline-offset-2"
+          >
+            <GithubMark className="size-3.5" />
+            kleek-code
           </TrackedLink>
         </p>
       </div>

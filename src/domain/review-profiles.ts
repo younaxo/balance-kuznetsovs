@@ -8,7 +8,13 @@
  */
 export const REVIEW_PROFILES = [
   {
-    label: "Avito",
+    label: "Avito — София",
     url: "https://www.avito.ru/user/f4883dd8791ff0dc85758741fd609cfb/profile",
+    platform: "avito",
+  },
+  {
+    label: "Avito — Дмитрий",
+    url: "https://www.avito.ru/user/eb322c7d762ad7d9cd2ee49834862c63/profile?src=sharing",
+    platform: "avito",
   },
 ] as const;
