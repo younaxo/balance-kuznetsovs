@@ -2,6 +2,7 @@ import { Star, Lock } from "lucide-react";
 import { ReviewRepository } from "@/server/reviews/repository";
 import { TrackedLink } from "@/components/analytics/tracked-link";
 import { Reveal } from "@/components/motion/reveal";
+import { AvitoMark } from "@/components/icons/avito-mark";
 import { REVIEW_PROFILES } from "@/domain/review-profiles";
 
 // Заглушка-"спойлер" для пока не запущенного раздела отзывов: несколько
@@ -45,7 +46,12 @@ export async function ReviewsSection({
                 >
                   <div className="flex gap-0.5">
                     {Array.from({ length: 5 }).map((_, j) => (
-                      <Star key={j} className="text-muted-foreground size-4" strokeWidth={1.5} />
+                      <Star
+                        key={j}
+                        className="text-muted-foreground size-4"
+                        fill="currentColor"
+                        strokeWidth={1.5}
+                      />
                     ))}
                   </div>
                   <div className="bg-muted h-3 w-full rounded" />
@@ -71,8 +77,9 @@ export async function ReviewsSection({
                       sourceElement="reviews_placeholder_profile"
                       target="_blank"
                       rel="noopener noreferrer nofollow"
-                      className="border-border-strong hover:bg-muted rounded-md border px-3 py-1.5 text-sm font-medium"
+                      className="border-border-strong hover:bg-muted inline-flex items-center gap-1.5 rounded-md border px-3 py-1.5 text-sm font-medium"
                     >
+                      {profile.platform === "avito" && <AvitoMark className="text-accent size-4" />}
                       Отзывы на {profile.label}
                     </TrackedLink>
                   ))}
@@ -110,8 +117,9 @@ export async function ReviewsSection({
                       sourceElement="review_source_link"
                       target="_blank"
                       rel="noopener noreferrer nofollow"
-                      className="hover:text-foreground underline underline-offset-2"
+                      className="hover:text-foreground inline-flex items-center gap-1 underline underline-offset-2"
                     >
+                      {review.source === "avito" && <AvitoMark className="size-3.5" />}
                       {review.source === "avito" ? "Avito" : "Источник"}
                     </TrackedLink>
                   )}
