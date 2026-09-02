@@ -100,6 +100,11 @@ export async function SiteFooter() {
                 Telegram
               </FooterLink>
             )}
+            {contacts.maxMessenger && (
+              <FooterLink href={contacts.maxMessenger} source="footer_max" event="max_click">
+                MAX
+              </FooterLink>
+            )}
           </FooterColumn>
         )}
       </div>
@@ -164,7 +169,7 @@ function FooterLink({
 }: {
   href: string;
   source: string;
-  event?: "phone_click" | "email_click" | "telegram_click";
+  event?: "phone_click" | "email_click" | "telegram_click" | "max_click";
   children: React.ReactNode;
 }) {
   return (

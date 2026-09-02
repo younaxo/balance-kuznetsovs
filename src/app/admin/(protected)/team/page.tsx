@@ -5,6 +5,7 @@ import { AdminSubmitButton } from "@/components/admin/admin-submit-button";
 import { ConfirmDeleteForm } from "@/components/admin/confirm-delete-form";
 import { AdminField } from "@/components/admin/admin-field";
 import { Checkbox } from "@/components/ui/checkbox";
+import { Textarea } from "@/components/ui/textarea";
 
 export const metadata = {};
 
@@ -107,6 +108,14 @@ function TeamMemberForm({
           <Checkbox name="removePhoto" /> Убрать фото (будут только инициалы)
         </label>
       )}
+      <AdminField label="Описание (эксперт по...)">
+        <Textarea
+          name="bio"
+          rows={2}
+          defaultValue={member?.bio ?? ""}
+          placeholder="Эксперт по защите персональных данных, договорной работе и..."
+        />
+      </AdminField>
       <div className="flex items-center gap-4">
         <AdminField label="Порядок" className="w-28">
           <input

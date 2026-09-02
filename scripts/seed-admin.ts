@@ -100,18 +100,30 @@ async function main() {
       .onConflictDoNothing({ target: schema.services.slug });
   }
 
-  // Команда: имена предоставлены владельцем (2026-09-01), фото — нет.
-  // По его решению карточка содержит только ФИО, без выдуманных
-  // должностей/стажа. Сидируется один раз; дальше правится из /admin/team.
-  const TEAM = ["Дмитрий Александрович Кузнецов", "София Максимовна Кузнецова-Морева"];
-  for (const [index, fullName] of TEAM.entries()) {
+  // Команда: имена и описания предоставлены владельцем (2026-09-02).
+  // Фамилия на публичной карточке — "Кузнецова" (без "-Морева"): так
+  // попросил владелец везде на сайте, КРОМЕ юридических документов
+  // (там — официальное "Морева", тянется из contact_settings.operator*
+  // и не связано с этой таблицей). Сидируется один раз; дальше правится
+  // из /admin/team.
+  const TEAM = [
+    {
+      fullName: "София Максимовна Кузнецова",
+      bio: "Эксперт по защите персональных данных (152-ФЗ), договорной работе и корпоративному праву.",
+    },
+    {
+      fullName: "Дмитрий Александрович Кузнецов",
+      bio: "Эксперт по защите персональных данных, договорной работе и регистрации товарных знаков.",
+    },
+  ];
+  for (const [index, member] of TEAM.entries()) {
     const existing = await db
       .select({ id: schema.teamMembers.id })
       .from(schema.teamMembers)
-      .where(eq(schema.teamMembers.fullName, fullName))
+      .where(eq(schema.teamMembers.fullName, member.fullName))
       .limit(1);
     if (existing.length === 0) {
-      await db.insert(schema.teamMembers).values({ fullName, order: index, isPublished: true });
+      await db.insert(schema.teamMembers).values({ ...member, order: index, isPublished: true });
     }
   }
 

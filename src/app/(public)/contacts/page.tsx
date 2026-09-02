@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Phone, Mail, Send, MapPin, Clock } from "lucide-react";
+import { Phone, Mail, Send, MessageCircle, MapPin, Clock } from "lucide-react";
 import { getContactSettings } from "@/server/content/contact-settings";
 import { TrackedLink } from "@/components/analytics/tracked-link";
 import { ApplicationForm } from "@/components/forms/application-form";
@@ -57,6 +57,14 @@ export default async function ContactsPage() {
                   event="telegram_click"
                 />
               )}
+              {contacts.maxMessenger && (
+                <ContactRow
+                  icon={MessageCircle}
+                  href={contacts.maxMessenger}
+                  label="MAX"
+                  event="max_click"
+                />
+              )}
               {contacts.address && <StaticRow icon={MapPin} label={contacts.address} />}
               {contacts.workingHours && <StaticRow icon={Clock} label={contacts.workingHours} />}
             </ul>
@@ -88,7 +96,7 @@ function ContactRow({
   icon: typeof Phone;
   href: string;
   label: string;
-  event: "phone_click" | "email_click" | "telegram_click";
+  event: "phone_click" | "email_click" | "telegram_click" | "max_click";
 }) {
   return (
     <li className="flex items-center gap-3">
