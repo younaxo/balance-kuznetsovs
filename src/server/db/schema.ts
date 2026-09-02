@@ -83,16 +83,24 @@ export const applicationStatusEnum = pgEnum("application_status", [
 
 export const applicationSourceEnum = pgEnum("application_source", ["form", "quiz"]);
 
+// Мессенджер, которому принадлежит значение поля `telegram` — сам столбец
+// переименовывать не стали (лишняя миграция везде, где он уже
+// используется), просто помечаем, что там реально за хэндл: Telegram
+// или MAX. По умолчанию "telegram" — так вело себя поле до появления
+// переключателя, все старые заявки этому соответствуют.
+export const messengerTypeEnum = pgEnum("messenger_type", ["telegram", "max"]);
+
 export const applications = pgTable(
   "applications",
   {
     id: uuid("id").primaryKey().defaultRandom(),
 
-    // Контактные данные — минимум один способ связи гарантируется
-    // на уровне Zod-валидации при создании заявки.
+    // Контактные данные — телефон и email обязательны (см. Zod-схему
+    // в server/validation/application.ts), Telegram/MAX — опционально.
     name: varchar("name", { length: 200 }).notNull(),
     phone: varchar("phone", { length: 40 }),
     telegram: varchar("telegram", { length: 100 }),
+    messengerType: messengerTypeEnum("messenger_type").notNull().default("telegram"),
     email: varchar("email", { length: 255 }),
 
     serviceSlug: varchar("service_slug", { length: 100 }),

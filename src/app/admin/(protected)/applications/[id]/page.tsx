@@ -78,7 +78,10 @@ export default async function AdminApplicationDetailPage({
           <h2 className="font-medium">Контакты</h2>
           <dl className="mt-4 flex flex-col gap-2 text-sm">
             <Row label="Телефон" value={application.phone} />
-            <Row label="Telegram / MAX" value={application.telegram} />
+            <Row
+              label={application.messengerType === "max" ? "MAX" : "Telegram"}
+              value={application.telegram}
+            />
             <Row label="Email" value={application.email} />
             <Row label="Услуга" value={service?.title ?? application.serviceSlug} />
             <Row label="Источник" value={application.source === "quiz" ? "Квиз" : "Форма"} />
