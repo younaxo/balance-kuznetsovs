@@ -7,6 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
+import { MessengerToggle } from "@/components/ui/messenger-toggle";
 import { TrackedLink } from "@/components/analytics/tracked-link";
 import { OptionCard } from "./option-card";
 import { TurnstileWidget } from "@/components/security/turnstile-widget";
@@ -29,6 +30,7 @@ interface QuizState {
   name: string;
   phone: string;
   telegram: string;
+  messengerType: "telegram" | "max";
   email: string;
   consent: boolean;
   website: string;
@@ -39,6 +41,7 @@ const INITIAL_STATE: QuizState = {
   name: "",
   phone: "",
   telegram: "",
+  messengerType: "telegram",
   email: "",
   consent: false,
   website: "",
@@ -112,6 +115,7 @@ export function Quiz({
       name: state.name,
       phone: state.phone,
       telegram: state.telegram,
+      messengerType: state.messengerType,
       email: state.email,
       consent: state.consent,
       website: state.website,
@@ -355,7 +359,15 @@ export function Quiz({
                   />
                 </div>
                 <div className="grid gap-1.5">
-                  <Label htmlFor="quiz-telegram">Telegram</Label>
+                  <div className="flex items-center justify-between gap-2">
+                    <Label htmlFor="quiz-telegram">
+                      {state.messengerType === "max" ? "MAX" : "Telegram"}
+                    </Label>
+                    <MessengerToggle
+                      value={state.messengerType}
+                      onChange={(value) => update("messengerType", value)}
+                    />
+                  </div>
                   <Input
                     id="quiz-telegram"
                     value={state.telegram}

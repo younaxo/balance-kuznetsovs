@@ -14,6 +14,7 @@ import {
   SelectItem,
 } from "@/components/ui/select";
 import { Checkbox } from "@/components/ui/checkbox";
+import { MessengerToggle } from "@/components/ui/messenger-toggle";
 import { TrackedLink } from "@/components/analytics/tracked-link";
 import { TurnstileWidget } from "@/components/security/turnstile-widget";
 import { trackEvent } from "@/lib/analytics/client";
@@ -24,6 +25,7 @@ type FormState = {
   name: string;
   phone: string;
   telegram: string;
+  messengerType: "telegram" | "max";
   email: string;
   serviceSlug: string;
   message: string;
@@ -35,6 +37,7 @@ const initialState: FormState = {
   name: "",
   phone: "",
   telegram: "",
+  messengerType: "telegram",
   email: "",
   serviceSlug: "",
   message: "",
@@ -175,7 +178,13 @@ export function ApplicationForm({
           {errors.phone && <p className="text-destructive text-xs">{errors.phone}</p>}
         </div>
         <div className="grid gap-1.5">
-          <Label htmlFor="telegram">Telegram</Label>
+          <div className="flex items-center justify-between gap-2">
+            <Label htmlFor="telegram">{form.messengerType === "max" ? "MAX" : "Telegram"}</Label>
+            <MessengerToggle
+              value={form.messengerType}
+              onChange={(value) => update("messengerType", value)}
+            />
+          </div>
           <Input
             id="telegram"
             value={form.telegram}

@@ -29,9 +29,12 @@ export const applicationBaseSchema = z.object({
   name: trimmedString(200).min(2, "Укажите имя"),
   phone: trimmedString(25).min(1, "Укажите телефон").regex(phoneRegex, "Некорректный телефон"),
   telegram: trimmedString(100)
-    .regex(handleRegex, "Некорректный Telegram")
+    .regex(handleRegex, "Некорректный юзернейм")
     .optional()
     .or(z.literal("")),
+  // К какому мессенджеру относится поле telegram — переключатель
+  // "Telegram / MAX" в форме, значение самого хэндла в поле выше.
+  messengerType: z.enum(["telegram", "max"]).default("telegram"),
   email: z.string().trim().min(1, "Укажите email").email("Некорректный email").max(255),
   serviceSlug: serviceSlugSchema.optional(),
   message: trimmedString(4000).optional().or(z.literal("")),

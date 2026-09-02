@@ -3,6 +3,8 @@ export interface ApplicationNotificationPayload {
   name: string;
   phone: string | null;
   telegram: string | null;
+  /** К какому мессенджеру относится значение поля telegram. */
+  messengerType: "telegram" | "max";
   email: string | null;
   serviceSlug: string | null;
   /** Человекочитаемое название услуги — резолвится из БД до вызова

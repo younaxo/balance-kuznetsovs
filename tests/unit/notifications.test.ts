@@ -7,6 +7,7 @@ const basePayload = {
   name: "Иван Иванов",
   phone: "+79001234567",
   telegram: null,
+  messengerType: "telegram" as const,
   email: null,
   serviceSlug: null,
   serviceTitle: null,
@@ -85,6 +86,27 @@ describe("TelegramNotificationProvider", () => {
     expect(body.text).toContain("Срочно");
     expect(body.text).toContain("Нет");
     expect(body.text).toContain("Телефон");
+  });
+
+  it("подписывает хэндл как MAX, если выбран MAX, а не Telegram", async () => {
+    process.env.TELEGRAM_BOT_TOKEN = "test-token";
+    process.env.TELEGRAM_CHAT_ID = "12345";
+    const fetchSpy = vi
+      .fn()
+      .mockResolvedValue(new Response(JSON.stringify({ ok: true }), { status: 200 }));
+    vi.stubGlobal("fetch", fetchSpy);
+
+    const provider = new TelegramNotificationProvider();
+    await provider.notifyNewApplication({
+      ...basePayload,
+      telegram: "@ivanov",
+      messengerType: "max",
+    });
+
+    const [, requestInit] = fetchSpy.mock.calls[0];
+    const body = JSON.parse(requestInit.body as string);
+    expect(body.text).toContain("MAX: @ivanov");
+    expect(body.text).not.toContain("Telegram: @ivanov");
   });
 });
 

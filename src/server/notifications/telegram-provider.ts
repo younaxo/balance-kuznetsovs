@@ -84,7 +84,9 @@ function buildMessage(payload: ApplicationNotificationPayload): string {
     `🆕 <b>Новая заявка (${payload.source === "quiz" ? "квиз" : "форма"})</b>`,
     `Имя: <code>${escapeHtml(payload.name)}</code>`,
     payload.phone ? `Телефон: ${escapeHtml(payload.phone)}` : null,
-    payload.telegram ? `Telegram: ${escapeHtml(payload.telegram)}` : null,
+    payload.telegram
+      ? `${payload.messengerType === "max" ? "MAX" : "Telegram"}: ${escapeHtml(payload.telegram)}`
+      : null,
     payload.email ? `Email: ${escapeHtml(payload.email)}` : null,
     `Услуга: <code>${escapeHtml(service)}</code>`,
     quizAnswers ? `\nОтветы квиза:\n${quizAnswers}` : null,

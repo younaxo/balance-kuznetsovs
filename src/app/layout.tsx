@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import { manrope, ptSerif } from "@/lib/fonts";
 import { MotionProvider } from "@/components/motion/motion-provider";
+import { StaleActionRecovery } from "@/components/stale-action-recovery";
 import { clientEnv } from "@/lib/env.client";
 import "./globals.css";
 
@@ -35,6 +36,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="ru" className={`${manrope.variable} ${ptSerif.variable}`}>
       <body className="flex min-h-screen flex-col antialiased">
+        <StaleActionRecovery />
         <MotionProvider>{children}</MotionProvider>
       </body>
     </html>

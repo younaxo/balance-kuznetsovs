@@ -42,7 +42,7 @@ function buildEmailHtml(payload: ApplicationNotificationPayload): string {
     ["Источник", payload.source === "quiz" ? "Квиз" : "Форма"],
     ["Имя", payload.name],
     ["Телефон", payload.phone],
-    ["Telegram", payload.telegram],
+    [payload.messengerType === "max" ? "MAX" : "Telegram", payload.telegram],
     ["Email", payload.email],
     ["Услуга", service],
     [
