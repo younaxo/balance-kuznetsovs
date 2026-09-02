@@ -105,7 +105,7 @@ describe("TelegramNotificationProvider", () => {
 
     const [, requestInit] = fetchSpy.mock.calls[0];
     const body = JSON.parse(requestInit.body as string);
-    expect(body.text).toContain("MAX: @ivanov");
+    expect(body.text).toContain("MAX: <code>@ivanov</code>");
     expect(body.text).not.toContain("Telegram: @ivanov");
   });
 });

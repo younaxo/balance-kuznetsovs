@@ -1,10 +1,12 @@
+import { eq } from "drizzle-orm";
 import { getCurrentAdmin, listSessionsForUser, getCurrentSessionId } from "@/server/auth/session";
 import { db } from "@/server/db/client";
-import { adminUsers } from "@/server/db/schema";
+import { adminUsers, notificationSettings } from "@/server/db/schema";
 import { ChangePasswordForm } from "@/components/admin/change-password-form";
 import { AdminForm } from "@/components/admin/admin-form";
 import { AdminSubmitButton } from "@/components/admin/admin-submit-button";
 import { RevokeSessionForm } from "@/components/admin/revoke-session-form";
+import { Checkbox } from "@/components/ui/checkbox";
 import {
   Select,
   SelectTrigger,
@@ -12,7 +14,13 @@ import {
   SelectContent,
   SelectItem,
 } from "@/components/ui/select";
-import { createAdminUserAction, toggleAdminUserActiveAction } from "./actions";
+import {
+  createAdminUserAction,
+  toggleAdminUserActiveAction,
+  updateOwnPingSettingsAction,
+  updateGlobalPingSettingAction,
+  toggleEmployeePingAction,
+} from "./actions";
 
 export const metadata = {};
 
@@ -27,6 +35,13 @@ export default async function AdminSettingsPage() {
 
   const employees = session.adminUser.role === "owner" ? await db.select().from(adminUsers) : [];
 
+  const [globalPing] = await db
+    .select()
+    .from(notificationSettings)
+    .where(eq(notificationSettings.id, "default"))
+    .limit(1);
+  const pingAllEnabled = globalPing?.pingAllEnabled ?? true;
+
   return (
     <div className="flex flex-col gap-8">
       <div>
@@ -39,6 +54,45 @@ export default async function AdminSettingsPage() {
         <div className="mt-4">
           <ChangePasswordForm />
         </div>
+      </section>
+
+      <section className="border-border bg-surface max-w-sm rounded-lg border p-6">
+        <h2 className="font-medium">Telegram-упоминания</h2>
+        <p className="text-muted-foreground mt-1 text-xs">
+          Ваш юзернейм, чтобы бот упоминал вас в чате при новой заявке.
+        </p>
+        <AdminForm action={updateOwnPingSettingsAction} className="mt-4 grid gap-3">
+          <label className="grid gap-1.5 text-sm">
+            <span className="font-medium">Telegram-юзернейм</span>
+            <input
+              name="telegramUsername"
+              defaultValue={session.adminUser.telegramUsername ?? ""}
+              placeholder="@username"
+              className="border-border-strong bg-background h-9 rounded-md border px-3 text-sm"
+            />
+          </label>
+          <label className="flex items-center gap-2 text-sm">
+            <Checkbox name="pingEnabled" defaultChecked={session.adminUser.pingEnabled} />
+            Упоминать меня при новой заявке
+          </label>
+          <AdminSubmitButton pendingLabel="Сохранение…" className="w-fit">
+            Сохранить
+          </AdminSubmitButton>
+        </AdminForm>
+
+        {session.adminUser.role === "owner" && (
+          <div className="border-border mt-6 border-t pt-5">
+            <AdminForm action={updateGlobalPingSettingAction}>
+              <label className="flex items-center gap-2 text-sm">
+                <Checkbox name="pingAllEnabled" defaultChecked={pingAllEnabled} />
+                Упоминать всех при новой заявке (общий выключатель)
+              </label>
+              <AdminSubmitButton pendingLabel="Сохранение…" className="mt-3 w-fit">
+                Сохранить
+              </AdminSubmitButton>
+            </AdminForm>
+          </div>
+        )}
       </section>
 
       <section className="border-border bg-surface max-w-xl rounded-lg border p-6">
@@ -88,17 +142,30 @@ export default async function AdminSettingsPage() {
                       {!e.isActive && " · выключен"}
                     </span>
                   </p>
+                  <p className="text-muted-foreground mt-0.5 text-xs">
+                    {e.telegramUsername ? e.telegramUsername : "Telegram не указан"} ·{" "}
+                    {e.pingEnabled ? "упоминание включено" : "упоминание выключено"}
+                  </p>
                 </div>
-                <AdminForm action={toggleAdminUserActiveAction}>
-                  <input type="hidden" name="id" value={e.id} />
-                  <input type="hidden" name="nextActive" value={String(!e.isActive)} />
-                  <AdminSubmitButton
-                    variant={e.isActive ? "destructive" : "ghost"}
-                    pendingLabel="Сохранение…"
-                  >
-                    {e.isActive ? "Выключить" : "Включить"}
-                  </AdminSubmitButton>
-                </AdminForm>
+                <div className="flex shrink-0 items-center gap-2">
+                  <AdminForm action={toggleEmployeePingAction}>
+                    <input type="hidden" name="id" value={e.id} />
+                    <input type="hidden" name="nextPingEnabled" value={String(!e.pingEnabled)} />
+                    <AdminSubmitButton variant="ghost" pendingLabel="…">
+                      {e.pingEnabled ? "Не упоминать" : "Упоминать"}
+                    </AdminSubmitButton>
+                  </AdminForm>
+                  <AdminForm action={toggleAdminUserActiveAction}>
+                    <input type="hidden" name="id" value={e.id} />
+                    <input type="hidden" name="nextActive" value={String(!e.isActive)} />
+                    <AdminSubmitButton
+                      variant={e.isActive ? "destructive" : "ghost"}
+                      pendingLabel="Сохранение…"
+                    >
+                      {e.isActive ? "Выключить" : "Включить"}
+                    </AdminSubmitButton>
+                  </AdminForm>
+                </div>
               </li>
             ))}
           </ul>

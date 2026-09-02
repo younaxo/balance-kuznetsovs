@@ -48,7 +48,7 @@ export async function ReviewsSection({
                     {Array.from({ length: 5 }).map((_, j) => (
                       <Star
                         key={j}
-                        className="text-muted-foreground size-4"
+                        className="size-4 text-yellow-400"
                         fill="currentColor"
                         strokeWidth={1.5}
                       />

@@ -12,7 +12,7 @@ import {
 } from "@/server/auth/session";
 import { hashPassword, verifyPassword } from "@/server/auth/password";
 import { db } from "@/server/db/client";
-import { adminUsers, adminSessions } from "@/server/db/schema";
+import { adminUsers, adminSessions, notificationSettings } from "@/server/db/schema";
 import { getClientIp, hashIp } from "@/server/security/ip";
 import { headers } from "next/headers";
 import type { AdminActionState } from "@/server/admin/action-state";
@@ -202,6 +202,87 @@ export async function toggleAdminUserActiveAction(
 
   await db.update(adminUsers).set({ isActive: nextActive }).where(eq(adminUsers.id, id));
   if (!nextActive) await invalidateAllSessionsForUser(id);
+
+  revalidatePath("/admin/settings");
+  return { ok: true };
+}
+
+// Юзернейм без @ — сама TrackedLink/сообщение подставляет @ там, где
+// нужно (см. getPingUsernames).
+const telegramUsernameSchema = z
+  .string()
+  .trim()
+  .regex(/^@?[a-zA-Z0-9_]{3,64}$/, "Некорректный юзернейм")
+  .optional()
+  .or(z.literal(""));
+
+/**
+ * Каждый сотрудник настраивает СВОЙ Telegram-юзернейм и тумблер
+ * "упоминать меня" — не требует прав владельца, только на себя.
+ */
+export async function updateOwnPingSettingsAction(
+  _prevState: AdminActionState,
+  formData: FormData,
+): Promise<AdminActionState> {
+  const session = await getCurrentAdmin();
+  if (!session) return { ok: false, error: "Unauthorized" };
+
+  const parsed = telegramUsernameSchema.safeParse(formData.get("telegramUsername") || "");
+  if (!parsed.success) {
+    return { ok: false, error: parsed.error.issues[0]?.message ?? "Некорректный юзернейм" };
+  }
+
+  await db
+    .update(adminUsers)
+    .set({
+      telegramUsername: parsed.data || null,
+      pingEnabled: formData.get("pingEnabled") === "on",
+      updatedAt: new Date(),
+    })
+    .where(eq(adminUsers.id, session.adminUser.id));
+
+  revalidatePath("/admin/settings");
+  return { ok: true };
+}
+
+/** Общий выключатель Telegram-упоминаний для всех. Только для owner. */
+export async function updateGlobalPingSettingAction(
+  _prevState: AdminActionState,
+  formData: FormData,
+): Promise<AdminActionState> {
+  const session = await getCurrentAdmin();
+  if (!session || session.adminUser.role !== "owner") {
+    return { ok: false, error: "Управлять этой настройкой может только владелец аккаунта" };
+  }
+
+  const pingAllEnabled = formData.get("pingAllEnabled") === "on";
+  await db
+    .insert(notificationSettings)
+    .values({ id: "default", pingAllEnabled, updatedAt: new Date() })
+    .onConflictDoUpdate({
+      target: notificationSettings.id,
+      set: { pingAllEnabled, updatedAt: new Date() },
+    });
+
+  revalidatePath("/admin/settings");
+  return { ok: true };
+}
+
+/** Выключить/включить упоминание конкретного сотрудника. Только для owner. */
+export async function toggleEmployeePingAction(
+  _prevState: AdminActionState,
+  formData: FormData,
+): Promise<AdminActionState> {
+  const session = await getCurrentAdmin();
+  if (!session || session.adminUser.role !== "owner") {
+    return { ok: false, error: "Управлять сотрудниками может только владелец аккаунта" };
+  }
+
+  const id = formData.get("id");
+  const nextPingEnabled = formData.get("nextPingEnabled") === "true";
+  if (typeof id !== "string") return { ok: false, error: "Некорректный id" };
+
+  await db.update(adminUsers).set({ pingEnabled: nextPingEnabled }).where(eq(adminUsers.id, id));
 
   revalidatePath("/admin/settings");
   return { ok: true };

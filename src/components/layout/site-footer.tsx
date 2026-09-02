@@ -24,89 +24,113 @@ export async function SiteFooter() {
 
   return (
     <footer className="bg-graphite text-graphite-foreground print:hidden">
-      <div className="container-page grid gap-10 py-16 lg:grid-cols-[1.3fr_1fr_1fr_1fr_1fr]">
-        <div>
+      <div className="container-page py-16">
+        {/* Лого + копирайт/реквизиты — полноширинный блок, а НЕ узкая
+            колонка грида ниже: только так у длинных строк реквизитов
+            хватает места не переноситься на sm-экранах и шире (на
+            телефонах перенос всё равно неизбежен — иначе горизонтальный
+            скролл, что строго хуже). */}
+        <div className="flex flex-col items-start gap-5">
           <TrackedLink href="/" sourceElement="footer_logo">
-            <Logo height={48} variant="dark" />
+            <Logo height={64} variant="dark" />
           </TrackedLink>
 
-          <p className="text-graphite-foreground/50 mt-5 text-xs">
-            © {new Date().getFullYear()} БАЛАНС КУЗНЕЦОВЫ. Все права защищены.
-          </p>
+          <div className="text-graphite-foreground/60 flex flex-col gap-1 text-sm leading-relaxed">
+            <p className="whitespace-normal sm:whitespace-nowrap">
+              © {new Date().getFullYear()} Баланс Кузнецовы. Все права защищены.
+            </p>
 
-          {/* Реквизиты оператора — только реальные, из БД (см. /admin/contacts —
-              там они уже не редактируются). Пока не заполнены, блок просто не
-              показывается — никаких выдуманных ООО/ИНН на публичном сайте. */}
-          {hasOperatorInfo && (
-            <div className="text-graphite-foreground/60 mt-4 flex flex-col gap-1 text-sm leading-relaxed">
-              {contacts.operatorFullName && (
-                <p>
-                  {contacts.operatorStatus
-                    ? `${contacts.operatorStatus} ${contacts.operatorFullName}`
-                    : contacts.operatorFullName}
-                </p>
-              )}
-              {contacts.operatorInn && <p>ИНН {contacts.operatorInn}</p>}
-            </div>
-          )}
+            {/* Реквизиты оператора — только реальные, из БД (см. /admin/contacts —
+                там они уже не редактируются). Пока не заполнены, блок просто не
+                показывается — никаких выдуманных ООО/ИНН на публичном сайте. */}
+            {hasOperatorInfo && (
+              <>
+                {contacts.operatorFullName && (
+                  <p className="whitespace-normal sm:whitespace-nowrap">
+                    {contacts.operatorStatus
+                      ? `${contacts.operatorStatus} ${contacts.operatorFullName}`
+                      : contacts.operatorFullName}
+                  </p>
+                )}
+                {contacts.operatorInn && (
+                  <p className="whitespace-normal sm:whitespace-nowrap">
+                    ИНН {contacts.operatorInn}
+                  </p>
+                )}
+                {contacts.operatorEmail && (
+                  <p className="whitespace-normal sm:whitespace-nowrap">{contacts.operatorEmail}</p>
+                )}
+              </>
+            )}
+          </div>
         </div>
 
-        <FooterColumn title="Навигация">
-          {NAV_ITEMS.map((item) => (
-            <FooterLink key={item.href} href={item.href} source={`footer_nav_${item.href}`}>
-              {item.label}
-            </FooterLink>
-          ))}
-        </FooterColumn>
-
-        <FooterColumn title="Услуги">
-          {services.map((service) => (
-            <FooterLink
-              key={service.slug}
-              href={`/services#${service.slug}`}
-              source={`footer_service_${service.slug}`}
-            >
-              {service.title}
-            </FooterLink>
-          ))}
-        </FooterColumn>
-
-        <FooterColumn title="Документы">
-          {LEGAL_LINKS.map((item) => (
-            <FooterLink key={item.href} href={item.href} source={`footer_legal_${item.href}`}>
-              {item.label}
-            </FooterLink>
-          ))}
-        </FooterColumn>
-
-        {hasContacts && (
-          <FooterColumn title="Контакты">
-            {contacts.phone && (
-              <FooterLink href={`tel:${contacts.phone}`} source="footer_phone" event="phone_click">
-                {contacts.phone}
+        <div className="mt-12 grid gap-10 lg:grid-cols-4">
+          <FooterColumn title="Навигация">
+            {NAV_ITEMS.map((item) => (
+              <FooterLink key={item.href} href={item.href} source={`footer_nav_${item.href}`}>
+                {item.label}
               </FooterLink>
-            )}
-            {contacts.email && (
-              <FooterLink
-                href={`mailto:${contacts.email}`}
-                source="footer_email"
-                event="email_click"
-              >
-                {contacts.email}
-              </FooterLink>
-            )}
-            {contacts.telegram && (
-              <FooterLink href={contacts.telegram} source="footer_telegram" event="telegram_click">
-                Telegram
-              </FooterLink>
-            )}
-            {contacts.maxMessenger && (
-              <FooterLink href={contacts.maxMessenger} source="footer_max" event="max_click">
-                MAX
-              </FooterLink>
-            )}
+            ))}
           </FooterColumn>
-        )}
+
+          <FooterColumn title="Услуги">
+            {services.map((service) => (
+              <FooterLink
+                key={service.slug}
+                href={`/services#${service.slug}`}
+                source={`footer_service_${service.slug}`}
+              >
+                {service.title}
+              </FooterLink>
+            ))}
+          </FooterColumn>
+
+          <FooterColumn title="Документы">
+            {LEGAL_LINKS.map((item) => (
+              <FooterLink key={item.href} href={item.href} source={`footer_legal_${item.href}`}>
+                {item.label}
+              </FooterLink>
+            ))}
+          </FooterColumn>
+
+          {hasContacts && (
+            <FooterColumn title="Контакты">
+              {contacts.phone && (
+                <FooterLink
+                  href={`tel:${contacts.phone}`}
+                  source="footer_phone"
+                  event="phone_click"
+                >
+                  {contacts.phone}
+                </FooterLink>
+              )}
+              {contacts.email && (
+                <FooterLink
+                  href={`mailto:${contacts.email}`}
+                  source="footer_email"
+                  event="email_click"
+                >
+                  {contacts.email}
+                </FooterLink>
+              )}
+              {contacts.telegram && (
+                <FooterLink
+                  href={contacts.telegram}
+                  source="footer_telegram"
+                  event="telegram_click"
+                >
+                  Telegram
+                </FooterLink>
+              )}
+              {contacts.maxMessenger && (
+                <FooterLink href={contacts.maxMessenger} source="footer_max" event="max_click">
+                  MAX
+                </FooterLink>
+              )}
+            </FooterColumn>
+          )}
+        </div>
       </div>
 
       <div className="container-page text-graphite-foreground/50 flex flex-col items-center gap-1 py-6 text-center text-xs">
@@ -136,6 +160,7 @@ export async function SiteFooter() {
             <GithubMark className="size-3.5" />
             younaxo
           </TrackedLink>
+          {" & "}
           <TrackedLink
             href="https://github.com/kleek-code"
             eventType="external_link_click"
