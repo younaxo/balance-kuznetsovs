@@ -13,7 +13,7 @@ import "./globals.css";
  * не нужны и не должны показываться поверх AdminShell.
  */
 
-const siteUrl = clientEnv.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000";
+const siteUrl = clientEnv.NEXT_PUBLIC_SITE_URL || "http://localhost:3000";
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
