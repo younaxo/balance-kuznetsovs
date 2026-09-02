@@ -35,6 +35,11 @@ export const adminUsers = pgTable(
     passwordHash: text("password_hash").notNull(),
     role: adminRoleEnum("role").notNull().default("editor"),
     isActive: boolean("is_active").notNull().default(true),
+    // Свой Telegram-юзернейм (для упоминания при новой заявке) и личный
+    // тумблер "упоминать меня" — редактирует сам сотрудник в /admin/settings,
+    // владелец может выключить чужой pingEnabled оттуда же.
+    telegramUsername: varchar("telegram_username", { length: 100 }),
+    pingEnabled: boolean("ping_enabled").notNull().default(true),
     createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
     updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow(),
   },
@@ -404,6 +409,16 @@ export const notificationLogs = pgTable("notification_logs", {
     onDelete: "set null",
   }),
   createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
+});
+
+// Синглтон-таблица (как contact_settings/site_banner): единственная
+// строка id='default'. Общий выключатель Telegram-упоминаний — если
+// false, никого не пингуем независимо от personal pingEnabled у
+// сотрудников (см. adminUsers).
+export const notificationSettings = pgTable("notification_settings", {
+  id: varchar("id", { length: 20 }).primaryKey().default("default"),
+  pingAllEnabled: boolean("ping_all_enabled").notNull().default(true),
+  updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow(),
 });
 
 // ---------------------------------------------------------------------------

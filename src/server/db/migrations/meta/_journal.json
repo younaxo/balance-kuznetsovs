@@ -57,6 +57,13 @@
       "when": 1788363466648,
       "tag": "0007_loose_genesis",
       "breakpoints": true
+    },
+    {
+      "idx": 8,
+      "version": "7",
+      "when": 1788380604674,
+      "tag": "0008_naive_magma",
+      "breakpoints": true
     }
   ]
 }

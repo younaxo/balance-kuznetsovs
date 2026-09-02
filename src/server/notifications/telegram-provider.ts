@@ -1,4 +1,5 @@
 import "server-only";
+import { getPingUsernames } from "./ping";
 import type {
   ApplicationNotificationPayload,
   NotificationProvider,
@@ -9,23 +10,6 @@ const TELEGRAM_API_TIMEOUT_MS = 8000;
 
 function escapeHtml(value: string): string {
   return value.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
-}
-
-/**
- * Кому пинговать в чате при новой заявке — список @юзернеймов через
- * запятую в TELEGRAM_PING_USERNAMES (необязательно). Обычный текст
- * "@username" в сообщении Telegram и так подсвечивается кликабельно и
- * присылает уведомление тому пользователю, если бот с ним знаком по
- * этому чату — отдельного API для "пинга" не нужно.
- */
-function pingUsernames(): string[] {
-  const raw = process.env.TELEGRAM_PING_USERNAMES;
-  if (!raw) return [];
-  return raw
-    .split(",")
-    .map((u) => u.trim())
-    .filter(Boolean)
-    .map((u) => (u.startsWith("@") ? u : `@${u}`));
 }
 
 // Человекочитаемые подписи для ответов квиза «Рассчитать стоимость» —
@@ -76,7 +60,20 @@ function formatQuizAnswers(quizAnswers: Record<string, unknown> | null): string 
   return lines.length > 0 ? lines.join("\n") : null;
 }
 
-function buildMessage(payload: ApplicationNotificationPayload): string {
+// MAX — не Telegram: "@handle" там не настоящий Telegram-юзернейм, и
+// если оставить его голым текстом, клиент Telegram всё равно подсветит
+// его как кликабельное упоминание/ссылку на несуществующий (или чужой)
+// telegram-аккаунт — вводит в заблуждение. <code> отключает разбор
+// сущностей для этого куска и просто показывает моноширинный текст.
+// Для реального Telegram-контакта, наоборот, кликабельное упоминание —
+// это ровно то, что нужно, поэтому там оставляем как есть.
+function formatContact(telegram: string, messengerType: "telegram" | "max"): string {
+  return messengerType === "max"
+    ? `MAX: <code>${escapeHtml(telegram)}</code>`
+    : `Telegram: ${escapeHtml(telegram)}`;
+}
+
+function buildMessage(payload: ApplicationNotificationPayload, ping: string[]): string {
   const service = payload.serviceTitle ?? "не указана";
   const quizAnswers = payload.source === "quiz" ? formatQuizAnswers(payload.quizAnswers) : null;
 
@@ -84,16 +81,13 @@ function buildMessage(payload: ApplicationNotificationPayload): string {
     `🆕 <b>Новая заявка (${payload.source === "quiz" ? "квиз" : "форма"})</b>`,
     `Имя: <code>${escapeHtml(payload.name)}</code>`,
     payload.phone ? `Телефон: ${escapeHtml(payload.phone)}` : null,
-    payload.telegram
-      ? `${payload.messengerType === "max" ? "MAX" : "Telegram"}: ${escapeHtml(payload.telegram)}`
-      : null,
+    payload.telegram ? formatContact(payload.telegram, payload.messengerType) : null,
     payload.email ? `Email: ${escapeHtml(payload.email)}` : null,
     `Услуга: <code>${escapeHtml(service)}</code>`,
     quizAnswers ? `\nОтветы квиза:\n${quizAnswers}` : null,
     payload.message ? `\nСообщение:\n<pre>${escapeHtml(payload.message)}</pre>` : null,
   ].filter(Boolean);
 
-  const ping = pingUsernames();
   if (ping.length > 0) {
     lines.push("", ping.join(" "));
   }
@@ -125,13 +119,14 @@ export class TelegramNotificationProvider implements NotificationProvider {
     const timeout = setTimeout(() => controller.abort(), TELEGRAM_API_TIMEOUT_MS);
 
     try {
+      const ping = await getPingUsernames();
       const url = `https://api.telegram.org/bot${process.env.TELEGRAM_BOT_TOKEN}/sendMessage`;
       const response = await fetch(url, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           chat_id: process.env.TELEGRAM_CHAT_ID,
-          text: buildMessage(payload),
+          text: buildMessage(payload, ping),
           parse_mode: "HTML",
         }),
         signal: controller.signal,
