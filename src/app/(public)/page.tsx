@@ -1,4 +1,5 @@
 import { HeroSection } from "@/components/sections/hero-section";
+import { LettersSection } from "@/components/sections/letters-section";
 import { TasksSection } from "@/components/sections/tasks-section";
 import { ServicesSection } from "@/components/sections/services-section";
 import { AboutSection } from "@/components/sections/about-section";
@@ -10,6 +11,7 @@ export default function HomePage() {
   return (
     <>
       <HeroSection />
+      <LettersSection compact />
       <TasksSection />
       <ServicesSection />
       {/* Блоки ниже управляются из /admin/content и появляются только

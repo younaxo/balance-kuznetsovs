@@ -17,7 +17,16 @@ export function KodvenLogo({ className }: { className?: string }) {
   if (exists) {
     return (
       // eslint-disable-next-line @next/next/no-img-element -- путь определяется в рантайме, статический импорт невозможен
-      <img src="/brand/kodven-logo.png" alt="KODVEN STUDIO" className={className} height={20} />
+      <img
+        src="/brand/kodven-logo.png"
+        alt="KODVEN STUDIO"
+        className={className}
+        // Высота — инлайн-стилем, а не только HTML-атрибутом: глобальный
+        // Tailwind-reset (`img { height: auto }`) перебивает голый
+        // height="20" по специфичности, и лого расползается на весь
+        // блок — inline style побеждает всегда.
+        style={{ height: 20, width: "auto" }}
+      />
     );
   }
 
