@@ -25,61 +25,51 @@ export async function SiteFooter() {
   return (
     <footer className="bg-graphite text-graphite-foreground print:hidden">
       <div className="container-page py-16">
-        {/* Лого + копирайт/реквизиты — полноширинный блок, а НЕ узкая
-            колонка грида ниже: только так у длинных строк реквизитов
-            хватает места не переноситься на sm-экранах и шире (на
-            телефонах перенос всё равно неизбежен — иначе горизонтальный
-            скролл, что строго хуже). */}
-        <div className="flex flex-col items-start gap-5">
-          <TrackedLink href="/" sourceElement="footer_logo">
-            <Logo height={64} variant="dark" />
-          </TrackedLink>
-
-          <div className="text-graphite-foreground/60 flex flex-col gap-1 text-sm leading-relaxed">
-            <p className="whitespace-normal sm:whitespace-nowrap">
-              © {new Date().getFullYear()} Баланс Кузнецовы. Все права защищены.
-            </p>
-
-            {/* Реквизиты оператора — только реальные, из БД (см. /admin/contacts —
-                там они уже не редактируются). Пока не заполнены, блок просто не
-                показывается — никаких выдуманных ООО/ИНН на публичном сайте. */}
-            {hasOperatorInfo && (
-              <>
-                {contacts.operatorFullName && (
-                  <p className="whitespace-normal sm:whitespace-nowrap">
-                    {contacts.operatorStatus
-                      ? `${contacts.operatorStatus} ${contacts.operatorFullName}`
-                      : contacts.operatorFullName}
-                  </p>
-                )}
-                {contacts.operatorInn && (
-                  <p className="whitespace-normal sm:whitespace-nowrap">
-                    ИНН {contacts.operatorInn}
-                  </p>
-                )}
-                {contacts.operatorEmail && (
-                  <p className="whitespace-normal sm:whitespace-nowrap">
-                    <TrackedLink
-                      href={`mailto:${contacts.operatorEmail}`}
-                      sourceElement="footer_operator_email"
-                      eventType="email_click"
-                      className="hover:text-graphite-foreground transition-colors"
-                    >
-                      {contacts.operatorEmail}
-                    </TrackedLink>
-                  </p>
-                )}
-              </>
-            )}
-          </div>
-        </div>
-
-        {/* flex, а не grid с равными колонками: с grid-cols-4 при скрытой
-            "Контакты" (нет данных) три оставшиеся колонки растягивались
-            на всю ширину контейнера с большими пустыми промежутками —
-            flex стягивает их компактно к левому краю независимо от того,
+        {/* Лого + колонки — один ряд: лого крайним слева, дальше колонки
+            ссылок. flex, а не grid с равными колонками: с grid-cols-4 при
+            скрытой "Контакты" (нет данных) колонки растягивались на всю
+            ширину контейнера с большими пустыми промежутками — flex
+            стягивает их компактно к левому краю независимо от того,
             сколько колонок реально показано. */}
-        <div className="mt-12 flex flex-wrap gap-x-16 gap-y-10">
+        <div className="flex flex-wrap gap-x-16 gap-y-10">
+          <div className="flex max-w-56 flex-col items-start gap-5">
+            <TrackedLink href="/" sourceElement="footer_logo">
+              <Logo height={64} variant="dark" />
+            </TrackedLink>
+
+            <div className="text-graphite-foreground/60 flex flex-col gap-1 text-sm leading-relaxed">
+              <p>© {new Date().getFullYear()} Баланс Кузнецовы. Все права защищены.</p>
+
+              {/* Реквизиты оператора — только реальные, из БД (см. /admin/contacts —
+                  там они уже не редактируются). Пока не заполнены, блок просто не
+                  показывается — никаких выдуманных ООО/ИНН на публичном сайте. */}
+              {hasOperatorInfo && (
+                <>
+                  {contacts.operatorFullName && (
+                    <p>
+                      {contacts.operatorStatus
+                        ? `${contacts.operatorStatus} ${contacts.operatorFullName}`
+                        : contacts.operatorFullName}
+                    </p>
+                  )}
+                  {contacts.operatorInn && <p>ИНН {contacts.operatorInn}</p>}
+                  {contacts.operatorEmail && (
+                    <p>
+                      <TrackedLink
+                        href={`mailto:${contacts.operatorEmail}`}
+                        sourceElement="footer_operator_email"
+                        eventType="email_click"
+                        className="hover:text-graphite-foreground transition-colors"
+                      >
+                        {contacts.operatorEmail}
+                      </TrackedLink>
+                    </p>
+                  )}
+                </>
+              )}
+            </div>
+          </div>
+
           <FooterColumn title="Навигация">
             {NAV_ITEMS.map((item) => (
               <FooterLink key={item.href} href={item.href} source={`footer_nav_${item.href}`}>
