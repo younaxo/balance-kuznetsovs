@@ -20,7 +20,7 @@ import type { AdminActionState } from "@/server/admin/action-state";
 const schema = z
   .object({
     currentPassword: z.string().min(1),
-    newPassword: z.string().min(12, "Новый пароль должен быть не короче 12 символов"),
+    newPassword: z.string().min(10, "Новый пароль должен быть не короче 10 символов"),
     confirmPassword: z.string().min(1),
   })
   .refine((data) => data.newPassword === data.confirmPassword, {
@@ -119,7 +119,7 @@ export async function revokeSessionAction(
 
 const employeeSchema = z.object({
   email: z.email("Некорректный email"),
-  password: z.string().min(12, "Пароль должен быть не короче 12 символов"),
+  password: z.string().min(10, "Пароль должен быть не короче 10 символов"),
   role: z.enum(["owner", "editor"]),
   confirmPassword: z.string().min(1, "Введите пароль для подтверждения"),
 });

@@ -28,8 +28,8 @@ async function main() {
   const adminPassword = process.env.ADMIN_INITIAL_PASSWORD;
 
   if (adminEmail && adminPassword) {
-    if (adminPassword.length < 12) {
-      throw new Error("ADMIN_INITIAL_PASSWORD должен быть не короче 12 символов.");
+    if (adminPassword.length < 10) {
+      throw new Error("ADMIN_INITIAL_PASSWORD должен быть не короче 10 символов.");
     }
 
     const existing = await db

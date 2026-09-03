@@ -30,7 +30,7 @@ export function ChangePasswordForm() {
           type="password"
           name="newPassword"
           autoComplete="new-password"
-          minLength={12}
+          minLength={10}
           required
           className="border-border-strong bg-background h-9 rounded-md border px-3 text-sm"
         />
@@ -41,7 +41,7 @@ export function ChangePasswordForm() {
           type="password"
           name="confirmPassword"
           autoComplete="new-password"
-          minLength={12}
+          minLength={10}
           required
           className="border-border-strong bg-background h-9 rounded-md border px-3 text-sm"
         />

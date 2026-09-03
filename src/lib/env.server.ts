@@ -17,7 +17,7 @@ const serverSchema = z.object({
   SESSION_SECRET: z.string().min(32, "SESSION_SECRET должен быть длиной не менее 32 символов"),
 
   ADMIN_EMAIL: z.string().email().optional(),
-  ADMIN_INITIAL_PASSWORD: z.string().min(12).optional(),
+  ADMIN_INITIAL_PASSWORD: z.string().min(10).optional(),
 
   TELEGRAM_BOT_TOKEN: z.string().optional(),
   TELEGRAM_CHAT_ID: z.string().optional(),

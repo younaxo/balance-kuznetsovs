@@ -189,8 +189,8 @@ export default async function AdminSettingsPage() {
                   <input
                     name="password"
                     type="password"
-                    placeholder="от 12 символов"
-                    minLength={12}
+                    placeholder="от 10 символов"
+                    minLength={10}
                     required
                     className="border-border-strong bg-background h-9 rounded-md border px-3 text-sm"
                   />
