@@ -58,14 +58,28 @@ export async function SiteFooter() {
                   </p>
                 )}
                 {contacts.operatorEmail && (
-                  <p className="whitespace-normal sm:whitespace-nowrap">{contacts.operatorEmail}</p>
+                  <p className="whitespace-normal sm:whitespace-nowrap">
+                    <TrackedLink
+                      href={`mailto:${contacts.operatorEmail}`}
+                      sourceElement="footer_operator_email"
+                      eventType="email_click"
+                      className="hover:text-graphite-foreground transition-colors"
+                    >
+                      {contacts.operatorEmail}
+                    </TrackedLink>
+                  </p>
                 )}
               </>
             )}
           </div>
         </div>
 
-        <div className="mt-12 grid gap-10 lg:grid-cols-4">
+        {/* flex, а не grid с равными колонками: с grid-cols-4 при скрытой
+            "Контакты" (нет данных) три оставшиеся колонки растягивались
+            на всю ширину контейнера с большими пустыми промежутками —
+            flex стягивает их компактно к левому краю независимо от того,
+            сколько колонок реально показано. */}
+        <div className="mt-12 flex flex-wrap gap-x-16 gap-y-10">
           <FooterColumn title="Навигация">
             {NAV_ITEMS.map((item) => (
               <FooterLink key={item.href} href={item.href} source={`footer_nav_${item.href}`}>
@@ -142,8 +156,9 @@ export async function SiteFooter() {
             sourceElement="footer_developer_credit"
             target="_blank"
             rel="noopener noreferrer nofollow"
-            className="hover:text-graphite-foreground inline-flex items-center underline underline-offset-2"
+            className="hover:text-graphite-foreground inline-flex items-center gap-1.5 underline underline-offset-2"
           >
+            Kodven Studio
             <KodvenLogo className="inline-block" />
           </TrackedLink>
         </p>
