@@ -85,13 +85,16 @@ export function LettersSection({
               </p>
             </Reveal>
 
-            <div className="mx-auto mt-10 grid max-w-3xl gap-6 sm:grid-cols-3">
+            {/* flex, а не grid: карточки — небольшие миниатюры в ряд, а не
+                растянутые на всю колонку письма во весь рост (и остаются
+                в ряд даже на телефонах — не разворачиваются в столбик). */}
+            <div className="mt-10 flex flex-wrap justify-center gap-4 sm:gap-6">
               {LETTERS.map((letter, index) => (
                 <Reveal key={letter.src} delay={index * 0.06}>
                   <LetterThumb
                     letter={letter}
                     onClick={() => setOpenIndex(index)}
-                    className="w-full"
+                    className="w-28 sm:w-36 lg:w-40"
                   />
                 </Reveal>
               ))}
