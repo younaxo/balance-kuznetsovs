@@ -32,12 +32,20 @@ export async function SiteFooter() {
             стягивает их компактно к левому краю независимо от того,
             сколько колонок реально показано. */}
         <div className="flex flex-wrap gap-x-16 gap-y-10">
-          <div className="flex max-w-56 flex-col items-start gap-5">
+          {/* sm:shrink-0 + whitespace-nowrap (тоже с sm+): реквизиты не
+              должны переноситься на несколько строк на нормальных экранах —
+              колонка растягивается под самую длинную строку и оказывается
+              шире остальных, самой крупной в ряду (это осознанно). На
+              телефонах (<640px) ширины всё равно не хватит — там колонке
+              обязательно нужно уметь сжиматься (иначе shrink-0 держит её на
+              полной ширине текста и переносить некуда — горизонтальный
+              скролл), поэтому shrink включается только с sm. */}
+          <div className="flex flex-col items-start gap-5 sm:shrink-0">
             <TrackedLink href="/" sourceElement="footer_logo">
               <Logo height={64} variant="dark" />
             </TrackedLink>
 
-            <div className="text-graphite-foreground/60 flex flex-col gap-1 text-sm leading-relaxed">
+            <div className="text-graphite-foreground/60 flex flex-col gap-1 text-sm leading-relaxed whitespace-normal sm:whitespace-nowrap">
               <p>© {new Date().getFullYear()} Баланс Кузнецовы. Все права защищены.</p>
 
               {/* Реквизиты оператора — только реальные, из БД (см. /admin/contacts —
