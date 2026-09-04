@@ -11,7 +11,6 @@ export default function HomePage() {
   return (
     <>
       <HeroSection />
-      <LettersSection compact />
       <TasksSection />
       <ServicesSection />
       {/* Блоки ниже управляются из /admin/content и появляются только
@@ -26,6 +25,7 @@ export default function HomePage() {
       <ContentBlockSection contentKey="company_stats" className="border-border border-b" />
       <ContentBlockSection contentKey="cases" className="border-border border-b" />
       <ReviewsSection limit={6} />
+      <LettersSection />
       <ContentBlockSection contentKey="guarantees" className="border-border border-b" />
       <ContentBlockSection contentKey="faq" className="border-border border-b" />
       <FinalCtaSection />
