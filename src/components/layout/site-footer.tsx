@@ -98,14 +98,6 @@ export async function SiteFooter() {
             ))}
           </FooterColumn>
 
-          <FooterColumn title="Документы">
-            {LEGAL_LINKS.map((item) => (
-              <FooterLink key={item.href} href={item.href} source={`footer_legal_${item.href}`}>
-                {item.label}
-              </FooterLink>
-            ))}
-          </FooterColumn>
-
           {hasContacts && (
             <FooterColumn title="Контакты">
               {contacts.phone && (
@@ -142,6 +134,16 @@ export async function SiteFooter() {
               )}
             </FooterColumn>
           )}
+
+          {/* Документы — всегда последняя колонка в ряду (правее "Контактов",
+              когда они заполнены), а не перед ними. */}
+          <FooterColumn title="Документы">
+            {LEGAL_LINKS.map((item) => (
+              <FooterLink key={item.href} href={item.href} source={`footer_legal_${item.href}`}>
+                {item.label}
+              </FooterLink>
+            ))}
+          </FooterColumn>
         </div>
       </div>
 
