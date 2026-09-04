@@ -75,17 +75,17 @@ export function LettersSection({
           </Reveal>
         ) : (
           <>
-            <Reveal>
+            <Reveal className="text-center">
               <Heading className="font-display text-3xl sm:text-4xl">
                 Благодарственные и рекомендательные письма
               </Heading>
-              <p className="text-muted-foreground mt-3 max-w-2xl text-[15px] leading-relaxed">
+              <p className="text-muted-foreground mx-auto mt-3 max-w-2xl text-[15px] leading-relaxed">
                 Реальные письма от компаний, для которых мы разрабатывали комплект документов по
                 защите персональных данных.
               </p>
             </Reveal>
 
-            <div className="mt-10 grid max-w-3xl gap-6 sm:grid-cols-3">
+            <div className="mx-auto mt-10 grid max-w-3xl gap-6 sm:grid-cols-3">
               {LETTERS.map((letter, index) => (
                 <Reveal key={letter.src} delay={index * 0.06}>
                   <LetterThumb
